@@ -24,47 +24,39 @@ public class ball {
 
         if (y >= game.y_boundary - diameter) {
             is_touching_ground = true;
-        }
-        else {
+        } else {
             is_touching_ground = false;
         }
 
-        if(!is_touching_ground){
+        if (!is_touching_ground) {
             y_vel += game.gravity;
-        }
-        else{
+        } else {
             x_vel *= friction;
             // We only apply friction when the ball is grounded
-            // Whenever the ball bounces, it stays grounded for a frame, reducing speed a bit
+            // Whenever the ball bounces, it stays grounded for a frame, reducing speed a
+            // bit
             // Applying friction all the time makes the ball slow down too much
         }
 
-        if(Math.abs(x_vel) < min_X_speed){
+        if (Math.abs(x_vel) < min_X_speed) {
             x_vel = 0;
         }
     }
 
-
-    public void bounceX(){
-        if(x <= 0){
+    public void bounceX() {
+        if (x <= 0) {
             x = 0;
-        }
-        if(x >= game.x_boundary - diameter){
-            x = game.x_boundary - diameter;
         }
 
         x_vel = -x_vel * bounce_factor; // Apply damping
     }
 
-
-    public void bounceY(){
-        if(y <= 0){
+    public void bounceY() {
+        if (y <= 0) {
             y = 0;
         }
-        if(y >= game.y_boundary - diameter){
-            y = game.y_boundary - diameter;
-        }
-        if(Math.abs(y_vel) < min_Y_speed){
+
+        if (Math.abs(y_vel) < min_Y_speed) {
             y_vel = 0;
         }
 
@@ -74,6 +66,7 @@ public class ball {
     public int getX() {
         return x;
     }
+
     public int getY() {
         return y;
     }
@@ -81,6 +74,7 @@ public class ball {
     public double getXVel() {
         return x_vel;
     }
+
     public double getYVel() {
         return y_vel;
     }
