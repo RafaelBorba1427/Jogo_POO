@@ -69,8 +69,8 @@ public class game extends JPanel implements MouseListener {
     }
 
     public void applyMouseInput() {
-        int x_diff = x_input - (ball.getX());
-        int y_diff = y_input - (ball.getY());
+        int x_diff = x_input - ((int) ball.getX());
+        int y_diff = y_input - ((int) ball.getY());
 
         ball.x_vel += x_diff * 0.1;
         ball.y_vel += y_diff * 0.1;
@@ -85,8 +85,10 @@ public class game extends JPanel implements MouseListener {
 
         // Desenha o ball branco
         g.setColor(Color.WHITE);
-        g.fillOval(ball.getX(), ball.getY(), ball.getDiameter(), ball.getDiameter());
-        g.fillRect(coisa.x, coisa.y, coisa.diametro, coisa.diametro);
+        g.fillOval((int) (ball.getX() - ball.getDiameter()), (int) (ball.getY() - ball.getDiameter()),
+                (int) ball.getDiameter(), (int) ball.getDiameter());
+        g.fillRect(coisa.x - coisa.diametro, coisa.y - coisa.diametro, coisa.diametro, coisa.diametro);
+
     }
 
     @Override
