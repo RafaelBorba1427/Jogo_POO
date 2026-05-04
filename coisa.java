@@ -74,7 +74,7 @@ public class coisa extends Rectangle {
 
   @Override
   public PathIterator getPathIterator(AffineTransform at) {
-    // Delegate to Ellipse2D — it already knows how to iterate a circle
+    // Delegate to Ellipse2D, it already knows how to iterate a circle
     return new Ellipse2D.Double(this.x - diametro / 2, this.y - diametro / 2, diametro, diametro).getPathIterator(at);
   }
 
