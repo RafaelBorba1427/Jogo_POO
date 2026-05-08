@@ -14,6 +14,7 @@ public class ball extends Ellipse2D.Double {
     double x_vel, y_vel;
 
     boolean is_touching_ground = false;
+    boolean enable_physics = true;
 
     public ball(int x, int y, int diameter) {
         super((double) (x - diameter / 2), (double) (y - diameter / 2), (double) (diameter), (double) diameter);
@@ -26,9 +27,16 @@ public class ball extends Ellipse2D.Double {
     }
 
     public void update() {
-        x += x_vel;
-        y += y_vel;
-        setFrame(x, y, diameter, diameter);
+        if(enable_physics){
+            x += x_vel;
+            y += y_vel;
+            setFrame(x, y, diameter, diameter);
+        }
+        else{
+            setFrame(x, y, diameter, diameter);
+            return;
+        }
+
         if (y >= game.y_boundary - diameter) {
             is_touching_ground = true;
         } else {
@@ -51,6 +59,8 @@ public class ball extends Ellipse2D.Double {
     }
 
     public void bounce(coisa coisa) {
+        if(!enable_physics) return;
+
         if (coisa.y + coisa.diametro > this.y + diameter / 2 || coisa.y + coisa.diametro < this.y - diameter / 2
                 || coisa.y - coisa.diametro > this.y + diameter / 2
                 || coisa.y - coisa.diametro < this.y - diameter / 2) {
@@ -67,6 +77,7 @@ public class ball extends Ellipse2D.Double {
     }
 
     public void bounceX() {
+        if(!enable_physics) return;
         if (x <= 0) {
             x = 0;
         }
@@ -75,6 +86,7 @@ public class ball extends Ellipse2D.Double {
     }
 
     public void bounceY() {
+        if(!enable_physics) return;
         if (y <= 0) {
             y = 0;
         }
@@ -84,6 +96,12 @@ public class ball extends Ellipse2D.Double {
         }
 
         y_vel = -y_vel * bounce_factor; // Apply damping
+    }
+
+    public void setPosition(int x, int y) {
+        this.x = x - diameter / 2;
+        this.y = y - diameter / 2;
+        setFrame(this.x, this.y, diameter, diameter);
     }
 
     public double getX() {

@@ -1,8 +1,13 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
-public class game extends JPanel implements MouseListener {
+public class game extends JPanel implements MouseListener, KeyListener {
+
+    enum GameModes {
+        PLAY, SHOOT, EDIT, SETPOSITION;
+    }
 
     static final double gravity = 0.5;
 
@@ -10,15 +15,22 @@ public class game extends JPanel implements MouseListener {
     static final int y_boundary = 600;
 
     ball ball = new ball(400, 50, 20);
-    coisa coisa = new coisa(400, 300, 40);
+
+    ArrayList<coisa> lvl_map = new ArrayList<>();
+
+    GameModes mode = GameModes.PLAY;
+
     int x_input, y_input;
 
     public game() {
         addMouseListener(this);
+        addKeyListener(this);
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(800, 600));
 
         setFocusable(true);
+
+        lvl_map.add(new coisa(400, 300, 40));
     }
 
     public static void main(String[] args) {
@@ -53,9 +65,26 @@ public class game extends JPanel implements MouseListener {
 
         // use mouse input to change ball trajectory
         if (x_input != 0 || y_input != 0) {
-            applyMouseInput();
+            if(mode == GameModes.SHOOT){
+                applyMouseInput();
+                mode = GameModes.PLAY;
+                ball.enable_physics = true;
+            }
+            else if(mode == GameModes.EDIT){
+                lvl_map.add(new coisa(x_input, y_input, 40));
+                x_input = 0;
+                y_input = 0;
+            }
+            else if(mode == GameModes.SETPOSITION){
+                ball.setPosition(x_input, y_input);
+                x_input = 0;
+                y_input = 0;
+            }
         }
-        coisa.verify(ball);
+
+        for(coisa c : lvl_map){
+            c.verify(ball);
+        }
 
         ball.update();
         // clears the console
@@ -84,11 +113,26 @@ public class game extends JPanel implements MouseListener {
         super.paintComponent(g);
 
         // Desenha o ball branco
-        g.setColor(Color.WHITE);
+        
+        if(mode == GameModes.EDIT){
+            g.setColor(Color.BLUE);
+        }
+        else if(mode == GameModes.SETPOSITION){
+            g.setColor(Color.GREEN);
+        }
+        else if(mode == GameModes.SHOOT){
+            g.setColor(Color.RED);
+        }
+        else{
+            g.setColor(Color.WHITE);
+        }
+
         g.fillOval((int) (ball.getX() - ball.getDiameter()), (int) (ball.getY() - ball.getDiameter()),
                 (int) ball.getDiameter(), (int) ball.getDiameter());
-        g.fillRect(coisa.x - coisa.diametro, coisa.y - coisa.diametro, coisa.diametro, coisa.diametro);
-
+        
+        for(coisa c : lvl_map){
+            g.fillRect(c.x - c.diametro, c.y - c.diametro, c.diametro, c.diametro);
+        }
     }
 
     @Override
@@ -111,5 +155,33 @@ public class game extends JPanel implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if(e.getKeyChar() == 'q'){
+            mode = GameModes.PLAY;
+            ball.enable_physics = true;
+        }
+        else if(e.getKeyChar() == 'w'){
+            mode = GameModes.SHOOT;
+            ball.enable_physics = false;
+        }
+        else if(e.getKeyChar() == 'e'){
+            mode = GameModes.EDIT;
+            ball.enable_physics = false;
+        }
+        else if(e.getKeyChar() == 'r'){
+            mode = GameModes.SETPOSITION;
+            ball.enable_physics = false;
+        }
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
     }
 }
