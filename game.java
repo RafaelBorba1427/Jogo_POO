@@ -72,14 +72,12 @@ public class game extends JPanel implements MouseListener, KeyListener {
             }
             else if(mode == GameModes.EDIT){
                 lvl_map.add(new coisa(x_input, y_input, 40));
-                x_input = 0;
-                y_input = 0;
             }
             else if(mode == GameModes.SETPOSITION){
                 ball.setPosition(x_input, y_input);
-                x_input = 0;
-                y_input = 0;
             }
+            x_input = 0;
+            y_input = 0;
         }
 
         for(coisa c : lvl_map){
