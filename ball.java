@@ -4,6 +4,8 @@ import java.awt.geom.*;
 import java.awt.*;
 
 public class ball extends Ellipse2D.Double {
+    static boolean bateuX = false;
+    static boolean bateuY = false;
     static final double bounce_factor = 0.7;
     static final double min_X_speed = 1.0;
     static final double min_Y_speed = 5.0;
@@ -27,12 +29,11 @@ public class ball extends Ellipse2D.Double {
     }
 
     public void update() {
-        if(enable_physics){
+        if (enable_physics) {
             x += x_vel;
             y += y_vel;
             setFrame(x, y, diameter, diameter);
-        }
-        else{
+        } else {
             setFrame(x, y, diameter, diameter);
             return;
         }
@@ -59,25 +60,27 @@ public class ball extends Ellipse2D.Double {
     }
 
     public void bounce(coisa coisa) {
-        if(!enable_physics) return;
+        if (!enable_physics)
+            return;
 
         if (coisa.y + coisa.diametro > this.y + diameter / 2 || coisa.y + coisa.diametro < this.y - diameter / 2
                 || coisa.y - coisa.diametro > this.y + diameter / 2
                 || coisa.y - coisa.diametro < this.y - diameter / 2) {
             bounceY();
+            bateuX = true;
         }
         if (coisa.x + coisa.diametro > this.x + diameter / 2 || coisa.x + coisa.diametro < this.x - diameter / 2
                 || coisa.x - coisa.diametro > this.x + diameter / 2
                 || coisa.x - coisa.diametro < this.x - diameter / 2) {
             bounceX();
-
+            bateuY = true;
         }
-        bateu = true;
 
     }
 
     public void bounceX() {
-        if(!enable_physics) return;
+        if (!enable_physics)
+            return;
         if (x <= 0) {
             x = 0;
         }
@@ -86,7 +89,8 @@ public class ball extends Ellipse2D.Double {
     }
 
     public void bounceY() {
-        if(!enable_physics) return;
+        if (!enable_physics)
+            return;
         if (y <= 0) {
             y = 0;
         }

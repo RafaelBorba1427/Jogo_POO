@@ -7,23 +7,32 @@ import java.awt.geom.*;
 
 public class coisa extends Rectangle {
   public int x, y, diametro;
+  private boolean bateu = false;
 
   public coisa(int x, int y, int diametro) {
     super(x - diametro / 2, y - diametro / 2, diametro, diametro);
 
     this.diametro = diametro;
-    this.x = x - diametro / 2;
-    this.y = y - diametro / 2;
+    this.x = x;
+    this.y = y;
   };
 
   public void verify(ball bola) {
 
-    if (intersects(bola.getX(), bola.getY(), bola.getDiameter(), bola.getDiameter()) && !bola.bateu) {
-      System.out.println("HI");
-      bola.bounce(this);
+    if ((intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
+        bola.getDiameter())
+        || contains(bola.getX(), bola.getY()))
+        && (bola.bateuX == false || bola.bateuY == false)) {
 
-    } else if (!intersects(bola.getX(), bola.getY(), bola.getDiameter(), bola.getDiameter())) {
-      bola.bateu = false;
+      bola.bounce(this);
+      if (intersects(bola.getX(), bola.getY(), bola.getDiameter(), bola.getDiameter())) {
+        System.out.println("HI");
+      } else if (contains(bola.getX(), bola.getY())) {
+        System.out.println("BYE");
+      }
+      game.hitting = true;
+    } else {
+      game.add++;
     }
   }
 
@@ -54,7 +63,10 @@ public class coisa extends Rectangle {
     // closest point on rect to circle center
     double nearX = Math.max(x, Math.min(this.x, x + w));
     double nearY = Math.max(y, Math.min(this.y, y + h));
-    return contains(nearX, nearY);
+    double dx = nearX - this.x;
+    double dy = nearY - this.y;
+    double r = diametro / 2.0;
+    return dx * dx + dy * dy <= r * r;
   }
 
   @Override
@@ -69,13 +81,13 @@ public class coisa extends Rectangle {
 
   @Override
   public Rectangle2D getBounds2D() {
-    return new Rectangle2D.Double(this.x - diametro / 2, this.y - diametro / 2, diametro, diametro);
+    return new Rectangle2D.Double(this.x, this.y, diametro, diametro);
   }
 
   @Override
   public PathIterator getPathIterator(AffineTransform at) {
     // Delegate to Ellipse2D, it already knows how to iterate a circle
-    return new Ellipse2D.Double(this.x - diametro / 2, this.y - diametro / 2, diametro, diametro).getPathIterator(at);
+    return new Ellipse2D.Double(this.x, this.y, diametro, diametro).getPathIterator(at);
   }
 
   @Override

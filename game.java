@@ -2,8 +2,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
+import java.math.*;
+import java.awt.image.BufferedImage;
 
 public class game extends JPanel implements MouseListener, KeyListener {
+    static boolean hitting = false;
+    static int add = 0;
+    private BufferedImage offscreen;
+    private Graphics2D offscreenG;
+    static JFrame frame;
+    static int x_cool_sqr, y_cool_sqr;
+    static int w_frame, h_frame;
 
     enum GameModes {
         PLAY, SHOOT, EDIT, SETPOSITION;
@@ -21,9 +30,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
     GameModes mode = GameModes.PLAY;
 
     int x_input, y_input;
-    Point mouse_position;
-
-    boolean is_aiming = false;
 
     public game() {
         addMouseListener(this);
@@ -32,12 +38,24 @@ public class game extends JPanel implements MouseListener, KeyListener {
         setPreferredSize(new Dimension(800, 600));
 
         setFocusable(true);
+        setDoubleBuffered(true);
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
+                if (ball.getX() >= j * w_frame && ball.getX() < (j + 1) * w_frame && ball.getY() >= i * h_frame
+                        && ball.getY() < (i + 1) * h_frame) {
+                    x_cool_sqr = j;
+                    y_cool_sqr = i;
+                }
 
+            }
+        }
         lvl_map.add(new coisa(400, 300, 40));
+        setVisible(true);
+
     }
 
     public static void main(String[] args) {
-        JFrame frame = new JFrame("Ball Game");
+        frame = new JFrame("Ball Game");
 
         game game = new game();
         frame.add(game);
@@ -46,66 +64,68 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
         frame.pack();
         frame.setVisible(true);
-
-        while (true) {
+        w_frame = (int) Math.ceil(frame.getWidth() / 4.0);
+        h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
+        Timer timer = new Timer(16, e -> {
             game.update();
-        }
+            game.repaint();
+        });
+        timer.start();
     }
 
     public void update() {
-        try {
-            Thread.sleep(16); // ~60 FPS
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        mouse_position = MouseInfo.getPointerInfo().getLocation();
-
-        if (ball.getY() >= y_boundary || ball.getY() <= 0) {
+        if ((ball.getY() >= y_boundary || ball.getY() <= 0)) {
             ball.bounceY();
         }
-        if (ball.getX() <= 0 || ball.getX() >= x_boundary - ball.getDiameter()) {
+        if ((ball.getX() <= 0 || ball.getX() >= x_boundary - ball.getDiameter())) {
             ball.bounceX();
         }
 
         // use mouse input to change ball trajectory
         if (x_input != 0 || y_input != 0) {
-            if(mode == GameModes.SHOOT){
+            if (mode == GameModes.SHOOT) {
                 applyMouseInput();
                 mode = GameModes.PLAY;
                 ball.enable_physics = true;
-            }
-            else if(mode == GameModes.EDIT){
-                lvl_map.add(new coisa(x_input, y_input, 40));
-            }
-            else if(mode == GameModes.SETPOSITION){
+            } else if (mode == GameModes.EDIT) {
+                coisa newy = new coisa(x_input, y_input, 40);
+                lvl_map.add(newy);
+
+            } else if (mode == GameModes.SETPOSITION) {
                 ball.setPosition(x_input, y_input);
             }
             x_input = 0;
             y_input = 0;
         }
 
-        for(coisa c : lvl_map){
+        for (coisa c : lvl_map) {
             c.verify(ball);
-        }
 
+        }
+        if (add == lvl_map.size()) {
+            ball.bateuX = false;
+            ball.bateuY = false;
+            hitting = false;
+        }
+        add = 0;
         ball.update();
         // clears the console
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        // System.out.print("\033[H\033[2J");
+        // System.out.flush();
 
-        System.out.println("Ball position: (" + ball.getX() + ", " + ball.getY() + ")");
-        System.out.println("Ball velocity: (" + ball.getXVel() + ", " + ball.getYVel() + ")");
+        System.out.println("Ball position: (" + ball.getX() + ", " + ball.getY() +
+                ")");
+        System.out.println("Ball velocity: (" + ball.getXVel() + ", " +
+                ball.getYVel() + ")");
 
-        repaint();
     }
 
     public void applyMouseInput() {
         int x_diff = x_input - ((int) ball.getX());
         int y_diff = y_input - ((int) ball.getY());
 
-        ball.x_vel -= x_diff * 0.1;
-        ball.y_vel -= y_diff * 0.1;
+        ball.x_vel += x_diff * 0.1;
+        ball.y_vel += y_diff * 0.1;
 
         x_input = 0;
         y_input = 0;
@@ -115,56 +135,59 @@ public class game extends JPanel implements MouseListener, KeyListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Desenha o ball branco
-        
-        if(mode == GameModes.EDIT){
-            g.setColor(Color.BLUE);
-        }
-        else if(mode == GameModes.SETPOSITION){
-            g.setColor(Color.GREEN);
-        }
-        else if(mode == GameModes.SHOOT){
-            g.setColor(Color.RED);
-        }
-        else{
-            g.setColor(Color.WHITE);
+        // Recreate off-screen buffer if panel was resized
+        if (offscreen == null || offscreen.getWidth() != getWidth() || offscreen.getHeight() != getHeight()) {
+            offscreen = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+            offscreenG = offscreen.createGraphics();
+            offscreenG.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            offscreenG.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         }
 
-        g.fillOval((int) (ball.getX() - ball.getDiameter()), (int) (ball.getY() - ball.getDiameter()),
-                (int) ball.getDiameter(), (int) ball.getDiameter());
-        
-        for(coisa c : lvl_map){
-            g.fillRect(c.x - c.diametro, c.y - c.diametro, c.diametro, c.diametro);
+        // Clear off-screen buffer
+        offscreenG.setColor(Color.BLACK);
+        offscreenG.fillRect(0, 0, getWidth(), getHeight());
+
+        // Draw ball with mode color
+        if (mode == GameModes.EDIT) {
+            offscreenG.setColor(Color.BLUE);
+        } else if (mode == GameModes.SETPOSITION) {
+            offscreenG.setColor(Color.GREEN);
+        } else if (mode == GameModes.SHOOT) {
+            offscreenG.setColor(Color.RED);
+        } else {
+            offscreenG.setColor(Color.WHITE);
         }
 
-        if(is_aiming){
-            g.drawLine((int) ball.getX(), (int) ball.getY(), mouse_position.x, mouse_position.y);
+        offscreenG.fillOval(
+                (int) (ball.getX() - ball.getDiameter() / 2),
+                (int) (ball.getY() - ball.getDiameter() / 2),
+                (int) ball.getDiameter(),
+                (int) ball.getDiameter());
+
+        // Draw obstacles
+
+        for (coisa c : lvl_map) {
+            offscreenG.fillRect(c.x - c.diametro / 2, c.y - c.diametro / 2, c.diametro,
+                    c.diametro);
+
         }
+
+        // Flip off-screen buffer to screen in one shot
+        g.drawImage(offscreen, 0, 0, null);
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if(mode == GameModes.EDIT || mode == GameModes.SETPOSITION){
-            x_input = e.getX();
-            y_input = e.getY();
-        }
+        x_input = e.getX();
+        y_input = e.getY();
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if(mode == GameModes.SHOOT){
-            is_aiming = true;
-        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        x_input = e.getX();
-        y_input = e.getY();
-
-        if(mode == GameModes.SHOOT){
-            is_aiming = false;
-        }
     }
 
     @Override
@@ -181,19 +204,16 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if(e.getKeyChar() == 'q'){
+        if (e.getKeyChar() == 'q') {
             mode = GameModes.PLAY;
             ball.enable_physics = true;
-        }
-        else if(e.getKeyChar() == 'w'){
+        } else if (e.getKeyChar() == 'w') {
             mode = GameModes.SHOOT;
             ball.enable_physics = false;
-        }
-        else if(e.getKeyChar() == 'e'){
+        } else if (e.getKeyChar() == 'e') {
             mode = GameModes.EDIT;
             ball.enable_physics = false;
-        }
-        else if(e.getKeyChar() == 'r'){
+        } else if (e.getKeyChar() == 'r') {
             mode = GameModes.SETPOSITION;
             ball.enable_physics = false;
         }
