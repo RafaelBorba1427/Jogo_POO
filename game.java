@@ -21,6 +21,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
     GameModes mode = GameModes.PLAY;
 
     int x_input, y_input;
+    Point mouse_position;
+
+    boolean is_aiming = false;
 
     public game() {
         addMouseListener(this);
@@ -55,6 +58,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        mouse_position = MouseInfo.getPointerInfo().getLocation();
 
         if (ball.getY() >= y_boundary || ball.getY() <= 0) {
             ball.bounceY();
@@ -99,8 +104,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         int x_diff = x_input - ((int) ball.getX());
         int y_diff = y_input - ((int) ball.getY());
 
-        ball.x_vel += x_diff * 0.1;
-        ball.y_vel += y_diff * 0.1;
+        ball.x_vel -= x_diff * 0.1;
+        ball.y_vel -= y_diff * 0.1;
 
         x_input = 0;
         y_input = 0;
@@ -131,20 +136,35 @@ public class game extends JPanel implements MouseListener, KeyListener {
         for(coisa c : lvl_map){
             g.fillRect(c.x - c.diametro, c.y - c.diametro, c.diametro, c.diametro);
         }
+
+        if(is_aiming){
+            g.drawLine((int) ball.getX(), (int) ball.getY(), mouse_position.x, mouse_position.y);
+        }
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        x_input = e.getX();
-        y_input = e.getY();
+        if(mode == GameModes.EDIT || mode == GameModes.SETPOSITION){
+            x_input = e.getX();
+            y_input = e.getY();
+        }
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if(mode == GameModes.SHOOT){
+            is_aiming = true;
+        }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        x_input = e.getX();
+        y_input = e.getY();
+
+        if(mode == GameModes.SHOOT){
+            is_aiming = false;
+        }
     }
 
     @Override
