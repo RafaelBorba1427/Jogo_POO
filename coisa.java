@@ -21,7 +21,7 @@ public class coisa extends Rectangle {
 
     if ((intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
         bola.getDiameter())
-        || contains(bola.getX(), bola.getY()))
+        || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))
         && (bola.bateuX == false || bola.bateuY == false)) {
 
       bola.bounce(this);

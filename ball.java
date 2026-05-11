@@ -44,7 +44,7 @@ public class ball extends Ellipse2D.Double {
             is_touching_ground = false;
         }
 
-        if (!is_touching_ground) {
+        if (!is_touching_ground && !(y_vel == 0 && game.hitting)) {
             y_vel += game.gravity;
         } else {
             x_vel *= friction;
@@ -84,7 +84,6 @@ public class ball extends Ellipse2D.Double {
         if (x <= 0) {
             x = 0;
         }
-
         x_vel = -x_vel * bounce_factor; // Apply damping
     }
 
