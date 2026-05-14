@@ -13,6 +13,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static JFrame frame;
     static int x_cool_sqr, y_cool_sqr;
     static int w_frame, h_frame;
+    static buffSystem buffSys;
 
     enum GameModes {
         PLAY, SHOOT, EDIT, SETPOSITION;
@@ -61,20 +62,26 @@ public class game extends JPanel implements MouseListener, KeyListener {
         frame.add(game);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        
         w_frame = (int) Math.ceil(frame.getWidth() / 4.0);
         h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
+
+        buffSys = new buffSystem();
+        //buffSys.ApplyBuff(buffSystem.buffs.ICED, 10);
         Timer timer = new Timer(16, e -> {
+            //buffSys.CheckDuration(buffSystem.buffs.ICED);
             game.update();
             game.repaint();
+            buffSys.DecrementBuffTimers();
         });
         timer.start();
     }
 
     public void update() {
-        if ((ball.getY() >= y_boundary || ball.getY() <= 0)) {
+        if ((ball.getY() >= y_boundary - ball.getDiameter() || ball.getY() <= 0)) {
             ball.bounceY();
         }
         if ((ball.getX() <= 0 || ball.getX() >= x_boundary - ball.getDiameter())) {
