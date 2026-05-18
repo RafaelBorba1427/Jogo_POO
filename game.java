@@ -26,10 +26,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     ball ball = new ball(400, 50, 20);
 
-    ArrayList<coisa> lvl_map = new ArrayList<>();
+    static ArrayList<coisa> lvl_map = new ArrayList<>();
 
     GameModes mode = GameModes.PLAY;
-
+    static game gaming = new game();
     int x_input, y_input;
 
     public game() {
@@ -50,7 +50,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
             }
         }
-        lvl_map.add(new coisa(400, 300, 40));
+        lvl_map.add(new coisa(400, 300, 40, lvl_map.size() - 1));
         setVisible(true);
 
     }
@@ -58,23 +58,22 @@ public class game extends JPanel implements MouseListener, KeyListener {
     public static void main(String[] args) {
         frame = new JFrame("Ball Game");
 
-        game game = new game();
-        frame.add(game);
+        frame.add(gaming);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        
+
         w_frame = (int) Math.ceil(frame.getWidth() / 4.0);
         h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
 
         buffSys = new buffSystem();
-        //buffSys.ApplyBuff(buffSystem.buffs.ICED, 10);
+        // buffSys.ApplyBuff(buffSystem.buffs.ICED, 10);
         Timer timer = new Timer(16, e -> {
-            //buffSys.CheckDuration(buffSystem.buffs.ICED);
-            game.update();
-            game.repaint();
+            buffSys.CheckDuration(buffSystem.buffs.MASSIVE_DRAG);
+            gaming.update();
+            gaming.repaint();
             buffSys.DecrementBuffTimers();
         });
         timer.start();
@@ -95,8 +94,12 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 mode = GameModes.PLAY;
                 ball.enable_physics = true;
             } else if (mode == GameModes.EDIT) {
-                coisa newy = new coisa(x_input, y_input, 40);
+                // coisa newy = new coisa(x_input, y_input, 40);
+                // buffSystem.buffs bu = buffSystem.buffs.SPEED_BOOST;
+                buff newy = new buff(x_input, y_input, 40, buffSystem.buffs.MASSIVE_DRAG, lvl_map.size() - 1);
+
                 lvl_map.add(newy);
+                // lvl_map.add(newy);
 
             } else if (mode == GameModes.SETPOSITION) {
                 ball.setPosition(x_input, y_input);
@@ -106,9 +109,16 @@ public class game extends JPanel implements MouseListener, KeyListener {
         }
 
         for (coisa c : lvl_map) {
-            c.verify(ball);
+            if (c instanceof buff b) {
 
+                b.verify(ball);
+
+            } else {
+                c.verify(ball);
+            }
+            System.out.println("Veryfy Ativo");
         }
+        lvl_map.removeIf(c -> c instanceof buff b && b.bateu);
         if (add == lvl_map.size()) {
             ball.bateuX = false;
             ball.bateuY = false;
@@ -174,8 +184,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // Draw obstacles
 
         for (coisa c : lvl_map) {
-            offscreenG.fillRect(c.x - c.diametro / 2, c.y - c.diametro / 2, c.diametro,
-                    c.diametro);
+            if ((c.buff == true && buffSys.HasBuff(((buff) c).buff_active)) || c.bateu == false) {
+                offscreenG.fillRect(c.x - c.diametro / 2, c.y - c.diametro / 2, c.diametro,
+                        c.diametro);
+
+            }
 
         }
 

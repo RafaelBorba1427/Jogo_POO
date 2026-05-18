@@ -1,0 +1,35 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.Shape;
+import java.awt.Rectangle;
+import java.awt.geom.*;
+
+class buff extends coisa {
+
+  public buffSystem.buffs buff_active;
+
+  public buff(int x, int y, int diametro, buffSystem.buffs buff, int id) {
+    super(x, y, diametro, id);
+    this.buff_active = buff;
+    this.buff = true;
+  };
+
+  @Override
+  public void verify(ball bola) {
+    System.out.println("buff verify called buffSys=" + game.buffSys + " buff_active=" + buff_active);
+    if ((intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
+        bola.getDiameter())
+        || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))
+        && (bola.bateuX == false || bola.bateuY == false)) {
+
+      game.gaming.buffSys.ApplyBuff(buff_active, 10);
+      bateu = true;
+
+    } else {
+      game.add++;
+    }
+
+  }
+
+}

@@ -7,24 +7,31 @@ import java.awt.geom.*;
 
 public class coisa extends Rectangle {
   public int x, y, diametro;
-  private boolean bateu = false;
+  public boolean bateu = false;
+  public boolean buff = false;
+  int id;
 
-  public coisa(int x, int y, int diametro) {
+  public coisa(int x, int y, int diametro, int id) {
     super(x - diametro / 2, y - diametro / 2, diametro, diametro);
-
+    this.id = id;
     this.diametro = diametro;
     this.x = x;
     this.y = y;
   };
 
-  public void verify(ball bola) {
+  public int getId() {
+    return id;
+  }
 
+  public void verify(ball bola) {
+    System.out.println("Works");
     if ((intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
         bola.getDiameter())
         || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))
         && (bola.bateuX == false || bola.bateuY == false)) {
 
       bola.bounce(this);
+
       if (intersects(bola.getX(), bola.getY(), bola.getDiameter(), bola.getDiameter())) {
         System.out.println("HI");
       } else if (contains(bola.getX(), bola.getY())) {
