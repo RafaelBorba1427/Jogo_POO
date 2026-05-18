@@ -32,15 +32,14 @@ public class coisa extends Rectangle {
         && (bola.bateuX == false || bola.bateuY == false)) {
 
       bola.bounce(this);
-
-      if (intersects(bola.getX(), bola.getY(), bola.getDiameter(), bola.getDiameter())) {
-        System.out.println("HI");
-      } else if (contains(bola.getX(), bola.getY())) {
-        System.out.println("BYE");
+      if (id == 1) {
+        game.fecha = true;
       }
       game.hitting = true;
     } else {
+
       game.add++;
+
     }
   }
 

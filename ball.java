@@ -28,6 +28,10 @@ public class ball extends Ellipse2D.Double {
         this.y_vel = 0;
     }
 
+    public void setY(double y) {
+        this.y = y;
+    }
+
     public void update() {
         if (enable_physics) {
             x += x_vel;
@@ -46,17 +50,21 @@ public class ball extends Ellipse2D.Double {
 
         if (!is_touching_ground && !(y_vel == 0 && game.hitting)) {
             y_vel += game.gravity;
-        } else if (!game.buffSys.HasBuff(buffSystem.buffs.SLIPPERY)) {
-            x_vel *= friction;
-            // We only apply friction when the ball is grounded
-            // also friction is only applied if it does not have the SLIPPERY modifier
-            // Whenever the ball bounces, it stays grounded for a frame, reducing speed a
-            // bit
-            // Applying friction all the time makes the ball slow down too much
-        } else if (game.buffSys.HasBuff(buffSystem.buffs.MASSIVE_DRAG)) {
-            x_vel *= friction * 0.96; // 0.95 velocity multiplier every tick
-        }
+        } else {
 
+            if (!game.buffSys.HasBuff(buffSystem.buffs.SLIPPERY)) {
+
+                x_vel *= friction;
+                // We only apply friction when the ball is grounded
+                // also friction is only applied if it does not have the SLIPPERY modifier
+                // Whenever the ball bounces, it stays grounded for a frame, reducing speed a
+                // bit
+                // Applying friction all the time makes the ball slow down too much
+            } else if (game.buffSys.HasBuff(buffSystem.buffs.MASSIVE_DRAG)) {
+                x_vel *= friction * 0.96; // 0.95 velocity multiplier every tick
+            }
+
+        }
         if (game.buffSys.HasBuff(buffSystem.buffs.ICED)) {
             if (!game.buffSys.ICED_active) {
                 x_vel = (x_vel > 0) ? Math.max(x_vel - 30, 0) : Math.min(x_vel + 30, 0);
@@ -98,13 +106,12 @@ public class ball extends Ellipse2D.Double {
                 || coisa.y - coisa.diametro > this.y + diameter / 2
                 || coisa.y - coisa.diametro < this.y - diameter / 2) {
             bounceY();
-            bateuX = true;
-        }
-        if (coisa.x + coisa.diametro > this.x + diameter / 2 || coisa.x + coisa.diametro < this.x - diameter / 2
+            bateuY = true;
+        } else if (coisa.x + coisa.diametro > this.x + diameter / 2 || coisa.x + coisa.diametro < this.x - diameter / 2
                 || coisa.x - coisa.diametro > this.x + diameter / 2
                 || coisa.x - coisa.diametro < this.x - diameter / 2) {
             bounceX();
-            bateuY = true;
+            bateuX = true;
         }
 
     }

@@ -15,7 +15,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     private Image image;
     static int anime = 0;
     static double anime_help = 0;
-
+    static boolean fecha = false;
     static boolean hitting = false;
     static int add = 0;
     private BufferedImage offscreen, sheet;
@@ -36,7 +36,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static final int x_boundary = 800;
     static final int y_boundary = 600;
 
-    ball ball = new ball(400, 50, 20);
+    ball ball = new ball(400, 200, 20);
 
     static ArrayList<coisa> lvl_map = new ArrayList<>();
 
@@ -68,6 +68,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
             }
         }
         lvl_map.add(new coisa(400, 300, 40, 0));
+        lvl_map.add(new coisa(700, 600, 40, 1));
+
         setVisible(true);
 
     }
@@ -101,6 +103,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
             if (anime >= 15) {
                 anime = 0;
             }
+            if (fecha) {
+                frame.dispose();
+            }
         });
         timer.start();
     }
@@ -120,7 +125,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 mode = GameModes.PLAY;
                 ball.enable_physics = true;
             } else if (mode == GameModes.EDIT) {
-                coisa newy = new coisa(x_input, y_input, 40, 6);
+                coisa newy = new coisa(x_input, y_input, 40, 0);
                 // buffSystem.buffs bu = buffSystem.buffs.SPEED_BOOST;
                 // buff newy = new buff(x_input, y_input, 40, buffSystem.buffs.SPEED_BOOST, 6);
 
