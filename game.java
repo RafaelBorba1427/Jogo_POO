@@ -4,18 +4,26 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.math.*;
 import java.awt.image.BufferedImage;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import javax.swing.JPanel;
+import javax.imageio.ImageIO;
+import java.io.File;
 
 public class game extends JPanel implements MouseListener, KeyListener {
     private Image image;
 
     static boolean hitting = false;
     static int add = 0;
-    private BufferedImage offscreen;
+    private BufferedImage offscreen, sheet;
     private Graphics2D offscreenG;
     static JFrame frame;
     static int x_cool_sqr, y_cool_sqr;
     static int w_frame, h_frame;
     static buffSystem buffSys;
+    int sprite_col = 16, sprite_lin = 16;
+    int option = 0;
 
     enum GameModes {
         PLAY, SHOOT, EDIT, SETPOSITION;
@@ -35,6 +43,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
     int x_input, y_input;
 
     public game(String imagePath) {
+        try {
+            sheet = ImageIO.read(new File("spritesheet/New Piskel(2).png"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         image = new ImageIcon(imagePath).getImage();
         addMouseListener(this);
         addKeyListener(this);
@@ -42,7 +55,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
         setPreferredSize(new Dimension(800, 600));
 
         setFocusable(true);
-        setDoubleBuffered(true);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
                 if (ball.getX() >= j * w_frame && ball.getX() < (j + 1) * w_frame && ball.getY() >= i * h_frame
@@ -53,7 +65,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
             }
         }
-        lvl_map.add(new coisa(400, 300, 40, lvl_map.size() - 1));
+        lvl_map.add(new coisa(400, 300, 40, 0));
         setVisible(true);
 
     }
@@ -99,7 +111,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
             } else if (mode == GameModes.EDIT) {
                 // coisa newy = new coisa(x_input, y_input, 40);
                 // buffSystem.buffs bu = buffSystem.buffs.SPEED_BOOST;
-                buff newy = new buff(x_input, y_input, 40, buffSystem.buffs.MASSIVE_DRAG, lvl_map.size() - 1);
+                buff newy = new buff(x_input, y_input, 40, buffSystem.buffs.MASSIVE_DRAG, 4);
 
                 lvl_map.add(newy);
                 // lvl_map.add(newy);
@@ -169,12 +181,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
             offscreenG.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         }
 
-        // --- FIX: Clear with FULL TRANSPARENCY, not black ---
         offscreenG.setComposite(AlphaComposite.Clear);
         offscreenG.fillRect(0, 0, getWidth(), getHeight());
         offscreenG.setComposite(AlphaComposite.SrcOver);
-        // -----------------------------------------------------
-
         // Draw ball in mode color
         if (mode == GameModes.EDIT) {
             offscreenG.setColor(Color.BLUE);
@@ -194,12 +203,21 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
         // Draw obstacles
         for (coisa c : lvl_map) {
+
             if ((c.buff && buffSys.HasBuff(((buff) c).buff_active)) || !c.bateu) {
-                offscreenG.fillRect(
+                g.drawImage(
+                        sheet,
                         c.x - c.diametro / 2,
                         c.y - c.diametro / 2,
-                        c.diametro,
-                        c.diametro);
+                        c.x + c.diametro / 2,
+                        c.y + c.diametro / 2,
+
+                        (0) * sprite_col, // column
+                        (0 + c.id) * sprite_lin, // row (do NOT add option!)
+                        (0) * sprite_col + sprite_col,
+                        (0 + c.id) * sprite_lin + sprite_lin,
+
+                        null);
             }
         }
 
