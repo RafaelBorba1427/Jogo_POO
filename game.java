@@ -6,6 +6,8 @@ import java.math.*;
 import java.awt.image.BufferedImage;
 
 public class game extends JPanel implements MouseListener, KeyListener {
+    private Image image;
+
     static boolean hitting = false;
     static int add = 0;
     private BufferedImage offscreen;
@@ -29,10 +31,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static ArrayList<coisa> lvl_map = new ArrayList<>();
 
     GameModes mode = GameModes.PLAY;
-    static game gaming = new game();
+    static game gaming = new game("Frat_background.png");
     int x_input, y_input;
 
-    public game() {
+    public game(String imagePath) {
+        image = new ImageIcon(imagePath).getImage();
         addMouseListener(this);
         addKeyListener(this);
         setBackground(Color.BLACK);
@@ -152,7 +155,13 @@ public class game extends JPanel implements MouseListener, KeyListener {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-        // Recreate off-screen buffer if panel was resized
+        // Draw background image
+        g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+
+        g.drawImage(new ImageIcon("floor.png").getImage(), 0, getHeight() - getHeight() / 4, getWidth(),
+                getHeight() / 4, this);
+
+        // Recreate buffer if needed
         if (offscreen == null || offscreen.getWidth() != getWidth() || offscreen.getHeight() != getHeight()) {
             offscreen = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
             offscreenG = offscreen.createGraphics();
@@ -160,11 +169,13 @@ public class game extends JPanel implements MouseListener, KeyListener {
             offscreenG.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
         }
 
-        // Clear off-screen buffer
-        offscreenG.setColor(Color.BLACK);
+        // --- FIX: Clear with FULL TRANSPARENCY, not black ---
+        offscreenG.setComposite(AlphaComposite.Clear);
         offscreenG.fillRect(0, 0, getWidth(), getHeight());
+        offscreenG.setComposite(AlphaComposite.SrcOver);
+        // -----------------------------------------------------
 
-        // Draw ball with mode color
+        // Draw ball in mode color
         if (mode == GameModes.EDIT) {
             offscreenG.setColor(Color.BLUE);
         } else if (mode == GameModes.SETPOSITION) {
@@ -182,17 +193,17 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 (int) ball.getDiameter());
 
         // Draw obstacles
-
         for (coisa c : lvl_map) {
-            if ((c.buff == true && buffSys.HasBuff(((buff) c).buff_active)) || c.bateu == false) {
-                offscreenG.fillRect(c.x - c.diametro / 2, c.y - c.diametro / 2, c.diametro,
+            if ((c.buff && buffSys.HasBuff(((buff) c).buff_active)) || !c.bateu) {
+                offscreenG.fillRect(
+                        c.x - c.diametro / 2,
+                        c.y - c.diametro / 2,
+                        c.diametro,
                         c.diametro);
-
             }
-
         }
 
-        // Flip off-screen buffer to screen in one shot
+        // Draw transparent buffer over background
         g.drawImage(offscreen, 0, 0, null);
     }
 
