@@ -13,6 +13,8 @@ import java.io.File;
 
 public class game extends JPanel implements MouseListener, KeyListener {
     private Image image;
+    static int anime = 0;
+    static double anime_help = 0;
 
     static boolean hitting = false;
     static int add = 0;
@@ -86,10 +88,19 @@ public class game extends JPanel implements MouseListener, KeyListener {
         buffSys = new buffSystem();
         // buffSys.ApplyBuff(buffSystem.buffs.ICED, 10);
         Timer timer = new Timer(16, e -> {
-            buffSys.CheckDuration(buffSystem.buffs.MASSIVE_DRAG);
+            buffSys.CheckDuration(buffSystem.buffs.SPEED_BOOST);
             gaming.update();
             gaming.repaint();
             buffSys.DecrementBuffTimers();
+            anime_help++;
+            if (anime_help > 4) {
+                anime_help = 0;
+                anime++;
+            }
+
+            if (anime >= 15) {
+                anime = 0;
+            }
         });
         timer.start();
     }
@@ -109,9 +120,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 mode = GameModes.PLAY;
                 ball.enable_physics = true;
             } else if (mode == GameModes.EDIT) {
-                // coisa newy = new coisa(x_input, y_input, 40);
+                coisa newy = new coisa(x_input, y_input, 40, 6);
                 // buffSystem.buffs bu = buffSystem.buffs.SPEED_BOOST;
-                buff newy = new buff(x_input, y_input, 40, buffSystem.buffs.MASSIVE_DRAG, 4);
+                // buff newy = new buff(x_input, y_input, 40, buffSystem.buffs.SPEED_BOOST, 6);
 
                 lvl_map.add(newy);
                 // lvl_map.add(newy);
@@ -212,9 +223,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
                         c.x + c.diametro / 2,
                         c.y + c.diametro / 2,
 
-                        (0) * sprite_col, // column
+                        (0 + anime) * sprite_col, // column
                         (0 + c.id) * sprite_lin, // row (do NOT add option!)
-                        (0) * sprite_col + sprite_col,
+                        (0 + anime) * sprite_col + sprite_col,
                         (0 + c.id) * sprite_lin + sprite_lin,
 
                         null);

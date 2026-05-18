@@ -46,45 +46,44 @@ public class ball extends Ellipse2D.Double {
 
         if (!is_touching_ground && !(y_vel == 0 && game.hitting)) {
             y_vel += game.gravity;
-        } else if(!game.buffSys.HasBuff(buffSystem.buffs.SLIPPERY)){
+        } else if (!game.buffSys.HasBuff(buffSystem.buffs.SLIPPERY)) {
             x_vel *= friction;
             // We only apply friction when the ball is grounded
             // also friction is only applied if it does not have the SLIPPERY modifier
-            // Whenever the ball bounces, it stays grounded for a frame, reducing speed a bit
+            // Whenever the ball bounces, it stays grounded for a frame, reducing speed a
+            // bit
             // Applying friction all the time makes the ball slow down too much
-        } else if(game.buffSys.HasBuff(buffSystem.buffs.MASSIVE_DRAG)){
-            x_vel *= friction*0.96; // 0.95 velocity multiplier every tick
+        } else if (game.buffSys.HasBuff(buffSystem.buffs.MASSIVE_DRAG)) {
+            x_vel *= friction * 0.96; // 0.95 velocity multiplier every tick
         }
 
-        if(game.buffSys.HasBuff(buffSystem.buffs.ICED)){
-            if(!game.buffSys.ICED_active){
-                x_vel = (x_vel>0)? Math.max(x_vel-30,0) : Math.min(x_vel+30,0);
-                y_vel = (y_vel>0)? Math.max(x_vel-35,0) : Math.min(x_vel+35,0);
+        if (game.buffSys.HasBuff(buffSystem.buffs.ICED)) {
+            if (!game.buffSys.ICED_active) {
+                x_vel = (x_vel > 0) ? Math.max(x_vel - 30, 0) : Math.min(x_vel + 30, 0);
+                y_vel = (y_vel > 0) ? Math.max(x_vel - 35, 0) : Math.min(x_vel + 35, 0);
                 game.buffSys.ICED_active = true;
-                game.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY, 
-                    game.buffSys.BuffDuration(buffSystem.buffs.ICED));
+                game.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY,
+                        game.buffSys.BuffDuration(buffSystem.buffs.ICED));
             }
         }
 
-        else if(game.buffSys.ICED_active){
+        else if (game.buffSys.ICED_active) {
             game.buffSys.ICED_active = false;
         }
 
-        else{
-        if(game.buffSys.HasBuff(buffSystem.buffs.SPEED_BOOST)){
-        if(!game.buffSys.speed_boost_active){
-            x_vel += (x_vel>0)? 20 : -20; 
-            y_vel += (y_vel>0)? 25 : -25; 
-            game.buffSys.speed_boost_active = true;
+        else {
+            if (game.buffSys.HasBuff(buffSystem.buffs.SPEED_BOOST)) {
+                if (!game.buffSys.speed_boost_active) {
+                    x_vel += (x_vel > 0) ? 20 : -20;
+                    y_vel += (y_vel > 0) ? 25 : -25;
+                    game.buffSys.speed_boost_active = true;
+                }
+                x_vel *= 1.01;
+                y_vel *= 1.01;
+            } else if (game.buffSys.speed_boost_active) {
+                game.buffSys.speed_boost_active = false;
+            }
         }
-        x_vel*=1.01;
-        y_vel*=1.01;
-        }
-        else if(game.buffSys.speed_boost_active){
-            game.buffSys.speed_boost_active = false;
-        }
-        }
-        
 
         if (Math.abs(x_vel) < min_X_speed) {
             x_vel = 0;
@@ -115,23 +114,23 @@ public class ball extends Ellipse2D.Double {
             return;
         if (x <= 0) {
             x = 0;
-        }
-        else if (x >= game.x_boundary - diameter) {
+        } else if (x >= game.x_boundary - diameter) {
             x = game.x_boundary - diameter;
         }
 
-        if(!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)){
-            x_vel*= bounce_factor; } // Apply damping
-        x_vel = -x_vel; 
+        if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
+            x_vel *= bounce_factor;
+        } // Apply damping
+        x_vel = -x_vel;
     }
 
     public void bounceY() {
         if (!enable_physics)
             return;
+
         if (y <= 0) {
             y = 1;
-        }
-        else if (y >= game.y_boundary - diameter) {
+        } else if (y >= game.y_boundary - diameter) {
             y = game.y_boundary - diameter;
         }
 
@@ -139,9 +138,10 @@ public class ball extends Ellipse2D.Double {
             y_vel = 0;
         }
 
-        if(!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)){
-            y_vel*= bounce_factor; } // Apply damping
-        y_vel = -y_vel; 
+        if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
+            y_vel *= bounce_factor;
+        } // Apply damping
+        y_vel = -y_vel;
     }
 
     public void setPosition(int x, int y) {
