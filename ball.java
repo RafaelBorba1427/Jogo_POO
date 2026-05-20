@@ -102,14 +102,16 @@ public class ball extends Ellipse2D.Double {
         if (!enable_physics)
             return;
 
-        if (coisa.y + coisa.diametro > this.y + diameter / 2 || coisa.y + coisa.diametro < this.y - diameter / 2
-                || coisa.y - coisa.diametro > this.y + diameter / 2
-                || coisa.y - coisa.diametro < this.y - diameter / 2) {
+        if (coisa.y + coisa.diametro / 2 > this.y + diameter / 2 || coisa.y + coisa.diametro / 2 < this.y - diameter / 2
+                || coisa.y - coisa.diametro / 2 > this.y + diameter / 2
+                || coisa.y - coisa.diametro / 2 < this.y - diameter / 2) {
+            System.out.println("Bounce Y");
             bounceY();
             bateuY = true;
-        } else if (coisa.x + coisa.diametro > this.x + diameter / 2 || coisa.x + coisa.diametro < this.x - diameter / 2
-                || coisa.x - coisa.diametro > this.x + diameter / 2
-                || coisa.x - coisa.diametro < this.x - diameter / 2) {
+        } else if (coisa.x + coisa.diametro / 2 > this.x + diameter / 2
+                || coisa.x + coisa.diametro / 2 < this.x - diameter / 2
+                || coisa.x - coisa.diametro / 2 > this.x + diameter / 2
+                || coisa.x - coisa.diametro / 2 < this.x - diameter / 2) {
             bounceX();
             bateuX = true;
         }
