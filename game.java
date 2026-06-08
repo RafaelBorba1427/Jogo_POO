@@ -10,15 +10,19 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.imageio.ImageIO;
 import java.io.File;
+import java.util.Vector;
 
 public class game extends JPanel implements MouseListener, KeyListener {
+    static Items dialog;
     private Image image;
     static int anime = 0;
     static double anime_help = 0;
     static boolean fecha = false;
     static boolean hitting = false;
     static int add = 0;
-    private BufferedImage offscreen, sheet;
+    private BufferedImage offscreen;
+    public BufferedImage sheet;
+
     private Graphics2D offscreenG;
     static JFrame frame;
     static int x_cool_sqr, y_cool_sqr;
@@ -26,9 +30,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static buffSystem buffSys;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
+    public Vector<coisa> list = new Vector<coisa>();
 
     enum GameModes {
-        PLAY, SHOOT, EDIT, SETPOSITION;
+        PLAY, SHOOT, EDIT, SETPOSITION, ITEM_PANEL;
     }
 
     static final double gravity = 0.5;
@@ -46,9 +51,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     public game(String imagePath) {
         try {
-            sheet = ImageIO.read(new File("spritesheet/New Piskel(2).png"));
+            sheet = ImageIO.read(new File("spritesheet/New Piskel(2)(1).png"));
+            System.out.println("sheet loaded: " + sheet); // ✅ null or not?
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("sheet FAILED to load"); // ❌ path wrong?
         }
         image = new ImageIcon(imagePath).getImage();
         addMouseListener(this);
@@ -67,8 +74,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
             }
         }
-        lvl_map.add(new coisa(400, 300, 40, 0));
-        lvl_map.add(new coisa(700, 600, 40, 1));
+        // lvl_map.add(new coisa(400, 300, 40, 0));
+        // lvl_map.add(new coisa(700, 600, 40, 1));
 
         setVisible(true);
 
@@ -86,9 +93,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
         w_frame = (int) Math.ceil(frame.getWidth() / 4.0);
         h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
-
+        gaming.frame = frame;
         buffSys = new buffSystem();
         // buffSys.ApplyBuff(buffSystem.buffs.ICED, 10);
+        dialog = new Items(gaming);
         Timer timer = new Timer(16, e -> {
             buffSys.CheckDuration(buffSystem.buffs.SPEED_BOOST);
             gaming.update();
@@ -125,7 +133,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 mode = GameModes.PLAY;
                 ball.enable_physics = true;
             } else if (mode == GameModes.EDIT) {
-                coisa newy = new coisa(x_input, y_input, 40, 0);
+                coisa newy = new coisa(x_input, y_input, 40, 1, gaming);
+
                 // buffSystem.buffs bu = buffSystem.buffs.SPEED_BOOST;
                 // buff newy = new buff(x_input, y_input, 40, buffSystem.buffs.SPEED_BOOST, 6);
 
@@ -218,23 +227,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 (int) ball.getDiameter());
 
         // Draw obstacles
+
         for (coisa c : lvl_map) {
-
-            if ((c.buff && buffSys.HasBuff(((buff) c).buff_active)) || !c.bateu) {
-                g.drawImage(
-                        sheet,
-                        c.x - c.diametro / 2,
-                        c.y - c.diametro / 2,
-                        c.x + c.diametro / 2,
-                        c.y + c.diametro / 2,
-
-                        (0 + anime) * sprite_col, // column
-                        (0 + c.id) * sprite_lin, // row (do NOT add option!)
-                        (0 + anime) * sprite_col + sprite_col,
-                        (0 + c.id) * sprite_lin + sprite_lin,
-
-                        null);
-            }
+            System.out.println("Thie id is" + c.id);
+            c.local.repaint();
         }
 
         // Draw transparent buffer over background
@@ -281,6 +277,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
         } else if (e.getKeyChar() == 'r') {
             mode = GameModes.SETPOSITION;
             ball.enable_physics = false;
+        } else if (e.getKeyChar() == 'y') {
+            mode = GameModes.ITEM_PANEL;
+            dialog.dialog_init();
         }
     }
 

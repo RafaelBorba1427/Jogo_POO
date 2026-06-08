@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -8,9 +9,10 @@ import java.awt.geom.*;
 class buff extends coisa {
 
   public buffSystem.buffs buff_active;
+  public game current;
 
-  public buff(int x, int y, int diametro, buffSystem.buffs buff, int id) {
-    super(x, y, diametro, id);
+  public buff(int x, int y, int diametro, buffSystem.buffs buff, int id, game current) {
+    super(x, y, diametro, id, current);
     this.buff_active = buff;
     this.buff = true;
   };

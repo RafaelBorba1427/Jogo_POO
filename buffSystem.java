@@ -23,6 +23,17 @@ public class buffSystem {
         any_buff_active = true;
     }
 
+    static buffs returnBuff(int choice) {
+        switch (choice) {
+            case 5:
+                return buffs.ICED;
+
+            case 6:
+                return buffs.SPEED_BOOST;
+        }
+        return buffs.SPEED_BOOST;
+    }
+
     void DecrementBuffTimers() {
         if (any_buff_active) {
             boolean cont = false;
