@@ -11,7 +11,7 @@ public class coisa extends Rectangle {
   public boolean buff = false;
   game current;
   int id;
-  public JButton local;
+  // public JButton local;
   coisa self;
 
   public coisa(int x, int y, int diametro, int id, game current) {
@@ -23,25 +23,30 @@ public class coisa extends Rectangle {
     this.current = current;
     self = this;
 
-    local = new JButton() {
-      @Override
-      protected void paintComponent(Graphics g) {
-        g.drawImage(
-            current.sheet,
-            0, 0, (int) getWidth(), (int) getHeight(), // ✅ 0,0 not x,y
-            current.anime * current.sprite_col,
-            id * current.sprite_lin,
-            current.anime * current.sprite_col + current.sprite_col,
-            id * current.sprite_lin + current.sprite_lin,
-            null);
-      }
-    };
+    /*
+     * local = new JButton() {
+     * 
+     * @Override
+     * protected void paintComponent(Graphics g) {
+     * g.drawImage(
+     * current.sheet,
+     * 0, 0, (int) getWidth(), (int) getHeight(), // ✅ 0,0 not x,y
+     * current.anime * current.sprite_col,
+     * id * current.sprite_lin,
+     * current.anime * current.sprite_col + current.sprite_col,
+     * id * current.sprite_lin + current.sprite_lin,
+     * null);
+     * }
+     * };
+     * 
+     * local.setOpaque(false);
+     * local.setContentAreaFilled(false);
+     * local.setBorderPainted(false);
+     * local.setBounds(x - diametro / 2, y - diametro / 2, diametro, diametro); // ✅
+     * position + size
+     * current.add(local);
+     */
 
-    local.setOpaque(false);
-    local.setContentAreaFilled(false);
-    local.setBorderPainted(false);
-    local.setBounds(x - diametro / 2, y - diametro / 2, diametro, diametro); // ✅ position + size
-    current.add(local);
   }
 
   public int getId() {

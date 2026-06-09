@@ -11,7 +11,7 @@ public class Items implements MouseListener {
   boolean active;
   JPanel panel;
   int numero = 2;
-  private Map<JButton, coisa> list = new HashMap<>();
+  private Map<JButton, Integer> list = new HashMap<>();
 
   Items(game current) {
     this.current = current;
@@ -19,39 +19,45 @@ public class Items implements MouseListener {
   }
 
   void dialog_init() {
-    active = true;
+    numero = 2; // reset here
     list.clear();
 
-    for (int i = 0; i < 4; i++) {
-      int r;
-      do {
-        r = (int) (Math.random() * 7);
-      } while (r == 0 || r == 3 || r == 4);
-
-      coisa c;
-      if (r < 3) {
-        c = new coisa(60 * i + 40, 80, 40, r, current);
-      } else {
-        c = new buff(60 * i + 40, 80, 40, buffSystem.returnBuff(r), r, current);
-      }
-      list.put(c.local, c);
-      c.local.addMouseListener(this);
-    }
-
+    // Create panel FIRST
     panel = new JPanel() {
       Image img = new ImageIcon("Dialog.png").getImage();
 
       @Override
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(img, 0, 0, getWidth(), getHeight(), this); // ✅ background only
+        g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
       }
     };
     panel.setOpaque(false);
-    panel.setLayout(null); // ✅ required for setBounds
+    panel.setLayout(null);
 
-    for (JButton btn : list.keySet()) {
-      panel.add(btn); // ✅ add buttons here, not in paintComponent
+    // THEN create and add buttons
+    for (int i = 0; i < 4; i++) {
+      int l;
+      do {
+        l = (int) (Math.random() * 7);
+      } while (l == 0 || l == 3 || l == 4);
+      final int r = l;
+      JButton local = new JButton() {
+        @Override
+        protected void paintComponent(Graphics g) {
+          g.drawImage(current.sheet,
+              0, 0, getWidth(), getHeight(),
+              current.anime * current.sprite_col,
+              r * current.sprite_lin,
+              current.anime * current.sprite_col + current.sprite_col,
+              r * current.sprite_lin + current.sprite_lin,
+              null);
+        }
+      };
+      local.setBounds(10 + i * 70, 80, 60, 60);
+      local.addMouseListener(this);
+      list.put(local, r);
+      panel.add(local); // safe now
     }
 
     dialog = new JDialog(current.frame, "Choose Your Item", true);
@@ -68,16 +74,14 @@ public class Items implements MouseListener {
   @Override
   public void mouseClicked(MouseEvent e) {
     JButton clicked = (JButton) e.getSource();
-    coisa chosen = list.get(clicked);
-    if (chosen != null) {
-      current.list.add(chosen);
-      panel.remove(clicked);
-      list.remove(clicked);
-      panel.repaint();
-      numero--;
-      if (numero == 0) {
-        dialog.dispose();
-      }
+    int chosen = list.get(clicked);
+    current.list.add(new coisa(0, 0, 40, chosen, current));
+    panel.remove(clicked);
+    list.remove(clicked);
+    panel.repaint();
+    numero--;
+    if (numero == 0) {
+      dialog.dispose();
     }
   }
 
