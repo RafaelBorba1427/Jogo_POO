@@ -195,7 +195,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // Draw background image
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
-        g.drawImage(new ImageIcon("floor.png").getImage(), 0, getHeight() - getHeight() / 4, getWidth(),
+        g.drawImage(new ImageIcon("floor.png").getImage(), 0, getHeight() -
+                getHeight() / 4, getWidth(),
                 getHeight() / 4, this);
 
         // Recreate buffer if needed
@@ -227,14 +228,21 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 (int) ball.getDiameter());
 
         // Draw obstacles
-
         for (coisa c : lvl_map) {
-            System.out.println("Thie id is" + c.id);
-            c.local.repaint();
-        }
-
-        // Draw transparent buffer over background
+            g.drawImage(
+                    sheet,
+                    c.x - c.diametro / 2, // destination x on screen
+                    c.y - c.diametro / 2, // destination y on screen
+                    c.x + c.diametro / 2, // destination x2
+                    c.y + c.diametro / 2, // destination y2
+                    anime * sprite_col, // source x on spritesheet
+                    c.id * sprite_lin, // source y on spritesheet
+                    anime * sprite_col + sprite_col, // source x2
+                    c.id * sprite_lin + sprite_lin, // source y2
+                    null);
+        } // Draw transparent buffer over background
         g.drawImage(offscreen, 0, 0, null);
+
     }
 
     @Override
