@@ -12,8 +12,9 @@ public class ball extends Ellipse2D.Double {
     static final double min_Y_speed = 5.0;
     static final double friction = 0.99;
     static boolean bateu = false;
-    private double x, y, diameter;
-
+    private double x, y, diameter, 
+                   paint_x, paint_y,
+                   time_travel_x, time_travel_y;
     double x_vel, y_vel;
 
     boolean is_touching_ground = false;
@@ -66,32 +67,57 @@ public class ball extends Ellipse2D.Double {
             }
 
         }
-        if (game.buffSys.HasBuff(buffSystem.buffs.ICED)) {
-            if (!game.buffSys.ICED_active) {
-                x_vel = (x_vel > 0) ? Math.max(x_vel - 30, 0) : Math.min(x_vel + 30, 0);
-                y_vel = (y_vel > 0) ? Math.max(x_vel - 35, 0) : Math.min(x_vel + 35, 0);
-                game.buffSys.ICED_active = true;
-                game.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY,
-                        game.buffSys.BuffDuration(buffSystem.buffs.ICED));
-            }
-        }
-
-        else if (game.buffSys.ICED_active) {
-            game.buffSys.ICED_active = false;
-        }
-
-        else {
-            if (game.buffSys.HasBuff(buffSystem.buffs.SPEED_BOOST)) {
-                if (!game.buffSys.speed_boost_active) {
-                    x_vel += (x_vel > 0) ? 20 : -20;
-                    y_vel += (y_vel > 0) ? 25 : -25;
-                    game.buffSys.speed_boost_active = true;
+        
+        if(game.buffSys.any_buff_active){
+            if (game.buffSys.HasBuff(buffSystem.buffs.ICED)) {
+                if (!game.buffSys.ICED_active) {
+                    x_vel = (x_vel > 0) ? Math.max(x_vel - 30, 0) : Math.min(x_vel + 30, 0);
+                    y_vel = (y_vel > 0) ? Math.max(x_vel - 35, 0) : Math.min(x_vel + 35, 0);
+                    game.buffSys.ICED_active = true;
+                    game.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY,
+                            game.buffSys.BuffDuration(buffSystem.buffs.ICED));
                 }
-                x_vel *= 1.01;
-                y_vel *= 1.01;
-            } else if (game.buffSys.speed_boost_active) {
-                game.buffSys.speed_boost_active = false;
             }
+
+            else if (game.buffSys.ICED_active) {
+                game.buffSys.ICED_active = false;
+            }
+
+            else {
+                if (game.buffSys.HasBuff(buffSystem.buffs.SPEED_BOOST)) {
+                    if (!game.buffSys.speed_boost_active) {
+                        x_vel += (x_vel > 0) ? 20 : -20;
+                        y_vel += (y_vel > 0) ? 25 : -25;
+                        game.buffSys.speed_boost_active = true;
+                    }
+                    x_vel *= 1.01;
+                    y_vel *= 1.01;
+                } else if (game.buffSys.speed_boost_active) {
+                    game.buffSys.speed_boost_active = false;
+                }
+            }
+        }
+        
+        if(game.buffSys.LAG_active || game.buffSys.HasBuff(buffSystem.buffs.LAG)){
+            if(!game.buffSys.HasBuff(buffSystem.buffs.LAG)){
+                game.buffSys.LAG_active = false;
+            }
+            // & 63 = mod 64
+            else if((game.buffSys.BuffDuration(buffSystem.buffs.LAG)&31) == 0) game.buffSys.LAG_active = !game.buffSys.LAG_active;
+        }
+
+        if(game.buffSys.HasBuff(buffSystem.buffs.TIME_TRAVEL)){
+            if(!game.buffSys.TIME_TRAVEL_active){
+                time_travel_x = this.x;
+                time_travel_y = this.y; 
+                game.buffSys.TIME_TRAVEL_active = true;
+                }
+            }
+        
+        else if(game.buffSys.TIME_TRAVEL_active){
+            this.x = time_travel_x;
+            this.y = time_travel_y;
+            game.buffSys.TIME_TRAVEL_active = false;
         }
 
         if (Math.abs(x_vel) < min_X_speed) {
