@@ -12,7 +12,7 @@ public class ball extends Ellipse2D.Double {
     static final double min_Y_speed = 5.0;
     static final double friction = 0.99;
     static boolean bateu = false;
-    private double x, y, diameter;
+    private double x, y, diameter, paint_x, paint_y;
 
     double x_vel, y_vel;
 
@@ -24,7 +24,9 @@ public class ball extends Ellipse2D.Double {
 
         this.diameter = diameter;
         this.x = x - diameter / 2;
+        paint_x = this.x;
         this.y = y - diameter / 2;
+        paint_y = this.y;
         this.x_vel = 0;
         this.y_vel = 0;
     }
@@ -37,10 +39,10 @@ public class ball extends Ellipse2D.Double {
         if (enable_physics) {
             x += x_vel;
             y += y_vel;
-            setFrame(x, y, diameter, diameter);
-        } else {
-            setFrame(x, y, diameter, diameter);
-            return;
+            if(!game.buffSys.LAG_active){
+                paint_x = x;
+                paint_y = y;
+            }
         }
 
         if (y >= game.y_boundary - diameter) {
@@ -49,7 +51,7 @@ public class ball extends Ellipse2D.Double {
             is_touching_ground = false;
         }
 
-        if (!is_touching_ground && !(y_vel == 0 && game.hitting)) {
+        if (!is_touching_ground && !(y_vel == 0 && game.hitting) && !game.buffSys.LAG_active) {
             y_vel += game.gravity;
         } else {
 
@@ -97,10 +99,18 @@ public class ball extends Ellipse2D.Double {
         if (Math.abs(x_vel) < min_X_speed) {
             x_vel = 0;
         }
+
+        if(game.buffSys.LAG_active || game.buffSys.HasBuff(buffSystem.buffs.LAG)){
+            if(!game.buffSys.HasBuff(buffSystem.buffs.LAG)){
+                game.buffSys.LAG_active = false;
+            }
+            // & 63 = mod 64
+            else if((game.buffSys.BuffDuration(buffSystem.buffs.LAG)&31) == 0) game.buffSys.LAG_active = !game.buffSys.LAG_active;
+        }
     }
 
     public void bounce(coisa coisa) {
-        if (!enable_physics || game.buffSys.HasBuff(buffSystem.buffs.INTANGIBLE))//
+        if (!enable_physics || game.buffSys.HasBuff(buffSystem.buffs.INTANGIBLE) || game.buffSys.LAG_active)//
             return;
 
         if (coisa.y + coisa.diametro / 2 > this.y + diameter / 2 || coisa.y + coisa.diametro / 2 < this.y - diameter / 2
@@ -128,10 +138,12 @@ public class ball extends Ellipse2D.Double {
             x = game.x_boundary - diameter;
         }
 
-        if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
-            x_vel *= bounce_factor;
-        } // Apply damping
-        x_vel = -x_vel;
+        if(!game.buffSys.LAG_active){
+            if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
+                x_vel *= bounce_factor;
+            } // Apply damping
+            x_vel = -x_vel;
+        }
     }
 
     public void bounceY() {
@@ -148,10 +160,12 @@ public class ball extends Ellipse2D.Double {
             y_vel = 0;
         }
 
-        if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
-            y_vel *= bounce_factor;
-        } // Apply damping
-        y_vel = -y_vel;
+        if(!game.buffSys.LAG_active){
+            if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
+                y_vel *= bounce_factor;
+            } // Apply damping
+            y_vel = -y_vel;
+        }
     }
 
     public void setPosition(int x, int y) {
@@ -164,8 +178,16 @@ public class ball extends Ellipse2D.Double {
         return x;
     }
 
+    public double getPaintX() {
+        return paint_x;
+    }
+
     public double getY() {
         return y;
+    }
+
+    public double getPaintY() {
+        return paint_y;
     }
 
     public double getXVel() {
