@@ -9,6 +9,7 @@ public class pointSystem {
 
 
     // Placeholder values, ideally add point values to the objects themselves
+    // Use coisa id for pts
     public void addPoints(coisa obj) {
         if (obj instanceof buff) {
             points += 10;
