@@ -100,7 +100,7 @@ public class ball extends Ellipse2D.Double {
     }
 
     public void bounce(coisa coisa) {
-        if (!enable_physics)
+        if (!enable_physics || game.buffSys.HasBuff(buffSystem.buffs.INTANGIBLE))//
             return;
 
         if (coisa.y + coisa.diametro / 2 > this.y + diameter / 2 || coisa.y + coisa.diametro / 2 < this.y - diameter / 2

@@ -95,7 +95,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
         gaming.frame = frame;
         buffSys = new buffSystem();
-        // buffSys.ApplyBuff(buffSystem.buffs.ICED, 10);
+         buffSys.ApplyBuff(buffSystem.buffs.INTANGIBLE, 300);
         dialog = new Items(gaming);
         Timer timer = new Timer(16, e -> {
             buffSys.CheckDuration(buffSystem.buffs.SPEED_BOOST);
