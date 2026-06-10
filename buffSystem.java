@@ -9,13 +9,14 @@ public class buffSystem {
         SLIPPERY, // implemented
         INTANGIBLE, // implemented
         LAG, // implemented
-        TIME_TRAVEL
+        TIME_TRAVEL // implemented
     };
 
     public boolean speed_boost_active = false;
     public boolean ICED_active = false;
     public boolean LAG_active = false;
-    private boolean any_buff_active = false;
+    public boolean TIME_TRAVEL_active = false;
+    public boolean any_buff_active = false;
     private EnumMap<buffs, Integer> active_buffs = new EnumMap<>(buffs.class);
 
     public void ApplyBuff(buffs buff_applied, int duration_in_seconds) {

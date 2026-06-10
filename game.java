@@ -95,7 +95,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         buffSys = new buffSystem();
         dialog = new Items(gaming);
         //debug buffs
-         buffSys.ApplyBuff(buffSystem.buffs.LAG, 300);
+         buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
         Timer timer = new Timer(16, e -> {
             buffSys.CheckDuration(buffSystem.buffs.SPEED_BOOST);
             gaming.update();
