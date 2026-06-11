@@ -7,6 +7,8 @@ import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -29,6 +31,15 @@ public class healthSystem extends JPanel {
         for(int i = 0; i < max_hp; i++){
             hp_sprites.add(new heart(i * 70, 10)); // Adjust position as needed
         }
+
+        Timer animation_timer = new Timer();
+        TimerTask update_frame = new TimerTask() {
+            @Override
+            public void run() {
+                repaint();
+            }
+        };
+        animation_timer.scheduleAtFixedRate(update_frame, 0, 100); // 10 FPS
     }
 
 
@@ -77,16 +88,33 @@ public class healthSystem extends JPanel {
         }
     }
 
-
-    // For testing purposes
+    // TO DO
+    // For testing purposes, delete later
     public static void main(String[] args) {
         JFrame frame = new JFrame("Health System Test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 1000);
         healthSystem health = new healthSystem(5);
         frame.add(health);
+
+        healthSystemTest test = new healthSystemTest();
+        frame.addKeyListener(test);
         
         frame.setVisible(true);
+        frame.setFocusable(true);
+
+        while(true){
+            if(test.input == 'a'){
+                health.takeDamageAndCheckDeath();
+            }
+            else if(test.input == 'd'){
+                health.heal();
+            }
+
+            test.input = '\0'; // Reset input after processing
+
+            System.out.println("Current HP: " + health.getCurrentHp() + "/" + health.getMaxHp() + " | Is Dead: " + health.isDead()); // Debugging output
+        }
     }
 }
 
@@ -141,5 +169,31 @@ class heart {
             }
             current_frame--;
         }
+    }
+}
+
+
+// TO DO
+// Delete later
+class healthSystemTest implements KeyListener {
+    public char input;
+    
+
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyChar() == 'a') {
+            input = 'a';
+            System.out.println("Damage taken!"); // Debugging output
+        }
+        if (e.getKeyChar() == 'd') {
+            input = 'd';
+            System.out.println("Healed!"); // Debugging output
+        }
+    }
+    
+    public void keyReleased(KeyEvent e) {
+        // Not needed for this test
+    }
+    public void keyTyped(KeyEvent e) {
+        // Not needed for this test
     }
 }
