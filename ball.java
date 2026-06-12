@@ -12,8 +12,9 @@ public class ball extends Ellipse2D.Double {
     static final double min_Y_speed = 5.0;
     static final double friction = 0.99;
     static boolean bateu = false;
-    private double x, y, diameter;
-
+    private double x, y, diameter, 
+                   paint_x, paint_y,
+                   time_travel_x, time_travel_y;
     double x_vel, y_vel;
 
     boolean is_touching_ground = false;
@@ -24,7 +25,9 @@ public class ball extends Ellipse2D.Double {
 
         this.diameter = diameter;
         this.x = x - diameter / 2;
+        paint_x = this.x;
         this.y = y - diameter / 2;
+        paint_y = this.y;
         this.x_vel = 0;
         this.y_vel = 0;
     }
@@ -37,10 +40,10 @@ public class ball extends Ellipse2D.Double {
         if (enable_physics) {
             x += x_vel;
             y += y_vel;
-            setFrame(x, y, diameter, diameter);
-        } else {
-            setFrame(x, y, diameter, diameter);
-            return;
+            if(!game.buffSys.LAG_active){
+                paint_x = x;
+                paint_y = y;
+            }
         }
 
         if (y >= game.y_boundary - diameter) {
@@ -49,7 +52,7 @@ public class ball extends Ellipse2D.Double {
             is_touching_ground = false;
         }
 
-        if (!is_touching_ground && !(y_vel == 0 && game.hitting)) {
+        if (!is_touching_ground && !(y_vel == 0 && game.hitting) && !game.buffSys.LAG_active) {
             y_vel += game.gravity;
         } else {
 
@@ -66,41 +69,67 @@ public class ball extends Ellipse2D.Double {
             }
 
         }
-        if (game.buffSys.HasBuff(buffSystem.buffs.ICED)) {
-            if (!game.buffSys.ICED_active) {
-                x_vel = (x_vel > 0) ? Math.max(x_vel - 30, 0) : Math.min(x_vel + 30, 0);
-                y_vel = (y_vel > 0) ? Math.max(x_vel - 35, 0) : Math.min(x_vel + 35, 0);
-                game.buffSys.ICED_active = true;
-                game.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY,
-                        game.buffSys.BuffDuration(buffSystem.buffs.ICED));
-            }
-        }
-
-        else if (game.buffSys.ICED_active) {
-            game.buffSys.ICED_active = false;
-        }
-
-        else {
-            if (game.buffSys.HasBuff(buffSystem.buffs.SPEED_BOOST)) {
-                if (!game.buffSys.speed_boost_active) {
-                    x_vel += (x_vel > 0) ? 20 : -20;
-                    y_vel += (y_vel > 0) ? 25 : -25;
-                    game.buffSys.speed_boost_active = true;
+        
+        if(game.buffSys.any_buff_active){
+            if (game.buffSys.HasBuff(buffSystem.buffs.ICED)) {
+                if (!game.buffSys.ICED_active) {
+                    x_vel = (x_vel > 0) ? Math.max(x_vel - 30, 0) : Math.min(x_vel + 30, 0);
+                    y_vel = (y_vel > 0) ? Math.max(x_vel - 35, 0) : Math.min(x_vel + 35, 0);
+                    game.buffSys.ICED_active = true;
+                    game.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY,
+                            game.buffSys.BuffDuration(buffSystem.buffs.ICED));
                 }
-                x_vel *= 1.01;
-                y_vel *= 1.01;
-            } else if (game.buffSys.speed_boost_active) {
-                game.buffSys.speed_boost_active = false;
             }
+
+            else if (game.buffSys.ICED_active) {
+                game.buffSys.ICED_active = false;
+            }
+
+            else {
+                if (game.buffSys.HasBuff(buffSystem.buffs.SPEED_BOOST)) {
+                    if (!game.buffSys.speed_boost_active) {
+                        x_vel += (x_vel > 0) ? 20 : -20;
+                        y_vel += (y_vel > 0) ? 25 : -25;
+                        game.buffSys.speed_boost_active = true;
+                    }
+                    x_vel *= 1.01;
+                    y_vel *= 1.01;
+                } else if (game.buffSys.speed_boost_active) {
+                    game.buffSys.speed_boost_active = false;
+                }
+            }
+        }
+        
+        if(game.buffSys.LAG_active || game.buffSys.HasBuff(buffSystem.buffs.LAG)){
+            if(!game.buffSys.HasBuff(buffSystem.buffs.LAG)){
+                game.buffSys.LAG_active = false;
+            }
+            // & 63 = mod 64
+            else if((game.buffSys.BuffDuration(buffSystem.buffs.LAG)&31) == 0) game.buffSys.LAG_active = !game.buffSys.LAG_active;
+        }
+
+        if(game.buffSys.HasBuff(buffSystem.buffs.TIME_TRAVEL)){
+            if(!game.buffSys.TIME_TRAVEL_active){
+                time_travel_x = this.x;
+                time_travel_y = this.y; 
+                game.buffSys.TIME_TRAVEL_active = true;
+                }
+            }
+        
+        else if(game.buffSys.TIME_TRAVEL_active){
+            this.x = time_travel_x;
+            this.y = time_travel_y;
+            game.buffSys.TIME_TRAVEL_active = false;
         }
 
         if (Math.abs(x_vel) < min_X_speed) {
             x_vel = 0;
         }
+
     }
 
     public void bounce(coisa coisa) {
-        if (!enable_physics)
+        if (!enable_physics || game.buffSys.HasBuff(buffSystem.buffs.INTANGIBLE) || game.buffSys.LAG_active)//
             return;
 
         if (coisa.y + coisa.diametro / 2 > this.y + diameter / 2 || coisa.y + coisa.diametro / 2 < this.y - diameter / 2
@@ -128,10 +157,12 @@ public class ball extends Ellipse2D.Double {
             x = game.x_boundary - diameter;
         }
 
-        if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
-            x_vel *= bounce_factor;
-        } // Apply damping
-        x_vel = -x_vel;
+        if(!game.buffSys.LAG_active){
+            if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
+                x_vel *= bounce_factor;
+            } // Apply damping
+            x_vel = -x_vel;
+        }
     }
 
     public void bounceY() {
@@ -148,10 +179,12 @@ public class ball extends Ellipse2D.Double {
             y_vel = 0;
         }
 
-        if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
-            y_vel *= bounce_factor;
-        } // Apply damping
-        y_vel = -y_vel;
+        if(!game.buffSys.LAG_active){
+            if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
+                y_vel *= bounce_factor;
+            } // Apply damping
+            y_vel = -y_vel;
+        }
     }
 
     public void setPosition(int x, int y) {
@@ -164,8 +197,16 @@ public class ball extends Ellipse2D.Double {
         return x;
     }
 
+    public double getPaintX() {
+        return paint_x;
+    }
+
     public double getY() {
         return y;
+    }
+
+    public double getPaintY() {
+        return paint_y;
     }
 
     public double getXVel() {

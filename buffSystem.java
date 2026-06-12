@@ -7,14 +7,16 @@ public class buffSystem {
         MASSIVE_DRAG, // implemented
         ICED, // implemented
         SLIPPERY, // implemented
-        INTANGIBLE,
-        LAG,
-        TIME_TRAVEL
+        INTANGIBLE, // implemented
+        LAG, // implemented
+        TIME_TRAVEL // implemented
     };
 
     public boolean speed_boost_active = false;
     public boolean ICED_active = false;
-    private boolean any_buff_active = false;
+    public boolean LAG_active = false;
+    public boolean TIME_TRAVEL_active = false;
+    public boolean any_buff_active = false;
     private EnumMap<buffs, Integer> active_buffs = new EnumMap<>(buffs.class);
 
     public void ApplyBuff(buffs buff_applied, int duration_in_seconds) {

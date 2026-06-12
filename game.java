@@ -4,10 +4,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.math.*;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
+
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.util.Vector;
@@ -95,8 +93,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
         h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
         gaming.frame = frame;
         buffSys = new buffSystem();
-        // buffSys.ApplyBuff(buffSystem.buffs.ICED, 10);
         dialog = new Items(gaming);
+        //debug buffs
+         buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
         Timer timer = new Timer(16, e -> {
             buffSys.CheckDuration(buffSystem.buffs.SPEED_BOOST);
             gaming.update();
@@ -156,7 +155,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
             } else {
                 c.verify(ball);
             }
-            System.out.println("Veryfy Ativo");
+            //System.out.println("Veryfy Ativo");
         }
         lvl_map.removeIf(c -> c instanceof buff b && b.bateu);
         if (add == lvl_map.size()) {
@@ -222,8 +221,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         }
 
         offscreenG.fillOval(
-                (int) (ball.getX() - ball.getDiameter() / 2),
-                (int) (ball.getY() - ball.getDiameter() / 2),
+                (int) (ball.getPaintX() - ball.getDiameter() / 2),
+                (int) (ball.getPaintY() - ball.getDiameter() / 2),
                 (int) ball.getDiameter(),
                 (int) ball.getDiameter());
 
