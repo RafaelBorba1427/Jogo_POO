@@ -10,6 +10,7 @@ import java.util.Queue;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.util.Vector;
+import java.util.Iterator;
 
 public class game extends JPanel implements MouseListener, KeyListener {
     static Items dialog;
@@ -21,7 +22,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static int add = 0;
     private BufferedImage offscreen;
     public BufferedImage sheet;
-
+    static Timer timer;
     private Graphics2D offscreenG;
     static JFrame frame;
     static int x_cool_sqr, y_cool_sqr;
@@ -44,7 +45,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     ball ball = new ball(400, 200, 20);
 
     static ArrayList<coisa> lvl_map = new ArrayList<>();
-
+    static Queue<buff> collided = new LinkedList<>();
     static GameModes mode = GameModes.PLAY;
     static game gaming = new game("Frat_background.png");
     int x_input, y_input;
@@ -98,7 +99,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // debug buffs
         buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
         lvl_map.add(new coisa(700, 600, 40, 3, gaming));
-        Timer timer = new Timer(16, e -> {
+        timer = new Timer(16, e -> {
 
             buffSys.CheckDuration(buffSystem.buffs.SPEED_BOOST);
             gaming.update();
@@ -117,6 +118,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 frame.dispose();
             }
         });
+
         timer.start();
     }
 
@@ -135,6 +137,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
             if (list.isEmpty()) {
                 mode = GameModes.PLAY;
                 ball.enable_physics = true;
+                // for (buff c : collided) {
+                // lvl_map.add(c);
+                // collided.remove(c);
+                // }
             }
             x_input = 0;
             y_input = 0;
@@ -146,8 +152,15 @@ public class game extends JPanel implements MouseListener, KeyListener {
         if (mode == GameModes.EDIT) {
             ball.enable_physics = false;
             ball.update();
-            EditCouse();
 
+            EditCouse();
+            Iterator<buff> it2 = game.collided.iterator();
+            while (it2.hasNext()) {
+                buff a = it2.next();
+
+                game.lvl_map.add(a);
+                it2.remove();
+            }
             return;
         }
         if ((ball.getY() >= y_boundary - ball.getDiameter() || ball.getY() <= 0)) {
@@ -178,24 +191,28 @@ public class game extends JPanel implements MouseListener, KeyListener {
             x_input = 0;
             y_input = 0;
         }
-
-        for (coisa c : lvl_map) {
+        Iterator<coisa> it = lvl_map.iterator();
+        while (it.hasNext()) {
+            coisa c = it.next();
             if (c instanceof buff b) {
 
                 b.verify(ball);
-
+                if (b.bateu == true) {
+                    b.bateu = false;
+                    collided.add(b);
+                    it.remove();
+                }
             } else {
                 c.verify(ball);
             }
-            // System.out.println("Veryfy Ativo");
+
         }
-        lvl_map.removeIf(c -> c instanceof buff b && b.bateu);
+
         if (add == lvl_map.size()) {
-            ball.bateuX = false;
-            ball.bateuY = false;
             hitting = false;
         }
         add = 0;
+
         ball.update();
         // clears the console
         // System.out.print("\033[H\033[2J");

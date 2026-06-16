@@ -4,6 +4,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Iterator;
 
 public class Items implements MouseListener {
   game current;
@@ -19,6 +20,7 @@ public class Items implements MouseListener {
   }
 
   void dialog_init() {
+    game.timer.stop();
     numero = 2; // reset here
     list.clear();
     current.ball.setPosition(0, 0);
@@ -87,8 +89,19 @@ public class Items implements MouseListener {
     panel.repaint();
     numero--;
     if (numero == 0) {
+      if (game.collided.isEmpty()) {
+        System.out.println("NO DICE");
+      } else {
+        Iterator<buff> it = game.collided.iterator();
+        while (it.hasNext()) {
+          game.lvl_map.add(it.next());
+          it.remove();
+        }
+
+      }
       dialog.dispose();
       game.mode = game.GameModes.EDIT;
+      game.timer.start();
     }
   }
 

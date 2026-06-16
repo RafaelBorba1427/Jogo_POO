@@ -8,8 +8,10 @@ import java.awt.geom.*;
 public class coisa extends Rectangle {
   public int x, y, diametro;
   public boolean bateu = false;
+  public boolean bateuY = false;
+  public boolean bateuX = false;
   public boolean buff = false;
-  game current;
+  public game current;
   int id;
   // public JButton local;
   coisa self;
@@ -67,17 +69,26 @@ public class coisa extends Rectangle {
     if ((intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
         bola.getDiameter())
         || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))
-        && (bola.bateuX == false || bola.bateuY == false)) {
-
+        && (bateuX == false || bateuY == false)) {
+      bateuX = true;
+      bateuY = true;
       bola.bounce(this);
       if (id == 3) {
+
         game.dialog.dialog_init();
       }
       game.hitting = true;
-    } else {
-
+    } else if (!(intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2,
+        bola.getDiameter(),
+        bola.getDiameter())
+        || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))) {
+      if (bateuX) {
+        bateuX = false;
+      }
+      if (bateuY) {
+        bateuY = false;
+      }
       game.add++;
-
     }
   }
 
