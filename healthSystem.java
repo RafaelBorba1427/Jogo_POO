@@ -88,6 +88,12 @@ public class healthSystem extends JPanel {
         }
     }
 
+
+    public void setVisibile(boolean visible) {
+        this.setVisible(visible);
+    }
+
+
     // TO DO
     // For testing purposes, delete later
     public static void main(String[] args) {
@@ -109,6 +115,14 @@ public class healthSystem extends JPanel {
             }
             else if(test.input == 'd'){
                 health.heal();
+            }
+            else if(test.input == 'q'){
+                health.setVisibile(false);
+                System.out.println("Health system hidden!"); // Debugging output
+            }
+            else if(test.input == 'e'){
+                health.setVisibile(true);
+                System.out.println("Health system shown!"); // Debugging output
             }
 
             test.input = '\0'; // Reset input after processing
@@ -187,6 +201,14 @@ class healthSystemTest implements KeyListener {
         if (e.getKeyChar() == 'd') {
             input = 'd';
             System.out.println("Healed!"); // Debugging output
+        }
+        if (e.getKeyChar() == 'q') {
+            input = 'q';
+            System.out.println("Health system will be hidden!"); // Debugging output
+        }
+        if (e.getKeyChar() == 'e') {
+            input = 'e';
+            System.out.println("Health system will be shown!"); // Debugging output
         }
     }
     
