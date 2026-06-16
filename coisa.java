@@ -76,10 +76,7 @@ public class coisa extends Rectangle {
       bola.bounce(this);
       if (id == 3) {
         game.hitting = false;
-        current.buffSys.DrecementABuff(buffSystem.buffs.SPEED_BOOST,
-            current.buffSys.BuffDuration(buffSystem.buffs.SPEED_BOOST) * 90);
-        current.buffSys.DrecementABuff(buffSystem.buffs.ICED,
-            current.buffSys.BuffDuration(buffSystem.buffs.ICED) * 90);
+        game.buffSys.EndBuffs();
 
         game.dialog.dialog_init();
         return;

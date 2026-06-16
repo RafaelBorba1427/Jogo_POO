@@ -50,6 +50,14 @@ public class buffSystem {
         }
     }
 
+    void EndBuffs(){
+            for (EnumMap.Entry<buffs, Integer> buff : active_buffs.entrySet()) {
+                    buff.setValue(0);
+            }
+            any_buff_active = false; // se cont = false -> desativa check de buffs
+        
+    }
+
     void DrecementABuff(buffs buff, int duration_in_ticks) {
         active_buffs.replace(buff, active_buffs.get(buff) - (duration_in_ticks));
 

@@ -77,7 +77,7 @@ public class ball extends Ellipse2D.Double {
                     y_vel = (y_vel > 0) ? Math.max(x_vel - 35, 0) : Math.min(x_vel + 35, 0);
                     game.buffSys.ICED_active = true;
                     game.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY,
-                            game.buffSys.BuffDuration(buffSystem.buffs.ICED));
+                        game.buffSys.BuffDuration(buffSystem.buffs.ICED));
                 }
             }
 
