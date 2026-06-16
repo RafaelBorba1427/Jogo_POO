@@ -49,6 +49,14 @@ public class coisa extends Rectangle {
 
   }
 
+  public void setX(int x) {
+    this.x = x;
+  }
+
+  public void setY(int y) {
+    this.y = y;
+  }
+
   public int getId() {
     return id;
   }
@@ -63,7 +71,7 @@ public class coisa extends Rectangle {
 
       bola.bounce(this);
       if (id == 3) {
-        game.fecha = true;
+        game.dialog.dialog_init();
       }
       game.hitting = true;
     } else {

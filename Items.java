@@ -21,7 +21,7 @@ public class Items implements MouseListener {
   void dialog_init() {
     numero = 2; // reset here
     list.clear();
-
+    current.ball.setPosition(0, 0);
     // Create panel FIRST
     panel = new JPanel() {
       Image img = new ImageIcon("Dialog.png").getImage();
@@ -75,13 +75,20 @@ public class Items implements MouseListener {
   public void mouseClicked(MouseEvent e) {
     JButton clicked = (JButton) e.getSource();
     int chosen = list.get(clicked);
-    current.list.add(new coisa(0, 0, 40, chosen, current));
+    if (chosen > 4) {
+      current.list.add(new buff(0, 0, 40, current.buffSys.returnBuff(chosen), chosen, current));
+
+    } else {
+      current.list.add(new coisa(0, 0, 40, chosen, current));
+
+    }
     panel.remove(clicked);
     list.remove(clicked);
     panel.repaint();
     numero--;
     if (numero == 0) {
       dialog.dispose();
+      game.mode = game.GameModes.EDIT;
     }
   }
 

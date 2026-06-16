@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.math.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImage;
-
+import java.util.LinkedList;
+import java.util.Queue;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.util.Vector;
@@ -28,9 +29,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static buffSystem buffSys;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
-    public Vector<coisa> list = new Vector<coisa>();
 
-    enum GameModes {
+    static Queue<coisa> list = new LinkedList<>();
+
+    public enum GameModes {
         PLAY, SHOOT, EDIT, SETPOSITION, ITEM_PANEL;
     }
 
@@ -43,7 +45,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     static ArrayList<coisa> lvl_map = new ArrayList<>();
 
-    GameModes mode = GameModes.PLAY;
+    static GameModes mode = GameModes.PLAY;
     static game gaming = new game("Frat_background.png");
     int x_input, y_input;
 
@@ -73,7 +75,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
             }
         }
         // lvl_map.add(new coisa(400, 300, 40, 0));
-        // lvl_map.add(new coisa(700, 600, 40, 1));
 
         setVisible(true);
 
@@ -94,9 +95,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
         gaming.frame = frame;
         buffSys = new buffSystem();
         dialog = new Items(gaming);
-        //debug buffs
-         buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
+        // debug buffs
+        buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
+        lvl_map.add(new coisa(700, 600, 40, 3, gaming));
         Timer timer = new Timer(16, e -> {
+
             buffSys.CheckDuration(buffSystem.buffs.SPEED_BOOST);
             gaming.update();
             gaming.repaint();
@@ -117,7 +120,36 @@ public class game extends JPanel implements MouseListener, KeyListener {
         timer.start();
     }
 
+    public void EditCouse() {
+
+        if (list.isEmpty()) {
+            mode = GameModes.PLAY;
+            return;
+
+        }
+        if (x_input != 0 || y_input != 0) {
+            lvl_map.add(list.peek());
+            list.peek().setX(x_input);
+            list.peek().setY(y_input);
+            list.poll();
+            if (list.isEmpty()) {
+                mode = GameModes.PLAY;
+                ball.enable_physics = true;
+            }
+            x_input = 0;
+            y_input = 0;
+
+        }
+    }
+
     public void update() {
+        if (mode == GameModes.EDIT) {
+            ball.enable_physics = false;
+            ball.update();
+            EditCouse();
+
+            return;
+        }
         if ((ball.getY() >= y_boundary - ball.getDiameter() || ball.getY() <= 0)) {
             ball.bounceY();
         }
@@ -132,12 +164,12 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 mode = GameModes.PLAY;
                 ball.enable_physics = true;
             } else if (mode == GameModes.EDIT) {
-                coisa newy = new coisa(x_input, y_input, 40, 1, gaming);
+                // coisa newy = new coisa(x_input, y_input, 40, 1, gaming);
 
                 // buffSystem.buffs bu = buffSystem.buffs.SPEED_BOOST;
                 // buff newy = new buff(x_input, y_input, 40, buffSystem.buffs.SPEED_BOOST, 6);
 
-                lvl_map.add(newy);
+                // lvl_map.add(newy);
                 // lvl_map.add(newy);
 
             } else if (mode == GameModes.SETPOSITION) {
@@ -155,7 +187,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
             } else {
                 c.verify(ball);
             }
-            //System.out.println("Veryfy Ativo");
+            // System.out.println("Veryfy Ativo");
         }
         lvl_map.removeIf(c -> c instanceof buff b && b.bateu);
         if (add == lvl_map.size()) {
@@ -275,6 +307,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         if (e.getKeyChar() == 'q') {
             mode = GameModes.PLAY;
             ball.enable_physics = true;
+
         } else if (e.getKeyChar() == 'w') {
             mode = GameModes.SHOOT;
             ball.enable_physics = false;
