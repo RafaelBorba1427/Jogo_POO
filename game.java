@@ -149,16 +149,17 @@ public class game extends JPanel implements MouseListener, KeyListener {
     }
 
     public void update() {
+
         if (mode == GameModes.EDIT) {
             ball.enable_physics = false;
             ball.update();
 
             EditCouse();
-            Iterator<buff> it2 = game.collided.iterator();
+            Iterator<buff> it2 = collided.iterator();
             while (it2.hasNext()) {
                 buff a = it2.next();
 
-                game.lvl_map.add(a);
+                lvl_map.add(a);
                 it2.remove();
             }
             return;
@@ -215,8 +216,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
         ball.update();
         // clears the console
-        // System.out.print("\033[H\033[2J");
-        // System.out.flush();
+        // System.out.print("\033[H\033[2J"); System.out.flush();
 
         System.out.println("Ball position: (" + ball.getX() + ", " + ball.getY() +
                 ")");

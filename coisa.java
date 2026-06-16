@@ -1,4 +1,5 @@
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.Shape;
@@ -74,8 +75,14 @@ public class coisa extends Rectangle {
       bateuY = true;
       bola.bounce(this);
       if (id == 3) {
+        game.hitting = false;
+        current.buffSys.DrecementABuff(buffSystem.buffs.SPEED_BOOST,
+            current.buffSys.BuffDuration(buffSystem.buffs.SPEED_BOOST) * 90);
+        current.buffSys.DrecementABuff(buffSystem.buffs.ICED,
+            current.buffSys.BuffDuration(buffSystem.buffs.ICED) * 90);
 
         game.dialog.dialog_init();
+        return;
       }
       game.hitting = true;
     } else if (!(intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2,

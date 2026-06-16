@@ -21,6 +21,7 @@ public class buffSystem {
 
     public void ApplyBuff(buffs buff_applied, int duration_in_seconds) {
         // 90*game_tick ~= 1 segundo
+
         active_buffs.replace(buff_applied, duration_in_seconds * 90);
         any_buff_active = true;
     }
@@ -51,6 +52,7 @@ public class buffSystem {
 
     void DrecementABuff(buffs buff, int duration_in_ticks) {
         active_buffs.replace(buff, active_buffs.get(buff) - (duration_in_ticks));
+
     }
 
     boolean HasBuff(buffs buff) {
