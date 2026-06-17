@@ -23,7 +23,7 @@ public class Items implements MouseListener {
     game.timer.stop();
     numero = 2; // reset here
     list.clear();
-    current.ball.setPosition(0, 0);
+    current.ball.setPosition(10 + (int) current.ball.getDiameter(), current.y_boundary - (int) current.ball.getDiameter() );
     // Create panel FIRST
     panel = new JPanel() {
       Image img = new ImageIcon("Dialog.png").getImage();
