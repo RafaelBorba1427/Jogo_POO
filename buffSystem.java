@@ -23,6 +23,10 @@ public class buffSystem {
         // 90*game_tick ~= 1 segundo
         active_buffs.replace(buff_applied, duration_in_seconds * 90);
         any_buff_active = true;
+        if(buff_applied == buffs.ICED) ICED_active = false;
+        else if(buff_applied == buffs.SPEED_BOOST) speed_boost_active = false;
+        else if(buff_applied == buffs.LAG) LAG_active = false;
+        else if(buff_applied == buffs.TIME_TRAVEL) TIME_TRAVEL_active = false;
     }
 
     static buffs returnBuff(int choice) {
@@ -47,6 +51,16 @@ public class buffSystem {
             }
             any_buff_active = cont; // se cont = false -> desativa check de buffs
         }
+    }
+
+    void EndBuffs(){
+            for (EnumMap.Entry<buffs, Integer> buff : active_buffs.entrySet()) {
+                    buff.setValue(0);
+            }
+    }
+
+    void EndBuff(buffs buff){
+        active_buffs.replace(buff, 0);
     }
 
     void DrecementABuff(buffs buff, int duration_in_ticks) {
