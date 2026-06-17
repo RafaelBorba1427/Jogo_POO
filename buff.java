@@ -1,3 +1,11 @@
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.Shape;
+import java.awt.Rectangle;
+import java.awt.geom.*;
+
 class buff extends coisa {
 
   public buffSystem.buffs buff_active;
@@ -11,7 +19,7 @@ class buff extends coisa {
 
   @Override
   public void verify(ball bola) {
-    //System.out.println("buff verify called buffSys=" + game.buffSys + " buff_active=" + buff_active);
+    System.out.println("buff verify called buffSys=" + game.buffSys + " buff_active=" + buff_active);
     if ((intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
         bola.getDiameter())
         || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))

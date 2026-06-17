@@ -70,14 +70,14 @@ public class ball extends Ellipse2D.Double {
 
         }
         
+        if(game.buffSys.any_buff_active){
             if (game.buffSys.HasBuff(buffSystem.buffs.ICED)) {
                 if (!game.buffSys.ICED_active) {
                     x_vel = (x_vel > 0) ? Math.max(x_vel - 30, 0) : Math.min(x_vel + 30, 0);
                     y_vel = (y_vel > 0) ? Math.max(x_vel - 35, 0) : Math.min(x_vel + 35, 0);
                     game.buffSys.ICED_active = true;
                     game.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY,
-                        game.buffSys.BuffDuration(buffSystem.buffs.ICED));
-                    game.buffSys.EndBuff(buffSystem.buffs.ICED);
+                            game.buffSys.BuffDuration(buffSystem.buffs.ICED));
                 }
             }
 
@@ -98,6 +98,7 @@ public class ball extends Ellipse2D.Double {
                     game.buffSys.speed_boost_active = false;
                 }
             }
+        }
         
         if(game.buffSys.LAG_active || game.buffSys.HasBuff(buffSystem.buffs.LAG)){
             if(!game.buffSys.HasBuff(buffSystem.buffs.LAG)){
@@ -134,7 +135,7 @@ public class ball extends Ellipse2D.Double {
         if (coisa.y + coisa.diametro / 2 > this.y + diameter / 2 || coisa.y + coisa.diametro / 2 < this.y - diameter / 2
                 || coisa.y - coisa.diametro / 2 > this.y + diameter / 2
                 || coisa.y - coisa.diametro / 2 < this.y - diameter / 2) {
-
+            System.out.println("Bounce Y");
             bounceY();
             bateuY = true;
         } else if (coisa.x + coisa.diametro / 2 > this.x + diameter / 2
@@ -192,11 +193,6 @@ public class ball extends Ellipse2D.Double {
         setFrame(this.x, this.y, diameter, diameter);
     }
 
-    public void setVelocity(int x, int y) {
-        this.x_vel = x;
-        this.y_vel = y;
-    }
-    
     public double getX() {
         return x;
     }

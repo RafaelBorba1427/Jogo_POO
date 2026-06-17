@@ -54,6 +54,7 @@ public class coisa extends Rectangle {
   }
 
   public void verify(ball bola) {
+    System.out.println("Works");
 
     if ((intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
         bola.getDiameter())
@@ -61,15 +62,9 @@ public class coisa extends Rectangle {
         && (bola.bateuX == false || bola.bateuY == false)) {
 
       bola.bounce(this);
-
       if (id == 3) {
-        game.hitting = false;
-        game.buffSys.EndBuffs();
-        current.SetBallVelocity(0,0);
-        game.dialog.dialog_init();
-        return;
+        game.fecha = true;
       }
-
       game.hitting = true;
     } else {
 

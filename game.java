@@ -45,13 +45,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     GameModes mode = GameModes.PLAY;
     static game gaming = new game("Frat_background.png");
-    private volatile int x_input;
-    private volatile int y_input;
-    private volatile boolean mouse_clicked;
-
-    public void SetBallVelocity(int x, int y){
-        ball.setVelocity(x,y);
-    }
+    int x_input, y_input;
 
     public game(String imagePath) {
         try {
@@ -82,6 +76,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // lvl_map.add(new coisa(700, 600, 40, 1));
 
         setVisible(true);
+
     }
 
     public static void main(String[] args) {
@@ -93,19 +88,16 @@ public class game extends JPanel implements MouseListener, KeyListener {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        SwingUtilities.invokeLater(() -> gaming.requestFocusInWindow());
 
         w_frame = (int) Math.ceil(frame.getWidth() / 4.0);
         h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
         gaming.frame = frame;
         buffSys = new buffSystem();
         dialog = new Items(gaming);
-
-        // debug buffs
-        //buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
-        lvl_map.add(new coisa(700, 600, 40, 3, gaming));
-
-        timer = new Timer(16, e -> {
+        //debug buffs
+         buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
+        Timer timer = new Timer(16, e -> {
+            buffSys.CheckDuration(buffSystem.buffs.SPEED_BOOST);
             gaming.update();
             gaming.repaint();
             buffSys.DecrementBuffTimers();
@@ -126,7 +118,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
     }
 
     public void update() {
-
         if ((ball.getY() >= y_boundary - ball.getDiameter() || ball.getY() <= 0)) {
             ball.bounceY();
         }
@@ -134,38 +125,29 @@ public class game extends JPanel implements MouseListener, KeyListener {
             ball.bounceX();
         }
 
-        if (mode == GameModes.EDIT) {
-            ball.update();
-
-            EditCouse();
-            Iterator<buff> it2 = collided.iterator();
-            while (it2.hasNext()) {
-                buff a = it2.next();
-
-                lvl_map.add(a);
-                it2.remove();
-            }
-            return;
-        }
-
         // use mouse input to change ball trajectory
-        else if (mouse_clicked) {
+        if (x_input != 0 || y_input != 0) {
             if (mode == GameModes.SHOOT) {
                 applyMouseInput();
+                mode = GameModes.PLAY;
+                ball.enable_physics = true;
+            } else if (mode == GameModes.EDIT) {
+                coisa newy = new coisa(x_input, y_input, 40, 1, gaming);
+
+                // buffSystem.buffs bu = buffSystem.buffs.SPEED_BOOST;
+                // buff newy = new buff(x_input, y_input, 40, buffSystem.buffs.SPEED_BOOST, 6);
+
+                lvl_map.add(newy);
+                // lvl_map.add(newy);
+
             } else if (mode == GameModes.SETPOSITION) {
-                //System.out.println("Processing click: mode = " + mode);
                 ball.setPosition(x_input, y_input);
-                ball.setVelocity(0,0);
             }
-            
-            mode = GameModes.PLAY;
-            ball.enable_physics = true;
-            mouse_clicked = false;
+            x_input = 0;
+            y_input = 0;
         }
 
-        Iterator<coisa> it = lvl_map.iterator();
-        while (it.hasNext()) {
-            coisa c = it.next();
+        for (coisa c : lvl_map) {
             if (c instanceof buff b) {
 
                 b.verify(ball);
@@ -184,12 +166,13 @@ public class game extends JPanel implements MouseListener, KeyListener {
         add = 0;
         ball.update();
         // clears the console
-        // System.out.print("\033[H\033[2J"); System.out.flush();
-        /*
+        // System.out.print("\033[H\033[2J");
+        // System.out.flush();
+
         System.out.println("Ball position: (" + ball.getX() + ", " + ball.getY() +
                 ")");
         System.out.println("Ball velocity: (" + ball.getXVel() + ", " +
-                ball.getYVel() + ")"); */
+                ball.getYVel() + ")");
 
     }
 
@@ -263,14 +246,12 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-    }
-    
-    @Override
-    public void mousePressed(MouseEvent e) {
-        //System.out.println("Click: mode = " + mode);
         x_input = e.getX();
         y_input = e.getY();
-        mouse_clicked = true;
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
     }
 
     @Override
@@ -294,26 +275,17 @@ public class game extends JPanel implements MouseListener, KeyListener {
         if (e.getKeyChar() == 'q') {
             mode = GameModes.PLAY;
             ball.enable_physics = true;
-            frame.requestFocus();
-            gaming.requestFocusInWindow();
         } else if (e.getKeyChar() == 'w') {
             mode = GameModes.SHOOT;
             ball.enable_physics = false;
-            frame.requestFocus();
-            gaming.requestFocusInWindow();
         } else if (e.getKeyChar() == 'e') {
             mode = GameModes.EDIT;
             ball.enable_physics = false;
-            frame.requestFocus();
-            gaming.requestFocusInWindow();
         } else if (e.getKeyChar() == 'r') {
             mode = GameModes.SETPOSITION;
             ball.enable_physics = false;
-            frame.requestFocus();
-            gaming.requestFocusInWindow();
         } else if (e.getKeyChar() == 'y') {
             mode = GameModes.ITEM_PANEL;
-            ball.enable_physics = false;
             dialog.dialog_init();
         }
     }
