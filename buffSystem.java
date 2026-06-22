@@ -24,10 +24,14 @@ public class buffSystem {
 
         active_buffs.replace(buff_applied, duration_in_seconds * 90);
         any_buff_active = true;
-        if(buff_applied == buffs.ICED) ICED_active = false;
-        else if(buff_applied == buffs.SPEED_BOOST) speed_boost_active = false;
-        else if(buff_applied == buffs.LAG) LAG_active = false;
-        else if(buff_applied == buffs.TIME_TRAVEL) TIME_TRAVEL_active = false;
+        if (buff_applied == buffs.ICED)
+            ICED_active = false;
+        else if (buff_applied == buffs.SPEED_BOOST)
+            speed_boost_active = false;
+        else if (buff_applied == buffs.LAG)
+            LAG_active = false;
+        else if (buff_applied == buffs.TIME_TRAVEL)
+            TIME_TRAVEL_active = false;
     }
 
     static buffs returnBuff(int choice) {
@@ -37,6 +41,13 @@ public class buffSystem {
 
             case 6:
                 return buffs.SPEED_BOOST;
+            case 7:
+            case 8:
+                return buffs.TIME_TRAVEL;
+            case 9:
+                return buffs.LAG;
+            case 10:
+                return buffs.ELASTIC_COLLISION;
         }
         return buffs.SPEED_BOOST;
     }
@@ -54,13 +65,13 @@ public class buffSystem {
         }
     }
 
-    void EndBuffs(){
-            for (EnumMap.Entry<buffs, Integer> buff : active_buffs.entrySet()) {
-                    buff.setValue(0);
-            }
+    void EndBuffs() {
+        for (EnumMap.Entry<buffs, Integer> buff : active_buffs.entrySet()) {
+            buff.setValue(0);
+        }
     }
 
-    void EndBuff(buffs buff){
+    void EndBuff(buffs buff) {
         active_buffs.replace(buff, 0);
     }
 
