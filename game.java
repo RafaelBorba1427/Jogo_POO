@@ -28,6 +28,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static int x_cool_sqr, y_cool_sqr;
     static int w_frame, h_frame;
     static buffSystem buffSys;
+    static pointSystem pointSys;
     static boolean game_start = false;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
@@ -106,6 +107,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         menu = new inicial(gaming);
         frame.add(menu);
         buffSys = new buffSystem();
+        pointSys = new pointSystem();
         dialog = new Items(gaming);
         frame.pack();
         // debug buffs
