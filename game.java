@@ -26,6 +26,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static int x_cool_sqr, y_cool_sqr;
     static int w_frame, h_frame;
     static buffSystem buffSys;
+    static pointSystem pointSys;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
     public Vector<coisa> list = new Vector<coisa>();
@@ -93,6 +94,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
         gaming.frame = frame;
         buffSys = new buffSystem();
+        pointSys = new pointSystem();
         dialog = new Items(gaming);
         //debug buffs
          buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);

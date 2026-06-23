@@ -11,6 +11,17 @@ public class coisa extends Rectangle {
   public boolean buff = false;
   game current;
   int id;
+  public static final int    ID_PLATAFORMA_CONGELADA = 0;
+  public static final int              ID_PLATAFORMA = 1;
+  public static final int                    ID_MESA = 2;
+  public static final int                   ID_BALDE = 3;
+  public static final int               ID_BUFF_ICED = 5;
+  public static final int        ID_BUFF_SPEED_BOOST = 6;
+  public static final int         ID_BUFF_INTANGIBLE = 7;
+  public static final int        ID_BUFF_TIME_TRAVEL = 8;
+  public static final int                ID_BUFF_LAG = 9;
+  public static final int ID_BUFF_ELASTIC_COLLISION = 10;
+
   // public JButton local;
   coisa self;
 
@@ -62,7 +73,10 @@ public class coisa extends Rectangle {
         && (bola.bateuX == false || bola.bateuY == false)) {
 
       bola.bounce(this);
-      if (id == 3) {
+      System.out.println(game.pointSys.getPoints());
+      game.pointSys.addPotentialPoints(this);
+      if (id == ID_BALDE) {
+        game.pointSys.processPoints();
         game.fecha = true;
       }
       game.hitting = true;
