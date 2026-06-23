@@ -18,6 +18,7 @@ public class buffSystem {
     public boolean TIME_TRAVEL_active = false;
     public boolean any_buff_active = false;
     private EnumMap<buffs, Integer> active_buffs = new EnumMap<>(buffs.class);
+    private static HashMap<Integer, buffs> id_to_buffs;
 
     public void ApplyBuff(buffs buff_applied, int duration_in_seconds) {
         // 90*game_tick ~= 1 segundo
@@ -35,21 +36,7 @@ public class buffSystem {
     }
 
     static buffs returnBuff(int choice) {
-        switch (choice) {
-            case 5:
-                return buffs.ICED;
-
-            case 6:
-                return buffs.SPEED_BOOST;
-            case 7:
-            case 8:
-                return buffs.TIME_TRAVEL;
-            case 9:
-                return buffs.LAG;
-            case 10:
-                return buffs.ELASTIC_COLLISION;
-        }
-        return buffs.SPEED_BOOST;
+        return id_to_buffs.get(choice);
     }
 
     void DecrementBuffTimers() {
@@ -91,6 +78,13 @@ public class buffSystem {
         for (buffs buff : buffs.values()) {
             active_buffs.put(buff, 0);
         }
+        id_to_buffs = new HashMap<>(buffs.values().length);
+        id_to_buffs.put(coisa.ID_BUFF_ICED,buffs.ICED);
+        id_to_buffs.put(coisa.ID_BUFF_SPEED_BOOST,buffs.SPEED_BOOST);
+        id_to_buffs.put(coisa.ID_BUFF_INTANGIBLE,buffs.INTANGIBLE);
+        id_to_buffs.put(coisa.ID_BUFF_TIME_TRAVEL,buffs.TIME_TRAVEL);
+        id_to_buffs.put(coisa.ID_BUFF_LAG,buffs.LAG);
+        id_to_buffs.put(coisa.ID_BUFF_ELASTIC_COLLISION,buffs.ELASTIC_COLLISION);
     }
 
     int BuffDuration(buffs buff) {

@@ -16,10 +16,12 @@ class buff extends coisa {
         bola.getDiameter())
         || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))
         && (bola.bateuX == false || bola.bateuY == false)) {
-
-      game.gaming.buffSys.ApplyBuff(buff_active, 10);
+          
+      game.pointSys.addPotentialPoints(this);
+      System.out.println("potential points:" + game.pointSys.getPotentialPoints());
+      game.gaming.buffSys.ApplyBuff(buff_active, 5);
       bateu = true;
-
+      
     } else {
       game.add++;
     }

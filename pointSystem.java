@@ -31,4 +31,8 @@ public class pointSystem {
     public Long getPoints() {
         return points;
     }
+
+    public Long getPotentialPoints() {
+        return potential_points;
+    }
 }

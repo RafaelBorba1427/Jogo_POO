@@ -42,24 +42,24 @@ public class Items implements MouseListener {
     for (int i = 0; i < 4; i++) {
       int l;
       do {
-        l = (int) (Math.random() * 11);
-      } while (l == 0 || l == 3 || l == 4);
-      final int r = l;
+        l = (int) (Math.random() * coisa.Quant_IDs);
+      } while (l == 3 || l == 4); //
+      final int random_id = l;
       JButton local = new JButton() {
         @Override
         protected void paintComponent(Graphics g) {
           g.drawImage(current.sheet,
               0, 0, getWidth(), getHeight(),
               current.anime * current.sprite_col,
-              r * current.sprite_lin,
+              random_id * current.sprite_lin,
               current.anime * current.sprite_col + current.sprite_col,
-              r * current.sprite_lin + current.sprite_lin,
+              random_id * current.sprite_lin + current.sprite_lin,
               null);
         }
       };
       local.setBounds(10 + i * 70, 80, 60, 60);
       local.addMouseListener(this);
-      list.put(local, r);
+      list.put(local, random_id);
       panel.add(local); // safe now
     }
 

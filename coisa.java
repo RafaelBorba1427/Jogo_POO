@@ -14,6 +14,7 @@ public class coisa extends Rectangle {
   public boolean buff = false;
   public game current;
   int id;
+  public static final int Quant_IDs = 11;
   public static final int    ID_PLATAFORMA_CONGELADA = 0;
   public static final int              ID_PLATAFORMA = 1;
   public static final int                    ID_MESA = 2;
@@ -85,15 +86,19 @@ public class coisa extends Rectangle {
       bateuY = true;
       bola.bounce(this);
       game.pointSys.addPotentialPoints(this);
-      System.out.println(game.pointSys.getPoints());
+      System.out.println("potential points:" + game.pointSys.getPotentialPoints());
 
       if (id == ID_BALDE) {  
         game.hitting = false;
         game.pointSys.processPoints();
+        System.out.println("points:" + game.pointSys.getPotentialPoints());
         game.buffSys.EndBuffs();
         current.SetBallVelocity(0,0);
         game.dialog.dialog_init();
         return;
+      }
+      else if(id == ID_PLATAFORMA_CONGELADA){
+        game.gaming.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY, 1);
       }
 
       game.hitting = true;

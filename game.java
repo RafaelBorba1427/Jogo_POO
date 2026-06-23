@@ -32,6 +32,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static boolean game_start = false;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
+    private Image floorImage;
 
     static Queue<coisa> list = new LinkedList<>();
 
@@ -46,10 +47,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     ball ball = new ball(400, 200, 20);
 
-    static ArrayList<coisa> lvl_map = new ArrayList<>();
-    static Queue<buff> collided = new LinkedList<>();
+    static volatile ArrayList<coisa> lvl_map = new ArrayList<>();
+    static volatile Queue<buff> collided = new LinkedList<>();
     static GameModes mode = GameModes.PLAY;
-    static game gaming = new game("Frat_background.png");
+    static game gaming;
     private volatile int x_input;
     private volatile int y_input;
     private volatile boolean mouse_clicked;
@@ -68,6 +69,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
             System.out.println("sheet FAILED to load"); // ❌ path wrong?
         }
         image = new ImageIcon(imagePath).getImage();
+        floorImage = new ImageIcon("floor.png").getImage();
         addMouseListener(this);
         addKeyListener(this);
         setBackground(Color.BLACK);
@@ -91,6 +93,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     }
 
     public static void main(String[] args) {
+        gaming = new game("Frat_background.png");
         frame = new JFrame("Ball Game");
 
         // frame.add(gaming);
@@ -112,7 +115,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         frame.pack();
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
-        lvl_map.add(new coisa(700, 600, 40, 3, gaming));
+        lvl_map.add(new coisa(x_boundary - 40, y_boundary - 15, 40, 3, gaming));
 
         timer = new Timer(16, e -> {
             gaming.update();
@@ -145,7 +148,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
             return;
 
         }
-        if (x_input != 0 || y_input != 0) {
+        if (mouse_clicked) {
             lvl_map.add(list.peek());
             list.peek().setX(x_input);
             list.peek().setY(y_input);
@@ -158,9 +161,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 // collided.remove(c);
                 // }
             }
-            x_input = 0;
-            y_input = 0;
-
+            mouse_clicked = false;
         }
     }
 
@@ -254,9 +255,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // Draw background image
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
-        g.drawImage(new ImageIcon("floor.png").getImage(), 0, getHeight() -
-                getHeight() / 4, getWidth(),
-                getHeight() / 4, this);
+        g.drawImage(floorImage,0, getHeight() - getHeight() / 4,
+            getWidth(), getHeight() / 4, this);
 
         // Recreate buffer if needed
         if (offscreen == null || offscreen.getWidth() != getWidth() || offscreen.getHeight() != getHeight()) {
