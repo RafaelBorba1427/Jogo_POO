@@ -13,6 +13,7 @@ import java.util.Vector;
 import java.util.Iterator;
 
 public class game extends JPanel implements MouseListener, KeyListener {
+    static int lose_sprite = 0;
     static Items dialog;
     private Image image;
     static int anime = 0;
@@ -34,8 +35,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static boolean game_start = false;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
+
     private Image floorImage;
-    public end fin;
+    static end fin;
     static Queue<coisa> list = new LinkedList<>();
 
     public enum GameModes {
@@ -58,8 +60,16 @@ public class game extends JPanel implements MouseListener, KeyListener {
     private volatile boolean mouse_clicked;
     static inicial menu;
 
-    public void createEnd() {
+    public boolean createEnd() {
+        if (fin != null) {
+            return false;
+        }
         fin = new end(10, this);
+        return true;
+    }
+
+    public void update_end() {
+        fin.update_panel();
     }
 
     public void SetBallVelocity(int x, int y) {
@@ -124,6 +134,13 @@ public class game extends JPanel implements MouseListener, KeyListener {
         lvl_map.add(new coisa(x_boundary - 40, y_boundary - 15, 40, 3, gaming));
 
         timer = new Timer(16, e -> {
+            if (fin != null)
+                fin.update_panel();
+            if (lose_sprite == 0) {
+                lose_sprite = 1;
+            } else
+                lose_sprite = 0;
+
             gaming.update();
             if (game_start)
                 gaming.repaint();
@@ -302,7 +319,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
                     c.id * sprite_lin + sprite_lin, // source y2
                     null);
         } // Draw transparent buffer over background
-
 
         g.drawImage(offscreen, 0, 0, null);
 

@@ -26,7 +26,7 @@ public class coisa extends Rectangle {
   public static final int ID_BUFF_TIME_TRAVEL = 8;
   public static final int ID_BUFF_LAG = 9;
   public static final int ID_BUFF_ELASTIC_COLLISION = 10;
-
+  private int number = 1;
   // public JButton local;
   coisa self;
 
@@ -58,7 +58,7 @@ public class coisa extends Rectangle {
      * local.setOpaque(false);
      * local.setContentAreaFilled(false);
      * local.setBorderPainted(false);
-     * local.setBounds(x - diametro / 2, y - diametro / 2, diametro, diametro); 
+     * local.setBounds(x - diametro / 2, y - diametro / 2, diametro, diametro);
      * position + size
      * current.add(local);
      */
@@ -89,13 +89,21 @@ public class coisa extends Rectangle {
       game.pointSys.addPotentialPoints(this);
 
       if (id == ID_BALDE) {
-        /*
-         * game.hitting = false;
-         * game.buffSys.EndBuffs();
-         * current.SetBallVelocity(0, 0);
-         * SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
-         */
-        current.createEnd();
+        game.pointSys.processPoints();
+        game.pointSys.removePotentialPoints();
+        if (game.pointSys.getPoints() < 1000 * number) {
+          SwingUtilities.invokeLater(() -> current.createEnd());
+
+          return;
+        }
+        number += 1.5;
+        game.hitting = false;
+        game.buffSys.EndBuffs();
+        current.SetBallVelocity(0, 0);
+        SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
+
+        // in coisa verify():
+
         return;
       } else if (id == ID_PLATAFORMA_CONGELADA) {
         game.gaming.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY, 1);
