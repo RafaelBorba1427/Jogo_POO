@@ -39,10 +39,10 @@ public class Items implements MouseListener {
     for (int i = 0; i < 4; i++) {
       int l;
       do {
-        l = (int) (Math.random() * 7);
-      } while (l == 0 || l == 3 || l == 4);
-      final int r = l;
-      JButton local = new JButton() {
+        l = (int) (Math.random() * coisa.Quant_IDs);
+      } while (l == coisa.ID_BALDE || l == coisa.ID_ESTILINGUE); //
+      final int random_id = l;
+      local = new JButton() {
         @Override
         protected void paintComponent(Graphics g) {
           g.drawImage(current.sheet,
