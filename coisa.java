@@ -89,10 +89,13 @@ public class coisa extends Rectangle {
       game.pointSys.addPotentialPoints(this);
 
       if (id == ID_BALDE) {
-        game.hitting = false;
-        game.buffSys.EndBuffs();
-        current.SetBallVelocity(0, 0);
-        SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
+        /*
+         * game.hitting = false;
+         * game.buffSys.EndBuffs();
+         * current.SetBallVelocity(0, 0);
+         * SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
+         */
+        current.createEnd();
         return;
       } else if (id == ID_PLATAFORMA_CONGELADA) {
         game.gaming.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY, 1);

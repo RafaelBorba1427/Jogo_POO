@@ -35,7 +35,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
     private Image floorImage;
-
+    public end fin;
     static Queue<coisa> list = new LinkedList<>();
 
     public enum GameModes {
@@ -57,6 +57,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
     private volatile int y_input;
     private volatile boolean mouse_clicked;
     static inicial menu;
+
+    public void createEnd() {
+        fin = new end(10, this);
+    }
 
     public void SetBallVelocity(int x, int y) {
         ball.setVelocity(x, y);
