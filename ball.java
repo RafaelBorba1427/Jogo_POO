@@ -15,6 +15,9 @@ public class ball extends Ellipse2D.Double {
     private double x, y, diameter, 
                    paint_x, paint_y,
                    time_travel_x, time_travel_y;
+    private double x, y, diameter, 
+                   paint_x, paint_y,
+                   time_travel_x, time_travel_y;
     double x_vel, y_vel;
 
     boolean is_touching_ground = false;
@@ -81,6 +84,9 @@ public class ball extends Ellipse2D.Double {
                 }
             }
 
+            else if (game.buffSys.ICED_active) {
+                game.buffSys.ICED_active = false;
+            }
             else if (game.buffSys.ICED_active) {
                 game.buffSys.ICED_active = false;
             }

@@ -13,6 +13,7 @@ public class Items implements MouseListener {
   JPanel panel;
   int numero = 2;
   private Map<JButton, Integer> list = new HashMap<>();
+  private Map<JButton, Integer> list = new HashMap<>();
 
   Items(game current, int numero) {
     this.current = current;
@@ -33,6 +34,7 @@ public class Items implements MouseListener {
       @Override
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+        g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
         g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
       }
     };

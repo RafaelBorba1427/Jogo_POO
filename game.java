@@ -298,6 +298,18 @@ public class game extends JPanel implements MouseListener, KeyListener {
                     c.id * sprite_lin + sprite_lin, // source y2
                     null);
         } // Draw transparent buffer over background
+            g.drawImage(
+                    sheet,
+                    c.x - c.diametro / 2, // destination x on screen
+                    c.y - c.diametro / 2, // destination y on screen
+                    c.x + c.diametro / 2, // destination x2
+                    c.y + c.diametro / 2, // destination y2
+                    anime * sprite_col, // source x on spritesheet
+                    c.id * sprite_lin, // source y on spritesheet
+                    anime * sprite_col + sprite_col, // source x2
+                    c.id * sprite_lin + sprite_lin, // source y2
+                    null);
+        } // Draw transparent buffer over background
         g.drawImage(offscreen, 0, 0, null);
 
         // PointSystem HUD
