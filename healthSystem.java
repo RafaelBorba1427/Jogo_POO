@@ -4,8 +4,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.math.*;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,10 +21,13 @@ public class healthSystem extends JPanel {
     private ArrayList<heart> hp_sprites = new ArrayList<heart>();
 
 
-    public healthSystem(int max_hp) {
+    public healthSystem(int max_hp, boolean is_visible) {
         this.max_hp = max_hp;
         this.current_hp = max_hp;
         this.is_dead = false;
+        setVisible(is_visible);
+        setOpaque(false);
+        setPreferredSize(new Dimension(800, 100)); // Set preferred size of the panel
 
         for(int i = 0; i < max_hp; i++){
             hp_sprites.add(new heart(i * 70, 10)); // Adjust position as needed
@@ -89,18 +90,14 @@ public class healthSystem extends JPanel {
     }
 
 
-    public void setVisibile(boolean visible) {
-        this.setVisible(visible);
-    }
-
-
     // TO DO
     // For testing purposes, delete later
+    /*
     public static void main(String[] args) {
         JFrame frame = new JFrame("Health System Test");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 1000);
-        healthSystem health = new healthSystem(5);
+        healthSystem health = new healthSystem(5, true);
         frame.add(health);
 
         healthSystemTest test = new healthSystemTest();
@@ -117,11 +114,11 @@ public class healthSystem extends JPanel {
                 health.heal();
             }
             else if(test.input == 'q'){
-                health.setVisibile(false);
+                health.setVisible(false);
                 System.out.println("Health system hidden!"); // Debugging output
             }
             else if(test.input == 'e'){
-                health.setVisibile(true);
+                health.setVisible(true);
                 System.out.println("Health system shown!"); // Debugging output
             }
 
@@ -130,6 +127,7 @@ public class healthSystem extends JPanel {
             System.out.println("Current HP: " + health.getCurrentHp() + "/" + health.getMaxHp() + " | Is Dead: " + health.isDead()); // Debugging output
         }
     }
+    */
 }
 
 class heart {
@@ -189,6 +187,7 @@ class heart {
 
 // TO DO
 // Delete later
+/*
 class healthSystemTest implements KeyListener {
     public char input;
     
@@ -219,3 +218,4 @@ class healthSystemTest implements KeyListener {
         // Not needed for this test
     }
 }
+*/

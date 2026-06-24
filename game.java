@@ -31,6 +31,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static int w_frame, h_frame;
     static buffSystem buffSys;
     static pointSystem pointSys;
+    static healthSystem healthSys;
     static boolean game_start = false;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
@@ -116,6 +117,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
         frame.pack();
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
+
+        healthSys = new healthSystem(5, true);
+        gaming.add(healthSys); // Adds health as a panel on gaming
+        
         pointSys = new pointSystem();
         lvl_map.add(new coisa(x_boundary - 40, y_boundary - 15, 40, 3, gaming));
 
@@ -165,6 +170,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
         }
     }
 
+    // Added a tracker to check if a trick shot is in progress
+    boolean trickshot_in_progress = false;
+
     public void update() {
 
         if ((ball.getY() >= y_boundary - ball.getDiameter() || ball.getY() <= 0)) {
@@ -192,6 +200,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
             if (mode == GameModes.SHOOT) {
                 ball.setVelocity(0, 0);
                 applyMouseInput();
+                trickshot_in_progress = true;
             } else if (mode == GameModes.SETPOSITION) {
                 // System.out.println("Processing click: mode = " + mode);
                 ball.setPosition(x_input, y_input);
@@ -224,6 +233,20 @@ public class game extends JPanel implements MouseListener, KeyListener {
         add = 0;
 
         ball.update();
+
+        // Check if the ball has stopped moving after a trick shot
+        // False flags ball as dead on goal hit and on the hand debuff
+        if (trickshot_in_progress && ball.getXVel() == 0 && ball.getYVel() == 0) {
+            trickshot_in_progress = false;
+            boolean is_dead = healthSys.takeDamageAndCheckDeath();
+
+            if(is_dead) {
+                // Handle game over logic here
+                System.out.println("Game Over!");
+                
+                // Implement game over logic
+            }
+        }
         // clears the console
         // System.out.print("\033[H\033[2J"); System.out.flush();
         /*
