@@ -46,7 +46,7 @@ public class coisa extends Rectangle {
      * protected void paintComponent(Graphics g) {
      * g.drawImage(
      * current.sheet,
-     * 0, 0, (int) getWidth(), (int) getHeight(), // ✅ 0,0 not x,y
+     * 0, 0, (int) getWidth(), (int) getHeight(), // 0,0 not x,y
      * current.anime * current.sprite_col,
      * id * current.sprite_lin,
      * current.anime * current.sprite_col + current.sprite_col,
@@ -58,7 +58,7 @@ public class coisa extends Rectangle {
      * local.setOpaque(false);
      * local.setContentAreaFilled(false);
      * local.setBorderPainted(false);
-     * local.setBounds(x - diametro / 2, y - diametro / 2, diametro, diametro); // ✅
+     * local.setBounds(x - diametro / 2, y - diametro / 2, diametro, diametro); 
      * position + size
      * current.add(local);
      */

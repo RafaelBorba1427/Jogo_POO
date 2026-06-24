@@ -13,7 +13,6 @@ public class Items implements MouseListener {
   JPanel panel;
   int numero = 2;
   private Map<JButton, Integer> list = new HashMap<>();
-  private Map<JButton, Integer> list = new HashMap<>();
 
   Items(game current, int numero) {
     this.current = current;

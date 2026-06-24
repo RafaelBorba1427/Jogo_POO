@@ -15,9 +15,6 @@ public class ball extends Ellipse2D.Double {
     private double x, y, diameter, 
                    paint_x, paint_y,
                    time_travel_x, time_travel_y;
-    private double x, y, diameter, 
-                   paint_x, paint_y,
-                   time_travel_x, time_travel_y;
     double x_vel, y_vel;
 
     boolean is_touching_ground = false;

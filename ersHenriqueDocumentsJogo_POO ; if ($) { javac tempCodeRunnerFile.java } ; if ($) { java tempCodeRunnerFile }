@@ -1,0 +1,26 @@
+[33m9de0411[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mhealthSystem[m[33m, [m[1;31morigin/healthSystem[m[33m)[m Added hide function
+[33m82a070a[m Finalised health system with tests
+[33m824701e[m Added the Time Travel buff
+[33m9707322[m Added sprite logic to health system
+[33mc29cab0[m Added heart sprite
+[33m2cacc8b[m Button Bugg fixed
+[33m9b754e6[m Added health logic
+[33ma526e40[m Added new classes
+[33m973fb94[m added item selection
+[33m8b7e772[m sprites for menue and ball sprites
+[33m1773af5[m minor collision fix
+[33ma74158c[m spite animations added + speed-boost buff sprite added
+[33m6118759[m basic sprite system added
+[33mad76de4[m background Image and floor added
+[33m8b50e2c[m buff collision implemented
+[33m56f4e8d[m Added the buffSystem and made several changes to the ball prototype
+[33mf3b0c0a[m[33m ([m[1;31morigin/ballPrototype[m[33m, [m[1;32mballPrototype[m[33m)[m corrected 'falling through square' bug
+[33m2de3340[m corrected colision for more than one square bug
+[33m035ae5e[m Added aiming mechanic
+[33m54e6902[m Fixed ghost input bug
+[33m2c6075e[m Added edit, setPosition and aim mode
+[33mfc2e459[m Create .gitignore
+[33me38c85f[m colision and sprites added
+[33m4f138bb[m colisao minima do jogo
+[33mb18b644[m Initial Ball Prototype
+[33m57b3693[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m Initial commit

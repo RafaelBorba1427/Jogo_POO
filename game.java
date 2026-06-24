@@ -65,10 +65,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
     public game(String imagePath) {
         try {
             sheet = ImageIO.read(new File("spritesheet/New Piskel(2)(1).png"));
-            System.out.println("sheet loaded: " + sheet); // ✅ null or not?
+            System.out.println("sheet loaded: " + sheet); // null or not?
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("sheet FAILED to load"); // ❌ path wrong?
+            System.out.println("sheet FAILED to load"); // path wrong?
         }
         image = new ImageIcon(imagePath).getImage();
         floorImage = new ImageIcon("floor.png").getImage();
@@ -298,18 +298,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
                     c.id * sprite_lin + sprite_lin, // source y2
                     null);
         } // Draw transparent buffer over background
-            g.drawImage(
-                    sheet,
-                    c.x - c.diametro / 2, // destination x on screen
-                    c.y - c.diametro / 2, // destination y on screen
-                    c.x + c.diametro / 2, // destination x2
-                    c.y + c.diametro / 2, // destination y2
-                    anime * sprite_col, // source x on spritesheet
-                    c.id * sprite_lin, // source y on spritesheet
-                    anime * sprite_col + sprite_col, // source x2
-                    c.id * sprite_lin + sprite_lin, // source y2
-                    null);
-        } // Draw transparent buffer over background
+
+
         g.drawImage(offscreen, 0, 0, null);
 
         // PointSystem HUD
