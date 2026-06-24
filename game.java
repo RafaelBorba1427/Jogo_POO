@@ -126,7 +126,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
             else
                 menu.repaint();
             buffSys.DecrementBuffTimers();
-            if(point_bonus_anime != 0) point_bonus_anime--;
+            if (point_bonus_anime != 0)
+                point_bonus_anime--;
             anime_help++;
             if (anime_help > 4) {
                 anime_help = 0;
@@ -159,7 +160,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
             list.peek().setX(x_input);
             list.peek().setY(y_input);
             list.poll();
-            
+
             mouse_clicked = false;
         }
     }
@@ -177,13 +178,12 @@ public class game extends JPanel implements MouseListener, KeyListener {
             ball.update();
 
             EditCouse();
-            Iterator<buff> it2 = collided.iterator();
-            while (it2.hasNext()) {
-                buff a = it2.next();
 
-                lvl_map.add(a);
-                it2.remove();
+            while (!collided.isEmpty()) {
+                lvl_map.add(collided.peek());
+                collided.poll();
             }
+
             return;
         }
 
@@ -207,7 +207,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
         while (it.hasNext()) {
             coisa c = it.next();
             if (c instanceof buff b) {
-
                 b.verify(ball);
                 if (b.bateu == true) {
                     b.bateu = false;
@@ -217,7 +216,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
             } else {
                 c.verify(ball);
             }
-
         }
 
         if (add == lvl_map.size()) {
@@ -255,8 +253,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // Draw background image
         g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
 
-        g.drawImage(floorImage,0, getHeight() - getHeight() / 4,
-            getWidth(), getHeight() / 4, this);
+        g.drawImage(floorImage, 0, getHeight() - getHeight() / 4,
+                getWidth(), getHeight() / 4, this);
 
         // Recreate buffer if needed
         if (offscreen == null || offscreen.getWidth() != getWidth() || offscreen.getHeight() != getHeight()) {
@@ -305,9 +303,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // PointSystem HUD
         Graphics2D g2 = (Graphics2D) g.create();
         g2.setRenderingHint(
-            RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON
-        );
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
 
         int hudWidth = 220;
         int hudHeight = 80;
@@ -324,32 +321,30 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // Total points
         g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, 22));
         g2.drawString(
-            "Total Points: " + pointSys.getPoints(),
-            hudX + 15,
-            hudY + 30
-        );
+                "Total Points: " + pointSys.getPoints(),
+                hudX + 15,
+                hudY + 30);
 
         // Potential points
         g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, 18));
         g2.drawString(
-            "Points: " + pointSys.getPotentialPoints(),
-            hudX + 15,
-            hudY + 60
-        );
+                "Points: " + pointSys.getPotentialPoints(),
+                hudX + 15,
+                hudY + 60);
 
-        
-        if (point_bonus_anime != 0) {   
-        String pointsText = "Points: " + pointSys.getPotentialPoints();
-        FontMetrics fm = g2.getFontMetrics();
-        String plus_minus;
-        if(point_bonus >= 0) plus_minus = " +";
-        else plus_minus = " ";
+        if (point_bonus_anime != 0) {
+            String pointsText = "Points: " + pointSys.getPotentialPoints();
+            FontMetrics fm = g2.getFontMetrics();
+            String plus_minus;
+            if (point_bonus >= 0)
+                plus_minus = " +";
+            else
+                plus_minus = " ";
 
-        g2.drawString(
-            plus_minus + point_bonus,
-            hudX + 15 + fm.stringWidth(pointsText),
-            hudY + 60
-        );
+            g2.drawString(
+                    plus_minus + point_bonus,
+                    hudX + 15 + fm.stringWidth(pointsText),
+                    hudY + 60);
         }
 
         g2.dispose();

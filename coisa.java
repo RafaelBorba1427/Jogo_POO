@@ -15,16 +15,16 @@ public class coisa extends Rectangle {
   public game current;
   int id;
   public static final int Quant_IDs = 11;
-  public static final int    ID_PLATAFORMA_CONGELADA = 0;
-  public static final int              ID_PLATAFORMA = 1;
-  public static final int                    ID_MESA = 2;
-  public static final int                   ID_BALDE = 3;
-  public static final int              ID_ESTILINGUE = 4;
-  public static final int               ID_BUFF_ICED = 5;
-  public static final int        ID_BUFF_SPEED_BOOST = 6;
-  public static final int         ID_BUFF_INTANGIBLE = 7;
-  public static final int        ID_BUFF_TIME_TRAVEL = 8;
-  public static final int                ID_BUFF_LAG = 9;
+  public static final int ID_PLATAFORMA_CONGELADA = 0;
+  public static final int ID_PLATAFORMA = 1;
+  public static final int ID_MESA = 2;
+  public static final int ID_BALDE = 3;
+  public static final int ID_ESTILINGUE = 4;
+  public static final int ID_BUFF_ICED = 5;
+  public static final int ID_BUFF_SPEED_BOOST = 6;
+  public static final int ID_BUFF_INTANGIBLE = 7;
+  public static final int ID_BUFF_TIME_TRAVEL = 8;
+  public static final int ID_BUFF_LAG = 9;
   public static final int ID_BUFF_ELASTIC_COLLISION = 10;
 
   // public JButton local;
@@ -88,14 +88,13 @@ public class coisa extends Rectangle {
       bola.bounce(this);
       game.pointSys.addPotentialPoints(this);
 
-      if (id == ID_BALDE) {  
+      if (id == ID_BALDE) {
         game.hitting = false;
         game.buffSys.EndBuffs();
         current.SetBallVelocity(0, 0);
-        game.dialog.dialog_init(2);
+        SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
         return;
-      }
-      else if(id == ID_PLATAFORMA_CONGELADA){
+      } else if (id == ID_PLATAFORMA_CONGELADA) {
         game.gaming.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY, 1);
       }
 
