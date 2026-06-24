@@ -88,8 +88,8 @@ public class ball extends Ellipse2D.Double {
             else {
                 if (game.buffSys.HasBuff(buffSystem.buffs.SPEED_BOOST)) {
                     if (!game.buffSys.speed_boost_active) {
-                        x_vel += (x_vel > 0) ? 20 : -20;
-                        y_vel += (y_vel > 0) ? 25 : -25;
+                        x_vel += (x_vel > 0) ? 15 : -15;
+                        y_vel += (y_vel > 0) ? 20 : -20;
                         game.buffSys.speed_boost_active = true;
                     }
                     x_vel *= 1.01;

@@ -17,6 +17,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
     private Image image;
     static int anime = 0;
     static double anime_help = 0;
+    static int point_bonus_anime = 0;
+    static Long point_bonus = 0L;
     static boolean fecha = false;
     static boolean hitting = false;
     static int add = 0;
@@ -110,11 +112,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
         menu = new inicial(gaming);
         frame.add(menu);
         buffSys = new buffSystem();
-        pointSys = new pointSystem();
         dialog = new Items(gaming);
         frame.pack();
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
+        pointSys = new pointSystem();
         lvl_map.add(new coisa(x_boundary - 40, y_boundary - 15, 40, 3, gaming));
 
         timer = new Timer(16, e -> {
@@ -124,6 +126,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
             else
                 menu.repaint();
             buffSys.DecrementBuffTimers();
+            if(point_bonus_anime != 0) point_bonus_anime--;
             anime_help++;
             if (anime_help > 4) {
                 anime_help = 0;
@@ -145,22 +148,18 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
         if (list.isEmpty()) {
             mode = GameModes.PLAY;
+            ball.enable_physics = true;
+            game.pointSys.processPoints();
+            game.pointSys.removePotentialPoints();
             return;
-
         }
+
         if (mouse_clicked) {
             lvl_map.add(list.peek());
             list.peek().setX(x_input);
             list.peek().setY(y_input);
             list.poll();
-            if (list.isEmpty()) {
-                mode = GameModes.PLAY;
-                ball.enable_physics = true;
-                // for (buff c : collided) {
-                // lvl_map.add(c);
-                // collided.remove(c);
-                // }
-            }
+            
             mouse_clicked = false;
         }
     }
@@ -191,6 +190,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // use mouse input to change ball trajectory
         else if (mouse_clicked) {
             if (mode == GameModes.SHOOT) {
+                ball.setVelocity(0, 0);
                 applyMouseInput();
             } else if (mode == GameModes.SETPOSITION) {
                 // System.out.println("Processing click: mode = " + mode);
@@ -241,8 +241,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         int x_diff = x_input - ((int) ball.getX());
         int y_diff = y_input - ((int) ball.getY());
 
-        ball.x_vel += x_diff * 0.1;
-        ball.y_vel += y_diff * 0.1;
+        ball.x_vel += Math.min(x_diff * 0.1, 15);
+        ball.y_vel += Math.min(y_diff * 0.1, 15);
 
         x_input = 0;
         y_input = 0;
@@ -302,6 +302,57 @@ public class game extends JPanel implements MouseListener, KeyListener {
         } // Draw transparent buffer over background
         g.drawImage(offscreen, 0, 0, null);
 
+        // PointSystem HUD
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_ON
+        );
+
+        int hudWidth = 220;
+        int hudHeight = 80;
+        int hudX = getWidth() - hudWidth - 20;
+        int hudY = 20;
+
+        // Semi-transparent background
+        g2.setColor(new Color(170, 8, 0, 65));
+        g2.fillRoundRect(hudX, hudY, hudWidth, hudHeight, 10, 15);
+
+        // Text color
+        g2.setColor(new Color(173, 133, 0));
+
+        // Total points
+        g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, 22));
+        g2.drawString(
+            "Total Points: " + pointSys.getPoints(),
+            hudX + 15,
+            hudY + 30
+        );
+
+        // Potential points
+        g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, 18));
+        g2.drawString(
+            "Points: " + pointSys.getPotentialPoints(),
+            hudX + 15,
+            hudY + 60
+        );
+
+        
+        if (point_bonus_anime != 0) {   
+        String pointsText = "Points: " + pointSys.getPotentialPoints();
+        FontMetrics fm = g2.getFontMetrics();
+        String plus_minus;
+        if(point_bonus >= 0) plus_minus = " +";
+        else plus_minus = " ";
+
+        g2.drawString(
+            plus_minus + point_bonus,
+            hudX + 15 + fm.stringWidth(pointsText),
+            hudY + 60
+        );
+        }
+
+        g2.dispose();
     }
 
     @Override

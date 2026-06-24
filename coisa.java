@@ -19,6 +19,7 @@ public class coisa extends Rectangle {
   public static final int              ID_PLATAFORMA = 1;
   public static final int                    ID_MESA = 2;
   public static final int                   ID_BALDE = 3;
+  public static final int              ID_ESTILINGUE = 4;
   public static final int               ID_BUFF_ICED = 5;
   public static final int        ID_BUFF_SPEED_BOOST = 6;
   public static final int         ID_BUFF_INTANGIBLE = 7;
@@ -86,12 +87,9 @@ public class coisa extends Rectangle {
       bateuY = true;
       bola.bounce(this);
       game.pointSys.addPotentialPoints(this);
-      System.out.println("potential points:" + game.pointSys.getPotentialPoints());
 
       if (id == ID_BALDE) {  
         game.hitting = false;
-        game.pointSys.processPoints();
-        System.out.println("points:" + game.pointSys.getPotentialPoints());
         game.buffSys.EndBuffs();
         current.SetBallVelocity(0,0);
         game.dialog.dialog_init();

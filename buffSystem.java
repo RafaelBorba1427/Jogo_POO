@@ -19,6 +19,7 @@ public class buffSystem {
     public boolean any_buff_active = false;
     private EnumMap<buffs, Integer> active_buffs = new EnumMap<>(buffs.class);
     private static HashMap<Integer, buffs> id_to_buffs;
+    public static EnumMap<buffs, Integer> standard_buff_duration;
 
     public void ApplyBuff(buffs buff_applied, int duration_in_seconds) {
         // 90*game_tick ~= 1 segundo
@@ -85,6 +86,14 @@ public class buffSystem {
         id_to_buffs.put(coisa.ID_BUFF_TIME_TRAVEL,buffs.TIME_TRAVEL);
         id_to_buffs.put(coisa.ID_BUFF_LAG,buffs.LAG);
         id_to_buffs.put(coisa.ID_BUFF_ELASTIC_COLLISION,buffs.ELASTIC_COLLISION);
+
+        standard_buff_duration = new EnumMap<>(buffs.class);
+        standard_buff_duration.put(buffs.ICED, 3);
+        standard_buff_duration.put(buffs.SPEED_BOOST,3);
+        standard_buff_duration.put(buffs.INTANGIBLE,2);
+        standard_buff_duration.put(buffs.TIME_TRAVEL,5);
+        standard_buff_duration.put(buffs.LAG,4);
+        standard_buff_duration.put(buffs.ELASTIC_COLLISION,8);
     }
 
     int BuffDuration(buffs buff) {

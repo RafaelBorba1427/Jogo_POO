@@ -43,7 +43,7 @@ public class Items implements MouseListener {
       int l;
       do {
         l = (int) (Math.random() * coisa.Quant_IDs);
-      } while (l == 3 || l == 4); //
+      } while (l == coisa.ID_BALDE || l == coisa.ID_ESTILINGUE); //
       final int random_id = l;
       JButton local = new JButton() {
         @Override

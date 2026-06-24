@@ -18,8 +18,7 @@ class buff extends coisa {
         && (bola.bateuX == false || bola.bateuY == false)) {
           
       game.pointSys.addPotentialPoints(this);
-      System.out.println("potential points:" + game.pointSys.getPotentialPoints());
-      game.gaming.buffSys.ApplyBuff(buff_active, 5);
+      game.gaming.buffSys.ApplyBuff(buff_active, buffSystem.standard_buff_duration.get(buff_active));
       bateu = true;
       
     } else {
