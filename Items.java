@@ -14,14 +14,15 @@ public class Items implements MouseListener {
   int numero = 2;
   private Map<JButton, Integer> list = new HashMap<>();
 
-  Items(game current) {
+  Items(game current, int numero) {
     this.current = current;
     this.active = false;
+    this.numero = numero;
   }
 
-  void dialog_init() {
+  void dialog_init(int numero) {
     game.timer.stop();
-    numero = 2; // reset here
+    this.numero = numero; // reset here
     list.clear();
     current.ball.setPosition(10 + (int) current.ball.getDiameter(),
         current.y_boundary - (int) current.ball.getDiameter());
@@ -37,15 +38,37 @@ public class Items implements MouseListener {
     };
     panel.setOpaque(false);
     panel.setLayout(null);
-
+    JButton local = new JButton() {
+      @Override
+      protected void paintComponent(Graphics g) {
+        g.drawImage(current.sheet,
+            0, 0, getWidth(), getHeight(),
+            current.anime * current.sprite_col,
+            1 * current.sprite_lin,
+            current.anime * current.sprite_col + current.sprite_col,
+            1 * current.sprite_lin + current.sprite_lin,
+            null);
+      }
+    };
+    local.setBounds(10 + 0 * 70, 80, 60, 60);
+    local.addMouseListener(this);
+    list.put(local, 1);
+    panel.add(local);
     // THEN create and add buttons
-    for (int i = 0; i < 4; i++) {
+    for (int i = 1; i < 4; i++) {
       int l;
       do {
+<<<<<<< Updated upstream
         l = (int) (Math.random() * coisa.Quant_IDs);
       } while (l == coisa.ID_BALDE || l == coisa.ID_ESTILINGUE); //
       final int random_id = l;
       JButton local = new JButton() {
+=======
+        l = (int) (Math.random() * 11);
+      } while (l == 0 || l == 3 || l == 4);
+      final int r = l;
+      local = new JButton() {
+>>>>>>> Stashed changes
         @Override
         protected void paintComponent(Graphics g) {
           g.drawImage(current.sheet,

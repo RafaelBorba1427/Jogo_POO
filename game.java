@@ -112,7 +112,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         menu = new inicial(gaming);
         frame.add(menu);
         buffSys = new buffSystem();
-        dialog = new Items(gaming);
+        dialog = new Items(gaming, 2);
         frame.pack();
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
@@ -408,7 +408,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         } else if (e.getKeyChar() == 'y') {
             mode = GameModes.ITEM_PANEL;
             ball.enable_physics = false;
-            dialog.dialog_init();
+            dialog.dialog_init(2);
         }
     }
 

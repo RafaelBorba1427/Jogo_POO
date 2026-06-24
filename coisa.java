@@ -91,8 +91,8 @@ public class coisa extends Rectangle {
       if (id == ID_BALDE) {  
         game.hitting = false;
         game.buffSys.EndBuffs();
-        current.SetBallVelocity(0,0);
-        game.dialog.dialog_init();
+        current.SetBallVelocity(0, 0);
+        game.dialog.dialog_init(2);
         return;
       }
       else if(id == ID_PLATAFORMA_CONGELADA){
