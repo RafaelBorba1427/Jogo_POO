@@ -50,10 +50,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
     public game(String imagePath) {
         try {
             sheet = ImageIO.read(new File("spritesheet/New Piskel(2)(1).png"));
-            System.out.println("sheet loaded: " + sheet); // ✅ null or not?
+            System.out.println("sheet loaded: " + sheet); // null or not?
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("sheet FAILED to load"); // ❌ path wrong?
+            System.out.println("sheet FAILED to load"); // path wrong?
         }
         image = new ImageIcon(imagePath).getImage();
         addMouseListener(this);

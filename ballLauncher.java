@@ -1,16 +1,20 @@
-import java.awt.event.MouseListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
-import java.nio.Buffer;
 import java.awt.*;
 import javax.swing.*;
 
-public class ballLauncher implements MouseListener {
+
+public class ballLauncher extends MouseAdapter{
 
     Point mouse_position;
     public int mouse_x_relative;
     public int mouse_y_relative;
 
     public ball ball;
+
+    public int ball_position_x;
+    public int ball_position_y;
 
     boolean aiming = false;
 
@@ -31,14 +35,18 @@ public class ballLauncher implements MouseListener {
         
     }
 
-    public void update() {
+    public void update(JPanel game) {
 
-        int ball_position_x = (int) ball.getX();
-        int ball_position_y = (int) ball.getY();
+        ball_position_x = (int) ball.getX();
+        ball_position_y = (int) ball.getY();
 
-        mouse_position = MouseInfo.getPointerInfo().getLocation();
-        mouse_x_relative = ball_position_x - (int) mouse_position.getX();
-        mouse_y_relative = ball_position_y - (int) mouse_position.getY();
+        Point point = MouseInfo.getPointerInfo().getLocation();
+        SwingUtilities.convertPointFromScreen(point, game);
+        int mouse_X = point.x;
+        int mouse_Y = point.y;
+
+        mouse_x_relative = ball_position_x - mouse_X;
+        mouse_y_relative = ball_position_y - mouse_Y;
 
         launch_power = (int) Math.sqrt(Math.pow(mouse_x_relative - ball_position_x, 2) + Math.pow(mouse_y_relative - ball_position_y, 2));
         launch_angle = Math.atan2(mouse_y_relative - ball_position_y, mouse_x_relative - ball_position_x);
@@ -46,28 +54,24 @@ public class ballLauncher implements MouseListener {
         System.out.println(mouse_x_relative + " " + mouse_y_relative);
     }
 
-    public void draw(Graphics g, int ball_position_x, int ball_position_y) {
+    public void draw(Graphics g) {
         if(aiming) {
+            g.setColor(Color.RED);
             g.drawLine(mouse_x_relative + ball_position_x, mouse_y_relative + ball_position_y, ball_position_x, ball_position_y); // Draw line from ball to mouse position
+            g.drawOval((int)ball.getX(), (int)ball.getY(), (int)ball.getDiameter(), (int)ball.getDiameter());
         }
     }
 
 
     @Override
-    public void mousePressed(java.awt.event.MouseEvent e) {
+    public void mousePressed(MouseEvent e) {
         aiming = true;
     }
     @Override
-    public void mouseReleased(java.awt.event.MouseEvent e) {
+    public void mouseReleased(MouseEvent e) {
         aiming = false;
         launchBall();
     }
-    @Override
-    public void mouseEntered(java.awt.event.MouseEvent e) {}
-    @Override
-    public void mouseExited(java.awt.event.MouseEvent e) {}
-    @Override
-    public void mouseClicked(java.awt.event.MouseEvent e) {}
 
 
     // For testing, delete in final game
@@ -80,11 +84,15 @@ public class ballLauncher implements MouseListener {
         frame.addMouseListener(launcher);
         frame.setVisible(true);
 
-        while(true){
-            launcher.update(); // Example ball position, replace with actual ball position in the game
-            Graphics g = frame.getGraphics();
+        JPanel panel = new JPanel();
+        frame.add(panel);
 
-            launcher.draw(g, 400, 400); // Example ball position, replace with actual ball position in the game
+        Graphics g = panel.getGraphics();
+
+        while(true){
+            launcher.update(panel); // Example ball position, replace with actual ball position in the game
+
+            launcher.draw(g); // Example ball position, replace with actual ball position in the game
             frame.repaint();
         }
     }
