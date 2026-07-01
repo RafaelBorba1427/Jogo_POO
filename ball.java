@@ -133,22 +133,27 @@ public class ball extends Ellipse2D.Double {
     public void bounce(coisa coisa) {
         if (!enable_physics || game.buffSys.HasBuff(buffSystem.buffs.INTANGIBLE) || game.buffSys.LAG_active)//
             return;
-        if (coisa.y + coisa.diametro / 2 >= this.y + diameter / 2
-                || coisa.y + coisa.diametro / 2 <= this.y - diameter / 2
-                || coisa.y - coisa.diametro / 2 >= this.y + diameter / 2
-                || coisa.y - coisa.diametro / 2 <= this.y - diameter / 2) {
+        if (coisa.y + coisa.height / 2 > this.y + diameter / 2
+                || coisa.y + coisa.height / 2 < this.y - diameter / 2
+                || coisa.y - coisa.height / 2 > this.y + diameter / 2
+                || coisa.y - coisa.height / 2 < this.y - diameter / 2) {
 
             if (coisa.id != coisa.ID_MESA)
-                bounceX();
-            bateuY = true;
+                bateuY = true;
+
         }
-        if (coisa.x + coisa.diametro / 2 >= this.x + diameter / 2
-                || coisa.x + coisa.diametro / 2 <= this.x - diameter / 2
-                || coisa.x - coisa.diametro / 2 >= this.x + diameter / 2
-                || coisa.x - coisa.diametro / 2 <= this.x - diameter / 2) {
-            bounceY();
+        if ((coisa.x + coisa.width / 2 > this.x + diameter / 2
+                || coisa.x + coisa.width / 2 < this.x - diameter / 2
+                || coisa.x - coisa.width / 2 > this.x + diameter / 2
+                || coisa.x - coisa.width / 2 < this.x - diameter / 2)) {
+
             bateuX = true;
         }
+
+        if (bateuY)
+            bounceX();
+        if (bateuX)
+            bounceY();
 
     }
 
@@ -156,7 +161,7 @@ public class ball extends Ellipse2D.Double {
         if (!enable_physics)
             return;
         if (x <= 0) {
-            x = 0;
+            x = 1;
         } else if (x >= game.x_boundary - diameter) {
             x = game.x_boundary - diameter;
         }
@@ -177,7 +182,7 @@ public class ball extends Ellipse2D.Double {
             return;
 
         if (y <= 0) {
-            y = 0;
+            y = 1;
         } else if (y >= game.y_boundary - diameter) {
             y = game.y_boundary - diameter;
         }

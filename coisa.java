@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 import java.awt.geom.*;
 
 public class coisa extends Rectangle {
-  public int x, y, diametro;
+  public int x, y, width, height;
   public boolean bateu = false;
   public boolean bateuY = false;
   public boolean bateuX = false;
@@ -38,10 +38,11 @@ public class coisa extends Rectangle {
       width /= 2;
     }
 
-    super(x - width / 2, y - height / 2, diametro, diametro);
-
+    super(x - width / 2, y - height / 2, width, height);
+    
     this.id = id;
-    this.diametro = diametro;
+    this.width = width;
+   this.height = height; 
     this.x = x;
     this.y = y;
     this.current = current;
@@ -140,7 +141,7 @@ public class coisa extends Rectangle {
   @Override
   public boolean contains(double x, double y) {
     double dx = x - this.x, dy = y - this.y;
-    return dx * dx + dy * dy <= (diametro / 2) * (diametro / 2);
+    return dx * dx + dy * dy <= (width / 2) * (height / 2);
   }
 
   @Override
@@ -166,7 +167,7 @@ public class coisa extends Rectangle {
     double nearY = Math.max(y, Math.min(this.y, y + h));
     double dx = nearX - this.x;
     double dy = nearY - this.y;
-    double r = diametro / 2.0;
+    double r = height / 2.0;
     return dx * dx + dy * dy <= r * r;
   }
 
@@ -182,13 +183,13 @@ public class coisa extends Rectangle {
 
   @Override
   public Rectangle2D getBounds2D() {
-    return new Rectangle2D.Double(this.x, this.y, diametro, diametro);
+    return new Rectangle2D.Double(this.x, this.y, width, height);
   }
 
   @Override
   public PathIterator getPathIterator(AffineTransform at) {
     // Delegate to Ellipse2D, it already knows how to iterate a circle
-    return new Ellipse2D.Double(this.x, this.y, diametro, diametro).getPathIterator(at);
+    return new Ellipse2D.Double(this.x, this.y, width, height).getPathIterator(at);
   }
 
   @Override

@@ -311,10 +311,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
         for (coisa c : lvl_map) {
             g.drawImage(
                     sheet,
-                    c.x - c.diametro / 2, // destination x on screen
-                    c.y - c.diametro / 2, // destination y on screen
-                    c.x + c.diametro / 2, // destination x2
-                    c.y + c.diametro / 2, // destination y2
+                    c.x - c.width / 2, // destination x on screen
+                    c.y - c.height / 2, // destination y on screen
+                    c.x + c.width / 2, // destination x2
+                    c.y + c.height / 2, // destination y2
                     anime * sprite_col, // source x on spritesheet
                     c.id * sprite_lin, // source y on spritesheet
                     anime * sprite_col + sprite_col, // source x2
