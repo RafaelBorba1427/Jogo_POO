@@ -14,24 +14,32 @@ public class coisa extends Rectangle {
   public boolean buff = false;
   public game current;
   int id;
-  public static final int Quant_IDs = 11;
+  public static final int Quant_IDs = 12;
   public static final int ID_PLATAFORMA_CONGELADA = 0;
   public static final int ID_PLATAFORMA = 1;
   public static final int ID_MESA = 2;
-  public static final int ID_BALDE = 3;
-  public static final int ID_ESTILINGUE = 4;
-  public static final int ID_BUFF_ICED = 5;
-  public static final int ID_BUFF_SPEED_BOOST = 6;
-  public static final int ID_BUFF_INTANGIBLE = 7;
-  public static final int ID_BUFF_TIME_TRAVEL = 8;
-  public static final int ID_BUFF_LAG = 9;
-  public static final int ID_BUFF_ELASTIC_COLLISION = 10;
+  public static final int ID_PAREDE = 3;
+
+  public static final int ID_BALDE = 4;
+  public static final int ID_ESTILINGUE = 5;
+  public static final int ID_BUFF_ICED = 6;
+  public static final int ID_BUFF_SPEED_BOOST = 7;
+  public static final int ID_BUFF_INTANGIBLE = 8;
+  public static final int ID_BUFF_TIME_TRAVEL = 9;
+  public static final int ID_BUFF_LAG = 10;
+  public static final int ID_BUFF_ELASTIC_COLLISION = 11;
   private int number = 1;
   // public JButton local;
   coisa self;
 
   public coisa(int x, int y, int diametro, int id, game current) {
-    super(x - diametro / 2, y - diametro / 2, diametro, diametro);
+    int width = diametro, height = diametro;
+    if (id == coisa.ID_PAREDE) {
+      width /= 2;
+    }
+
+    super(x - width / 2, y - height / 2, diametro, diametro);
+
     this.id = id;
     this.diametro = diametro;
     this.x = x;
@@ -79,16 +87,18 @@ public class coisa extends Rectangle {
 
   public void verify(ball bola) {
 
-    if ((intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
+    if ((intersects(bola.getX() - bola.getDiameter() / 2, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
         bola.getDiameter())
-        || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))
+        || contains(bola.getX(), bola.getY()))
         && (bateuX == false || bateuY == false)) {
-      bateuX = true;
-      bateuY = true;
+      bateu = true;
       bola.bounce(this);
+      bateuX = bola.bateuX;
+      bateuY = bola.bateuY;
       game.pointSys.addPotentialPoints(this);
 
       if (id == ID_BALDE) {
+
         game.pointSys.processPoints();
         game.pointSys.removePotentialPoints();
         if (game.pointSys.getPoints() < 1000 * number) {
@@ -100,6 +110,8 @@ public class coisa extends Rectangle {
         game.hitting = false;
         game.buffSys.EndBuffs();
         current.SetBallVelocity(0, 0);
+
+        System.out.println("Bye World");
         SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
 
         // in coisa verify():
@@ -114,6 +126,7 @@ public class coisa extends Rectangle {
         bola.getDiameter(),
         bola.getDiameter())
         || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))) {
+      bateu = false;
       if (bateuX) {
         bateuX = false;
       }

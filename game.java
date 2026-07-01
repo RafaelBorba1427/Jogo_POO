@@ -131,7 +131,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
         pointSys = new pointSystem();
-        lvl_map.add(new coisa(x_boundary - 40, y_boundary - 15, 40, 3, gaming));
+        lvl_map.add(new coisa(x_boundary - 40, y_boundary - 15, 40, coisa.ID_BALDE, gaming));
 
         timer = new Timer(16, e -> {
             if (fin != null)
@@ -227,9 +227,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
         Iterator<coisa> it = lvl_map.iterator();
         while (it.hasNext()) {
             coisa c = it.next();
+
             if (c instanceof buff b) {
                 b.verify(ball);
                 if (b.bateu == true) {
+                    System.out.println("Bateu no buff");
                     b.bateu = false;
                     collided.add(b);
                     it.remove();

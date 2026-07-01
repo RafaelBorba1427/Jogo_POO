@@ -13,17 +13,18 @@ class buff extends coisa {
   public void verify(ball bola) {
     // System.out.println("buff verify called buffSys=" + game.buffSys + "
     // buff_active=" + buff_active);
-    if ((intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
+    if (intersects(bola.getX() - bola.getDiameter() / 2, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
         bola.getDiameter())
-        || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))
-        && (bola.bateuX == false || bola.bateuY == false)) {
-
+        || contains(bola.getX(), bola.getY())
+            && (bateuX == false || bateuY == false)) {
+      System.out.println("Bateu 2");
       game.pointSys.addPotentialPoints(this);
       game.gaming.buffSys.ApplyBuff(buff_active, buffSystem.standard_buff_duration.get(buff_active));
       bateu = true;
 
     } else {
       game.add++;
+      bateu = false;
     }
 
   }

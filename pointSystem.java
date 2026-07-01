@@ -19,7 +19,7 @@ public class pointSystem extends JFrame {
         id_to_points.put(coisa.ID_BUFF_TIME_TRAVEL, 150L);
         id_to_points.put(coisa.ID_BUFF_LAG, -100L);
         id_to_points.put(coisa.ID_BUFF_ELASTIC_COLLISION, 50L);
-
+        id_to_points.put(coisa.ID_PAREDE, 50L);
         this.points = 0L;
         this.potential_points = 0L;
     }
