@@ -22,6 +22,7 @@ public class Items implements MouseListener {
 
   void dialog_init(int numero) {
     game.timer.stop();
+    System.out.println("Hello World");
     this.numero = numero; // reset here
     list.clear();
     current.ball.setPosition(10 + (int) current.ball.getDiameter(),
@@ -95,7 +96,7 @@ public class Items implements MouseListener {
   public void mouseClicked(MouseEvent e) {
     JButton clicked = (JButton) e.getSource();
     int chosen = list.get(clicked);
-    if (chosen > 4) {
+    if (chosen > 5) {
       current.list.add(new buff(0, 0, 40, current.buffSys.returnBuff(chosen), chosen, current));
 
     } else {

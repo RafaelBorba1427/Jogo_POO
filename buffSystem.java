@@ -23,9 +23,9 @@ public class buffSystem {
 
     public void ApplyBuff(buffs buff_applied, int duration_in_seconds) {
         // 90*game_tick ~= 1 segundo
-
         active_buffs.replace(buff_applied, duration_in_seconds * 90);
         any_buff_active = true;
+
         if (buff_applied == buffs.ICED)
             ICED_active = false;
         else if (buff_applied == buffs.SPEED_BOOST)
@@ -37,6 +37,7 @@ public class buffSystem {
     }
 
     static buffs returnBuff(int choice) {
+        System.out.print(choice + "is choice");
         return id_to_buffs.get(choice);
     }
 
@@ -80,20 +81,20 @@ public class buffSystem {
             active_buffs.put(buff, 0);
         }
         id_to_buffs = new HashMap<>(buffs.values().length);
-        id_to_buffs.put(coisa.ID_BUFF_ICED,buffs.ICED);
-        id_to_buffs.put(coisa.ID_BUFF_SPEED_BOOST,buffs.SPEED_BOOST);
-        id_to_buffs.put(coisa.ID_BUFF_INTANGIBLE,buffs.INTANGIBLE);
-        id_to_buffs.put(coisa.ID_BUFF_TIME_TRAVEL,buffs.TIME_TRAVEL);
-        id_to_buffs.put(coisa.ID_BUFF_LAG,buffs.LAG);
-        id_to_buffs.put(coisa.ID_BUFF_ELASTIC_COLLISION,buffs.ELASTIC_COLLISION);
+        id_to_buffs.put(coisa.ID_BUFF_ICED, buffs.ICED);
+        id_to_buffs.put(coisa.ID_BUFF_SPEED_BOOST, buffs.SPEED_BOOST);
+        id_to_buffs.put(coisa.ID_BUFF_INTANGIBLE, buffs.INTANGIBLE);
+        id_to_buffs.put(coisa.ID_BUFF_TIME_TRAVEL, buffs.TIME_TRAVEL);
+        id_to_buffs.put(coisa.ID_BUFF_LAG, buffs.LAG);
+        id_to_buffs.put(coisa.ID_BUFF_ELASTIC_COLLISION, buffs.ELASTIC_COLLISION);
 
         standard_buff_duration = new EnumMap<>(buffs.class);
         standard_buff_duration.put(buffs.ICED, 3);
-        standard_buff_duration.put(buffs.SPEED_BOOST,3);
-        standard_buff_duration.put(buffs.INTANGIBLE,2);
-        standard_buff_duration.put(buffs.TIME_TRAVEL,5);
-        standard_buff_duration.put(buffs.LAG,4);
-        standard_buff_duration.put(buffs.ELASTIC_COLLISION,8);
+        standard_buff_duration.put(buffs.SPEED_BOOST, 3);
+        standard_buff_duration.put(buffs.INTANGIBLE, 2);
+        standard_buff_duration.put(buffs.TIME_TRAVEL, 5);
+        standard_buff_duration.put(buffs.LAG, 4);
+        standard_buff_duration.put(buffs.ELASTIC_COLLISION, 8);
     }
 
     int BuffDuration(buffs buff) {
