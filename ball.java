@@ -133,27 +133,33 @@ public class ball extends Ellipse2D.Double {
     public void bounce(coisa coisa) {
         if (!enable_physics || game.buffSys.HasBuff(buffSystem.buffs.INTANGIBLE) || game.buffSys.LAG_active)//
             return;
-        if (coisa.y + coisa.height / 2 > this.y + diameter / 2
-                || coisa.y + coisa.height / 2 < this.y - diameter / 2
-                || coisa.y - coisa.height / 2 > this.y + diameter / 2
-                || coisa.y - coisa.height / 2 < this.y - diameter / 2) {
+        int divisor1 = 2, divisor2 = 2;
 
-            if (coisa.id != coisa.ID_MESA)
-                bateuY = true;
+        if (coisa.id == coisa.ID_MESA)
+            divisor1 = 3;
+        if (coisa.id == coisa.ID_PAREDE)
+            divisor2 = 3;
+        boolean overlapX = (this.x - diameter / 2 <= coisa.x + coisa.width / divisor2) &&
+                (this.x + diameter / 2 >= coisa.x - coisa.width / divisor2);
+        boolean overlapY = (this.y - diameter / 2 <= coisa.y + coisa.height / divisor1) &&
+                (this.y + diameter / 2 >= coisa.y - coisa.height / divisor1);
 
+        if (overlapX && overlapY) {
+            double penX = Math.min(this.x + diameter / 2 - (coisa.x - coisa.width / divisor2),
+                    (coisa.x + coisa.width / divisor2) - (this.x - diameter / 2));
+            double penY = Math.min(this.y + diameter / 2 - (coisa.y - coisa.height / divisor1),
+                    (coisa.y + coisa.height / divisor1) - (this.y - diameter / 2));
+
+            if (penX < penY && (coisa.id != coisa.ID_MESA)) {
+                // push ball out along X by penX, then flip X velocity
+                this.x += (this.x < coisa.x) ? -penX : penX;
+                bounceX();
+            } else {
+                this.y += (this.y < coisa.y) ? -penY : penY;
+                bounceY();
+
+            }
         }
-        if ((coisa.x + coisa.width / 2 > this.x + diameter / 2
-                || coisa.x + coisa.width / 2 < this.x - diameter / 2
-                || coisa.x - coisa.width / 2 > this.x + diameter / 2
-                || coisa.x - coisa.width / 2 < this.x - diameter / 2)) {
-
-            bateuX = true;
-        }
-
-        if (bateuY)
-            bounceX();
-        if (bateuX)
-            bounceY();
 
     }
 
