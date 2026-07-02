@@ -133,21 +133,32 @@ public class ball extends Ellipse2D.Double {
     public void bounce(coisa coisa) {
         if (!enable_physics || game.buffSys.HasBuff(buffSystem.buffs.INTANGIBLE) || game.buffSys.LAG_active)//
             return;
-        if (coisa.y + coisa.diametro / 2 >= this.y + diameter / 2
-                || coisa.y + coisa.diametro / 2 <= this.y - diameter / 2
-                || coisa.y - coisa.diametro / 2 >= this.y + diameter / 2
-                || coisa.y - coisa.diametro / 2 <= this.y - diameter / 2) {
+        int divisor1 = 2, divisor2 = 2;
 
-            if (coisa.id != coisa.ID_MESA)
+        if (coisa.id == coisa.ID_MESA)
+            divisor1 = 3;
+        if (coisa.id == coisa.ID_PAREDE)
+            divisor2 = 3;
+        boolean overlapX = (this.x - diameter / 2 <= coisa.x + coisa.width / divisor2) &&
+                (this.x + diameter / 2 >= coisa.x - coisa.width / divisor2);
+        boolean overlapY = (this.y - diameter / 2 <= coisa.y + coisa.height / divisor1) &&
+                (this.y + diameter / 2 >= coisa.y - coisa.height / divisor1);
+
+        if (overlapX && overlapY) {
+            double penX = Math.min(this.x + diameter / 2 - (coisa.x - coisa.width / divisor2),
+                    (coisa.x + coisa.width / divisor2) - (this.x - diameter / 2));
+            double penY = Math.min(this.y + diameter / 2 - (coisa.y - coisa.height / divisor1),
+                    (coisa.y + coisa.height / divisor1) - (this.y - diameter / 2));
+
+            if (penX < penY && (coisa.id != coisa.ID_MESA)) {
+                // push ball out along X by penX, then flip X velocity
+                this.x += (this.x < coisa.x) ? -penX : penX;
                 bounceX();
-            bateuY = true;
-        }
-        if (coisa.x + coisa.diametro / 2 >= this.x + diameter / 2
-                || coisa.x + coisa.diametro / 2 <= this.x - diameter / 2
-                || coisa.x - coisa.diametro / 2 >= this.x + diameter / 2
-                || coisa.x - coisa.diametro / 2 <= this.x - diameter / 2) {
-            bounceY();
-            bateuX = true;
+            } else {
+                this.y += (this.y < coisa.y) ? -penY : penY;
+                bounceY();
+
+            }
         }
 
     }
@@ -156,7 +167,7 @@ public class ball extends Ellipse2D.Double {
         if (!enable_physics)
             return;
         if (x <= 0) {
-            x = 0;
+            x = 1;
         } else if (x >= game.x_boundary - diameter) {
             x = game.x_boundary - diameter;
         }
@@ -177,7 +188,7 @@ public class ball extends Ellipse2D.Double {
             return;
 
         if (y <= 0) {
-            y = 0;
+            y = 1;
         } else if (y >= game.y_boundary - diameter) {
             y = game.y_boundary - diameter;
         }
