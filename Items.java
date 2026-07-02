@@ -22,6 +22,8 @@ public class Items implements MouseListener {
 
   void dialog_init(int numero) {
     game.timer.stop();
+    //game.healthSys.AddMaxHearts(1);
+
     System.out.println("Hello World");
     this.numero = numero; // reset here
     list.clear();
