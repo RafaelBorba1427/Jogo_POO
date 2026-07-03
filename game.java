@@ -37,13 +37,13 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static boolean game_start = false;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
-
+    public int end_selected = 0;
     private Image floorImage;
     static end fin;
     static Queue<coisa> list = new LinkedList<>();
 
     public enum GameModes {
-        PLAY, SHOOT, EDIT, SETPOSITION, ITEM_PANEL;
+        PLAY, SHOOT, EDIT, SETPOSITION, ITEM_PANEL, END, CHOOSE;
     }
 
     static final double gravity = 0.5;
