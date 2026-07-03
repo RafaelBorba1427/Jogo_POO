@@ -37,20 +37,16 @@ public class ball extends Ellipse2D.Double {
     }
 
     public void update() {
-        if (enable_physics) {
-            x += x_vel;
-            y += y_vel;
-            if (!game.buffSys.LAG_active) {
-                paint_x = x;
-                paint_y = y;
-            }
-        }
 
-        if (y >= game.y_boundary - diameter) {
-            is_touching_ground = true;
-        } else {
-            is_touching_ground = false;
+        System.out.println(y);
+        x += x_vel;
+        y += y_vel;
+
+        if (!game.buffSys.LAG_active) {
+            paint_x = x;
+            paint_y = y;
         }
+        // gravity
 
         if (!is_touching_ground && !(y_vel == 0 && game.hitting) && !game.buffSys.LAG_active) {
             y_vel += game.gravity;
@@ -122,6 +118,41 @@ public class ball extends Ellipse2D.Double {
             this.x = time_travel_x;
             this.y = time_travel_y;
             game.buffSys.TIME_TRAVEL_active = false;
+        }
+
+        if (Math.abs(x_vel) < min_X_speed) {
+            x_vel = 0;
+        }
+        // floor collision
+        if (y >= game.y_boundary - diameter) {
+            y = game.y_boundary - diameter;
+
+            if (Math.abs(y_vel) < min_Y_speed) {
+                y_vel = 0;
+            } else {
+                y_vel = -y_vel * bounce_factor;
+            }
+            if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION))
+                x_vel *= friction;
+        }
+
+        // ceiling collision
+        if (y <= 0) {
+            y = 0;
+
+            y_vel = -y_vel * bounce_factor;
+        }
+
+        // left wall collision
+        if (x <= 0) {
+            x = 0;
+            x_vel = -x_vel * bounce_factor;
+        }
+
+        // right wall collision
+        if (x >= game.x_boundary - diameter) {
+            x = game.x_boundary - diameter;
+            x_vel = -x_vel * bounce_factor;
         }
 
         if (Math.abs(x_vel) < min_X_speed) {

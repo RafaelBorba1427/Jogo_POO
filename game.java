@@ -49,7 +49,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static final double gravity = 0.5;
 
     static final int x_boundary = 900;
-    static final int y_boundary = 900;
+    static final int y_boundary = 700;
 
     ball ball = new ball(400, 200, 20);
 
@@ -128,15 +128,16 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
-        
+
         dialog = new Items(gaming, 2);
         buffSys = new buffSystem();
         healthSys = new healthSystem(5, true);
         gaming.add(healthSys); // Adds health as a panel on gaming
         pointSys = new pointSystem();
-        
+
         lvl = new Level();
-        lvl_map.add(new coisa(x_boundary - 40, y_boundary - 15, 40, coisa.ID_BALDE, gaming));
+        lvl_map.add(new coisa(x_boundary - 40 * (x_boundary / 800), y_boundary - 15 * (y_boundary / 600), 40,
+                coisa.ID_BALDE, gaming));
 
         frame.pack();
         w_frame = (int) Math.ceil(frame.getWidth() / 4.0);
@@ -199,14 +200,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
     boolean trickshot_in_progress = false;
 
     public void update() {
-
-        if ((ball.getY() >= y_boundary - ball.getDiameter() || ball.getY() <= 0)) {
-            ball.bounceY();
-        }
-        if ((ball.getX() <= 0 || ball.getX() >= x_boundary - ball.getDiameter())) {
-            ball.bounceX();
-        }
-
+        if (ball.enable_physics)
+            ball.update();
         if (mode == GameModes.EDIT) {
             ball.update();
 
@@ -258,8 +253,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
             hitting = false;
         }
         add = 0;
-
-        ball.update();
 
         // Check if the ball has stopped moving after a trick shot
         // False flags ball as dead on goal hit and on the hand debuff
