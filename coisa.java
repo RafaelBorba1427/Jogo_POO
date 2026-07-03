@@ -106,11 +106,15 @@ public class coisa extends Rectangle {
           current.mode = game.GameModes.END;
           return;
         }
-
+          SwingUtilities.invokeLater(() -> current.createEnd());
+          current.mode = game.GameModes.END;
+          return;
+        }
         number += 1.5;
         game.hitting = false;
         game.buffSys.EndBuffs();
         current.SetBallVelocity(0, 0);
+        game.lvl.unblockBuff(9);
 
         System.out.println("Bye World");
 

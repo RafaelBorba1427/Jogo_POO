@@ -12,7 +12,7 @@ import javax.imageio.ImageIO;
 import java.io.File;
 
 public class healthSystem extends JPanel {
-    private int max_hp;
+     int max_hp;
     private int current_hp;
 
     private boolean is_dead; // A bit redundant, but might be useful
@@ -41,6 +41,16 @@ public class healthSystem extends JPanel {
         animation_timer.scheduleAtFixedRate(update_frame, 0, 100); // 10 FPS
     }
 
+    public void AddMaxHearts(int hearts){
+        
+        for (int i = max_hp; i < max_hp + hearts; i++) {
+            hp_sprites.add(new heart(i * 70, 10)); // Adjust position as needed
+            hp_sprites.get(i).playDamageAnimation();
+        }
+        max_hp += hearts;
+    }
+
+
     // returns true if the player dies, false otherwise
     public boolean takeDamageAndCheckDeath() {
         if (current_hp > 0) {
@@ -49,8 +59,6 @@ public class healthSystem extends JPanel {
             hp_sprites.get(current_hp).playDamageAnimation(); // Assuming you have a method to play the damage animation
                                                               // on the heart sprite
         }
-
-        System.out.println("Current HP: " + current_hp); // Debugging output
 
         if (current_hp <= 0) {
             this.is_dead = true;
