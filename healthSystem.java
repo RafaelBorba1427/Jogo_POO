@@ -4,8 +4,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.math.*;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -21,10 +19,13 @@ public class healthSystem extends JPanel {
 
     private ArrayList<heart> hp_sprites = new ArrayList<heart>();
 
-    public healthSystem(int max_hp) {
+    public healthSystem(int max_hp, boolean is_visible) {
         this.max_hp = max_hp;
         this.current_hp = max_hp;
         this.is_dead = false;
+        setVisible(is_visible);
+        setOpaque(false);
+        setPreferredSize(new Dimension(800, 100)); // Set preferred size of the panel
 
         for (int i = 0; i < max_hp; i++) {
             hp_sprites.add(new heart(i * 70, 10)); // Adjust position as needed
@@ -92,38 +93,51 @@ public class healthSystem extends JPanel {
 
     // TO DO
     // For testing purposes, delete later
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Health System Test");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1000, 1000);
-        healthSystem health = new healthSystem(5);
-        frame.add(health);
-
-        healthSystemTest test = new healthSystemTest();
-        frame.addKeyListener(test);
-
-        frame.setVisible(true);
-        frame.setFocusable(true);
-
-        while (true) {
-            if (test.input == 'a') {
-                health.takeDamageAndCheckDeath();
-            } else if (test.input == 'd') {
-                health.heal();
-            } else if (test.input == 'q') {
-                health.setVisibile(false);
-                System.out.println("Health system hidden!"); // Debugging output
-            } else if (test.input == 'e') {
-                health.setVisibile(true);
-                System.out.println("Health system shown!"); // Debugging output
-            }
-
-            test.input = '\0'; // Reset input after processing
-
-            System.out.println("Current HP: " + health.getCurrentHp() + "/" + health.getMaxHp() + " | Is Dead: "
-                    + health.isDead()); // Debugging output
-        }
-    }
+    /*
+     * public static void main(String[] args) {
+     * JFrame frame = new JFrame("Health System Test");
+     * frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+     * frame.setSize(1000, 1000);
+     * healthSystem health = new healthSystem(5, true);
+     * frame.add(health);
+     * 
+     * healthSystemTest test = new healthSystemTest();
+     * frame.addKeyListener(test);
+     * 
+     * frame.setVisible(true);
+     * frame.setFocusable(true);
+     * 
+     * while (true) {
+     * if (test.input == 'a') {
+     * health.takeDamageAndCheckDeath();
+     * } else if (test.input == 'd') {
+     * health.heal();
+     * <<<<<<< HEAD
+     * }
+     * else if(test.input == 'q'){
+     * health.setVisible(false);
+     * System.out.println("Health system hidden!"); // Debugging output
+     * }
+     * else if(test.input == 'e'){
+     * health.setVisible(true);
+     * =======
+     * } else if (test.input == 'q') {
+     * health.setVisibile(false);
+     * System.out.println("Health system hidden!"); // Debugging output
+     * } else if (test.input == 'e') {
+     * health.setVisibile(true);
+     * >>>>>>> guiEndCycle
+     * System.out.println("Health system shown!"); // Debugging output
+     * }
+     * 
+     * test.input = '\0'; // Reset input after processing
+     * 
+     * System.out.println("Current HP: " + health.getCurrentHp() + "/" +
+     * health.getMaxHp() + " | Is Dead: "
+     * + health.isDead()); // Debugging output
+     * }
+     * }
+     */
 }
 
 class heart {
@@ -181,33 +195,36 @@ class heart {
 
 // TO DO
 // Delete later
-class healthSystemTest implements KeyListener {
-    public char input;
-
-    public void keyPressed(KeyEvent e) {
-        if (e.getKeyChar() == 'a') {
-            input = 'a';
-            System.out.println("Damage taken!"); // Debugging output
-        }
-        if (e.getKeyChar() == 'd') {
-            input = 'd';
-            System.out.println("Healed!"); // Debugging output
-        }
-        if (e.getKeyChar() == 'q') {
-            input = 'q';
-            System.out.println("Health system will be hidden!"); // Debugging output
-        }
-        if (e.getKeyChar() == 'e') {
-            input = 'e';
-            System.out.println("Health system will be shown!"); // Debugging output
-        }
-    }
-
-    public void keyReleased(KeyEvent e) {
-        // Not needed for this test
-    }
-
-    public void keyTyped(KeyEvent e) {
-        // Not needed for this test
-    }
-}
+/*
+ * class healthSystemTest implements KeyListener {
+ * public char input;
+ * 
+ * public void keyPressed(KeyEvent e) {
+ * if (e.getKeyChar() == 'a') {
+ * input = 'a';
+ * System.out.println("Damage taken!"); // Debugging output
+ * }
+ * if (e.getKeyChar() == 'd') {
+ * input = 'd';
+ * System.out.println("Healed!"); // Debugging output
+ * }
+ * if (e.getKeyChar() == 'q') {
+ * input = 'q';
+ * System.out.println("Health system will be hidden!"); // Debugging output
+ * }
+ * if (e.getKeyChar() == 'e') {
+ * input = 'e';
+ * System.out.println("Health system will be shown!"); // Debugging output
+ * }
+ * }
+ * 
+ * public void keyReleased(KeyEvent e) {
+ * // Not needed for this test
+ * }
+ * 
+ * public void keyTyped(KeyEvent e) {
+ * // Not needed for this test
+ * }
+ * }
+ * <<<<<<< HEAD
+ */
