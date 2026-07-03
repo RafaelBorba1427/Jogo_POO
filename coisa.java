@@ -83,68 +83,52 @@ public class coisa extends Rectangle {
     return id;
   }
 
-  public void verify(ball bola) {
-
-    if ((intersects(bola.getX() - bola.getDiameter() / 2, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
-        bola.getDiameter())
-        || contains(bola.getX(), bola.getY()))
-        && (bateuX == false || bateuY == false)) {
-      bateu = true;
-      bola.bounce(this);
-      bateuX = bola.bateuX;
-      bateuY = bola.bateuY;
-      game.pointSys.addPotentialPoints(this);
-
-      if (id == ID_BALDE) {
-
-        game.pointSys.processPoints();
-        game.pointSys.removePotentialPoints();
-        current.mode = game.GameModes.EDIT;
-        if (game.pointSys.getPoints() < 1000 * number) {
-
-          SwingUtilities.invokeLater(() -> current.createEnd());
-          current.mode = game.GameModes.END;
-          return;
-        }
-
-          SwingUtilities.invokeLater(() -> current.createEnd());
-          current.mode = game.GameModes.END;
-          return;
-        }
-        number += 1.5;
-        game.hitting = false;
-        game.buffSys.EndBuffs();
-        current.SetBallVelocity(0, 0);
-        game.lvl.unblockBuff(9);
-
-        System.out.println("Bye World");
-
-        if (current.mode == game.GameModes.EDIT)
-          SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
-
-        // in coisa verify():
-
+public void verify(ball bola) {
+  if ((intersects(bola.getX() - bola.getDiameter() / 2, bola.getY() - bola.getDiameter() / 2, bola.getDiameter(),
+      bola.getDiameter())
+      || contains(bola.getX(), bola.getY()))
+      && (bateuX == false || bateuY == false)) {
+    bateu = true;
+    bola.bounce(this);
+    bateuX = bola.bateuX;
+    bateuY = bola.bateuY;
+    game.pointSys.addPotentialPoints(this);
+    if (id == ID_BALDE) {
+      game.pointSys.processPoints();
+      game.pointSys.removePotentialPoints();
+      current.mode = game.GameModes.EDIT;
+      if (game.pointSys.getPoints() < 1000 * number) {
+        SwingUtilities.invokeLater(() -> current.createEnd());
+        current.mode = game.GameModes.END;
         return;
-      } else if (id == ID_PLATAFORMA_CONGELADA) {
-        game.gaming.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY, 1);
       }
-
-      game.hitting = true;
-    } else if (!(intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2,
-        bola.getDiameter(),
-        bola.getDiameter())
-        || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))) {
-      bateu = false;
-      if (bateuX) {
-        bateuX = false;
-      }
-      if (bateuY) {
-        bateuY = false;
-      }
-      game.add++;
+      number += 1.5;
+      game.hitting = false;
+      game.buffSys.EndBuffs();
+      current.SetBallVelocity(0, 0);
+      game.lvl.unblockBuff(9);
+      System.out.println("Bye World");
+      if (current.mode == game.GameModes.EDIT)
+        SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
+      // in coisa verify():
+      return;
+    } else if (id == ID_PLATAFORMA_CONGELADA) {
+      game.gaming.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY, 1);
     }
+    game.hitting = true;
+  } else if (!(intersects(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2,
+      bola.getDiameter(),
+      bola.getDiameter()) || contains(bola.getX() - bola.getDiameter() / 2.0, bola.getY() - bola.getDiameter() / 2.0))) {
+    bateu = false;
+    if (bateuX) {
+      bateuX = false;
+    }
+    if (bateuY) {
+      bateuY = false;
+    }
+    game.add++;
   }
-
+}
   @Override
   public boolean contains(double x, double y) {
     double dx = x - this.x, dy = y - this.y;
