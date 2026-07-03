@@ -102,6 +102,7 @@ public class inicial extends JPanel implements MouseListener, ActionListener {
       game_sys.frame.add(game_sys.gaming);
       game.game_start = true;
       game_sys.frame.remove(this);
+      game_sys.frame.pack();
       game_sys.frame.revalidate(); // recalculates layout
       game_sys.frame.repaint(); // redraws
     }

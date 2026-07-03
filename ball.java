@@ -166,20 +166,28 @@ public class ball extends Ellipse2D.Double {
     public void bounceX() {
         if (!enable_physics)
             return;
-        if (x <= 0) {
-            x = 1;
-        } else if (x >= game.x_boundary - diameter) {
+
+        boolean hitLeft = x <= 0;
+        boolean hitRight = x >= game.x_boundary - diameter;
+
+        if (hitLeft) {
+            x = 0;
+        } else if (hitRight) {
             x = game.x_boundary - diameter;
         }
 
         if (Math.abs(x_vel) < min_X_speed) {
             x_vel = 0;
         }
+
         if (!game.buffSys.LAG_active) {
-            if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
-                x_vel *= bounce_factor;
-            } // Apply damping
-            x_vel = -x_vel;
+            boolean movingIntoWall = (hitLeft && x_vel < 0) || (hitRight && x_vel > 0);
+            if (movingIntoWall) {
+                if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
+                    x_vel *= bounce_factor;
+                }
+                x_vel = -x_vel;
+            }
         }
     }
 
@@ -187,9 +195,12 @@ public class ball extends Ellipse2D.Double {
         if (!enable_physics)
             return;
 
-        if (y <= 0) {
-            y = 1;
-        } else if (y >= game.y_boundary - diameter) {
+        boolean hitTop = y <= 0;
+        boolean hitBottom = y >= game.y_boundary - diameter;
+
+        if (hitTop) {
+            y = 0;
+        } else if (hitBottom) {
             y = game.y_boundary - diameter;
         }
 
@@ -198,10 +209,13 @@ public class ball extends Ellipse2D.Double {
         }
 
         if (!game.buffSys.LAG_active) {
-            if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
-                y_vel *= bounce_factor;
-            } // Apply damping
-            y_vel = -y_vel;
+            boolean movingIntoWall = (hitTop && y_vel < 0) || (hitBottom && y_vel > 0);
+            if (movingIntoWall) {
+                if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
+                    y_vel *= bounce_factor;
+                }
+                y_vel = -y_vel;
+            }
         }
     }
 
