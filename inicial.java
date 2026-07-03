@@ -5,10 +5,8 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.math.*;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import javax.swing.JPanel;
+
 import javax.imageio.ImageIO;
 import java.io.File;
 
@@ -22,7 +20,7 @@ public class inicial extends JPanel implements MouseListener, ActionListener {
   inicial(game game_sys) {
     setLayout(new BorderLayout());
     this.game_sys = game_sys;
-    setPreferredSize(new Dimension(800, 600));
+    setPreferredSize(new Dimension(game.x_boundary,game.y_boundary));
 
     img = new ImageIcon("inicial_screen.png").getImage();
     try {
@@ -88,7 +86,7 @@ public class inicial extends JPanel implements MouseListener, ActionListener {
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    g.drawImage(img, 0, 0, game_sys.frame.getWidth(), game_sys.frame.getHeight(), this);
+    g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
   }
 
   @Override
@@ -104,6 +102,7 @@ public class inicial extends JPanel implements MouseListener, ActionListener {
       game_sys.frame.remove(this);
       game_sys.frame.revalidate(); // recalculates layout
       game_sys.frame.repaint(); // redraws
+      game_sys.frame.pack();
     }
   }
 

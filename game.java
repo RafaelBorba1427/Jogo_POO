@@ -48,8 +48,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     static final double gravity = 0.5;
 
-    static final int x_boundary = 800;
-    static final int y_boundary = 600;
+    static final int x_boundary = 900;
+    static final int y_boundary = 900;
 
     ball ball = new ball(400, 200, 20);
 
@@ -91,7 +91,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         addMouseListener(this);
         addKeyListener(this);
         setBackground(Color.BLACK);
-        setPreferredSize(new Dimension(800, 600));
+        setPreferredSize(new Dimension(x_boundary, y_boundary));
 
         setFocusable(true);
         for (int i = 0; i < 4; i++) {
@@ -122,23 +122,25 @@ public class game extends JPanel implements MouseListener, KeyListener {
         frame.setVisible(true);
         SwingUtilities.invokeLater(() -> gaming.requestFocusInWindow());
 
-        w_frame = (int) Math.ceil(frame.getWidth() / 4.0);
-        h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
         gaming.frame = frame;
         menu = new inicial(gaming);
         frame.add(menu);
-        buffSys = new buffSystem();
-        dialog = new Items(gaming, 2);
-        frame.pack();
+
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
         
+        dialog = new Items(gaming, 2);
+        buffSys = new buffSystem();
         healthSys = new healthSystem(5, true);
         gaming.add(healthSys); // Adds health as a panel on gaming
-        
         pointSys = new pointSystem();
+        
         lvl = new Level();
         lvl_map.add(new coisa(x_boundary - 40, y_boundary - 15, 40, coisa.ID_BALDE, gaming));
+
+        frame.pack();
+        w_frame = (int) Math.ceil(frame.getWidth() / 4.0);
+        h_frame = (int) Math.ceil(frame.getHeight() / 4.0);
 
         timer = new Timer(16, e -> {
             if (fin != null)

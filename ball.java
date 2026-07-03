@@ -167,7 +167,7 @@ public class ball extends Ellipse2D.Double {
         if (!enable_physics)
             return;
         if (x <= 0) {
-            x = 1;
+            x = 0;
         } else if (x >= game.x_boundary - diameter) {
             x = game.x_boundary - diameter;
         }
@@ -188,7 +188,7 @@ public class ball extends Ellipse2D.Double {
             return;
 
         if (y <= 0) {
-            y = 1;
+            y = 0;
         } else if (y >= game.y_boundary - diameter) {
             y = game.y_boundary - diameter;
         }
