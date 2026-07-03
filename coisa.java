@@ -99,9 +99,11 @@ public class coisa extends Rectangle {
 
         game.pointSys.processPoints();
         game.pointSys.removePotentialPoints();
+        current.mode = game.GameModes.EDIT;
         if (game.pointSys.getPoints() < 1000 * number) {
-          SwingUtilities.invokeLater(() -> current.createEnd());
 
+          SwingUtilities.invokeLater(() -> current.createEnd());
+          current.mode = game.GameModes.END;
           return;
         }
         number += 1.5;
@@ -110,7 +112,9 @@ public class coisa extends Rectangle {
         current.SetBallVelocity(0, 0);
 
         System.out.println("Bye World");
-        SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
+
+        if (current.mode == game.GameModes.EDIT)
+          SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
 
         // in coisa verify():
 
