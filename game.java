@@ -48,17 +48,20 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     static double gravity;
 
-    static int x_boundary = 1000;
-    static int y_boundary = 800;
+    static int x_boundary = 800;
+    static int y_boundary = 600;
     static double rescale_factor_x; 
     static double rescale_factor_y;
     static double rescale_factor_average;
+
+    static String selected_resolution = "800x600";
 
     static{
         updateRescaleFactors();
     }
 
     ball ball = new ball(rescaleX(100), rescaleY(50), rescaleByAverage(20));
+    static Color ball_color = Color.WHITE;
 
     static volatile ArrayList<coisa> lvl_map = new ArrayList<>();
     static volatile Queue<buff> collided = new LinkedList<>();
@@ -86,6 +89,21 @@ public class game extends JPanel implements MouseListener, KeyListener {
         rescale_factor_y = y_boundary/600.0;
         rescale_factor_average = (rescale_factor_x + rescale_factor_y)/2.0;
         gravity = 0.5*rescale_factor_y;
+    }
+
+    static void updateResolution(){ //"800x600", "1140x720", "1280x800" ,"1440x900", "1920x1080"
+        if(selected_resolution == "800x600"){
+            x_boundary = 800; y_boundary = 600;
+        }else if(selected_resolution == "1140x720"){
+            x_boundary = 1140; y_boundary = 720;
+        }else if(selected_resolution == "1280x800"){
+            x_boundary = 1280; y_boundary = 800;
+        }else if(selected_resolution == "1440x900"){
+            x_boundary = 1440; y_boundary = 900;
+        }else{
+            x_boundary = 1920; y_boundary = 1080;
+        }
+        
     }
 
     public boolean createEnd() {
@@ -144,14 +162,16 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
-        frame.setLocationRelativeTo(null);
+
         frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
         SwingUtilities.invokeLater(() -> gaming.requestFocusInWindow());
 
         gaming.frame = frame;
         menu = new inicial(gaming);
         frame.add(menu);
-
+        frame.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width/4, Toolkit.getDefaultToolkit().getScreenSize().height/8);
+        
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
 
@@ -344,7 +364,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         } else if (mode == GameModes.SHOOT) {
             offscreenG.setColor(Color.RED);
         } else {
-            offscreenG.setColor(Color.WHITE);
+            offscreenG.setColor(ball_color);
         }
 
         offscreenG.fillOval(
