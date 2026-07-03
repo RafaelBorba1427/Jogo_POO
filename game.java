@@ -48,8 +48,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     static final double gravity = 0.5;
 
-    static final int x_boundary = 900;
-    static final int y_boundary = 700;
+    static final int x_boundary = 1200;
+    static final int y_boundary = 900;
 
     ball ball = new ball(400, 200, 20);
 
@@ -282,8 +282,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         int x_diff = x_input - ((int) ball.getX());
         int y_diff = y_input - ((int) ball.getY());
 
-        ball.x_vel += Math.min(x_diff * 0.1, 15);
-        ball.y_vel += Math.min(y_diff * 0.1, 15);
+        ball.x_vel += (x_input > 0)? Math.min(x_diff * 0.1, 2) : Math.max(x_diff * 0.1, -2);
+        ball.y_vel += (y_input > 0)? Math.min(y_diff * 0.1, 2) : Math.max(y_diff * 0.1, -2);
 
         x_input = 0;
         y_input = 0;

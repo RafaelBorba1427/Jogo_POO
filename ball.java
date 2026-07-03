@@ -17,7 +17,6 @@ public class ball extends Ellipse2D.Double {
             time_travel_x, time_travel_y;
     double x_vel, y_vel;
 
-    boolean is_touching_ground = false;
     boolean enable_physics = true;
 
     public ball(int x, int y, int diameter) {
@@ -48,23 +47,9 @@ public class ball extends Ellipse2D.Double {
         }
         // gravity
 
-        if (!is_touching_ground && !(y_vel == 0 && game.hitting) && !game.buffSys.LAG_active) {
+        if (!(y_vel == 0 && game.hitting) && !game.buffSys.LAG_active) {
             y_vel += game.gravity;
-        } else {
-
-            if (!game.buffSys.HasBuff(buffSystem.buffs.SLIPPERY)) {
-
-                x_vel *= friction;
-                // We only apply friction when the ball is grounded
-                // also friction is only applied if it does not have the SLIPPERY modifier
-                // Whenever the ball bounces, it stays grounded for a frame, reducing speed a
-                // bit
-                // Applying friction all the time makes the ball slow down too much
-            } else if (game.buffSys.HasBuff(buffSystem.buffs.MASSIVE_DRAG)) {
-                x_vel *= friction * 0.96; // 0.95 velocity multiplier every tick
-            }
-
-        }
+        } 
 
         if (game.buffSys.HasBuff(buffSystem.buffs.ICED)) {
             if (!game.buffSys.ICED_active) {
@@ -86,7 +71,9 @@ public class ball extends Ellipse2D.Double {
         else {
             if (game.buffSys.HasBuff(buffSystem.buffs.SPEED_BOOST)) {
                 if (!game.buffSys.speed_boost_active) {
+                    if(x_vel != 0)
                     x_vel += (x_vel > 0) ? 12 : -12;
+                    if(y_vel != 0)
                     y_vel += (y_vel > 0) ? 15 : -15;
                     game.buffSys.speed_boost_active = true;
                 }
@@ -123,36 +110,62 @@ public class ball extends Ellipse2D.Double {
         if (Math.abs(x_vel) < min_X_speed) {
             x_vel = 0;
         }
+        
         // floor collision
         if (y >= game.y_boundary - diameter) {
             y = game.y_boundary - diameter;
 
             if (Math.abs(y_vel) < min_Y_speed) {
                 y_vel = 0;
-            } else {
+            } else if(game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)){
+                y_vel = -(y_vel - game.gravity);
+            } else{
                 y_vel = -y_vel * bounce_factor;
             }
-            if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION))
-                x_vel *= friction;
+
+            if (!game.buffSys.HasBuff(buffSystem.buffs.SLIPPERY) && !game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
+                if (game.buffSys.HasBuff(buffSystem.buffs.MASSIVE_DRAG)) {
+                    x_vel *= friction * 0.96; // 0.95 velocity multiplier every tick
+                }
+                else 
+                 x_vel *= friction;
+                // We only apply friction when the ball is grounded
+                // also friction is only applied if it does not have the SLIPPERY modifier
+                // Whenever the ball bounces, it stays grounded for a frame, reducing speed a
+                // bit
+                // Applying friction all the time makes the ball slow down too much
+            }  
         }
 
         // ceiling collision
         if (y <= 0) {
             y = 0;
 
-            y_vel = -y_vel * bounce_factor;
+             if(game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)){
+                y_vel = -(y_vel + game.gravity);
+            } else{
+                y_vel = -y_vel * bounce_factor;
+            }
         }
 
         // left wall collision
         if (x <= 0) {
             x = 0;
-            x_vel = -x_vel * bounce_factor;
+            if(game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)){
+                x_vel = -x_vel;
+            } else{
+                x_vel = -x_vel * bounce_factor;
+            }
         }
 
         // right wall collision
         if (x >= game.x_boundary - diameter) {
             x = game.x_boundary - diameter;
-            x_vel = -x_vel * bounce_factor;
+            if(game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)){
+                x_vel = -x_vel;
+            } else{
+                x_vel = -x_vel * bounce_factor;
+            }
         }
 
         if (Math.abs(x_vel) < min_X_speed) {
@@ -229,10 +242,11 @@ public class ball extends Ellipse2D.Double {
         }
 
         if (!game.buffSys.LAG_active) {
-            if (!game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
-                y_vel *= bounce_factor;
-            } // Apply damping
-            y_vel = -y_vel;
+            if(game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)){
+                y_vel = -(y_vel - game.gravity);
+            } else{
+                y_vel = -y_vel * bounce_factor;
+            }
         }
     }
 
