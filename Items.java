@@ -99,10 +99,10 @@ public class Items implements MouseListener {
     JButton clicked = (JButton) e.getSource();
     int chosen = list.get(clicked);
     if (chosen > 5) {
-      current.list.add(new buff(0, 0, 40, current.buffSys.returnBuff(chosen), chosen, current));
+      current.list.add(new buff(0, 0, game.rescaleByAverage(40), current.buffSys.returnBuff(chosen), chosen, current));
 
     } else {
-      current.list.add(new coisa(0, 0, 40, chosen, current));
+      current.list.add(new coisa(0, 0, game.rescaleByAverage(40), chosen, current));
 
     }
     panel.remove(clicked);

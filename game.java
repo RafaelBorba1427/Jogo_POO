@@ -46,12 +46,19 @@ public class game extends JPanel implements MouseListener, KeyListener {
         PLAY, SHOOT, EDIT, SETPOSITION, ITEM_PANEL;
     }
 
-    static final double gravity = 0.5;
+    static double gravity;
 
-    static final int x_boundary = 1200;
-    static final int y_boundary = 900;
+    static int x_boundary = 1000;
+    static int y_boundary = 800;
+    static double rescale_factor_x; 
+    static double rescale_factor_y;
+    static double rescale_factor_average;
 
-    ball ball = new ball(400, 200, 20);
+    static{
+        updateRescaleFactors();
+    }
+
+    ball ball = new ball(rescaleX(100), rescaleY(50), rescaleByAverage(20));
 
     static volatile ArrayList<coisa> lvl_map = new ArrayList<>();
     static volatile Queue<buff> collided = new LinkedList<>();
@@ -61,6 +68,25 @@ public class game extends JPanel implements MouseListener, KeyListener {
     private volatile int y_input;
     private volatile boolean mouse_clicked;
     static inicial menu;
+
+    static int rescaleX(int x){
+        return (int) (x*rescale_factor_x);
+    }
+
+    static int rescaleY(int y){
+        return (int) (y*rescale_factor_y);
+    }
+
+    static int rescaleByAverage(int n){
+        return (int) (n*rescale_factor_average);
+    }
+
+    static void updateRescaleFactors(){
+        rescale_factor_x = x_boundary/800.0;
+        rescale_factor_y = y_boundary/600.0;
+        rescale_factor_average = (rescale_factor_x + rescale_factor_y)/2.0;
+        gravity = 0.5*rescale_factor_y;
+    }
 
     public boolean createEnd() {
         if (fin != null) {
@@ -113,7 +139,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     public static void main(String[] args) {
         gaming = new game("Frat_background.png");
         frame = new JFrame("Ball Game");
-
+        updateRescaleFactors();
         // frame.add(gaming);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -136,7 +162,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         pointSys = new pointSystem();
 
         lvl = new Level();
-        lvl_map.add(new coisa(x_boundary - 40 * (x_boundary / 800), y_boundary - 15 * (y_boundary / 600), 40,
+        lvl_map.add(new coisa(x_boundary - rescaleX(40), y_boundary - rescaleY(15), rescaleByAverage(40),
                 coisa.ID_BALDE, gaming));
 
         frame.pack();
@@ -279,11 +305,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
     }
 
     public void applyMouseInput() {
+        
         int x_diff = x_input - ((int) ball.getX());
         int y_diff = y_input - ((int) ball.getY());
-
-        ball.x_vel += (x_input > 0)? Math.min(x_diff * 0.1, 2) : Math.max(x_diff * 0.1, -2);
-        ball.y_vel += (y_input > 0)? Math.min(y_diff * 0.1, 2) : Math.max(y_diff * 0.1, -2);
+        ball.x_vel += (x_diff > 0)? Math.min(x_diff * 0.1, rescaleX(15)) : Math.max(x_diff * 0.1, -rescaleX(15));
+        ball.y_vel += (y_diff > 0)? Math.min(y_diff * 0.1, rescaleY(15)) : Math.max(y_diff * 0.1, -rescaleY(22));
 
         x_input = 0;
         y_input = 0;
@@ -350,10 +376,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 RenderingHints.KEY_ANTIALIASING,
                 RenderingHints.VALUE_ANTIALIAS_ON);
 
-        int hudWidth = 220;
-        int hudHeight = 80;
-        int hudX = getWidth() - hudWidth - 20;
-        int hudY = 20;
+        int hudWidth = rescaleX(220);
+        int hudHeight = rescaleY(80);
+        int hudX = getWidth() - hudWidth - rescaleX(20);
+        int hudY = rescaleY(20);
 
         // Semi-transparent background
         g2.setColor(new Color(170, 8, 0, 65));
@@ -363,14 +389,14 @@ public class game extends JPanel implements MouseListener, KeyListener {
         g2.setColor(new Color(173, 133, 0));
 
         // Total points
-        g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, 22));
+        g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, rescaleY(22)));
         g2.drawString(
                 "Total Points: " + pointSys.getPoints(),
                 hudX + 15,
                 hudY + 30);
 
         // Potential points
-        g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, 18));
+        g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, rescaleY(18)));
         g2.drawString(
                 "Points: " + pointSys.getPotentialPoints(),
                 hudX + 15,

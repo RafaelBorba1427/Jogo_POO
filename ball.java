@@ -37,7 +37,6 @@ public class ball extends Ellipse2D.Double {
 
     public void update() {
 
-        System.out.println(y);
         x += x_vel;
         y += y_vel;
 
