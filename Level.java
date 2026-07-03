@@ -14,6 +14,10 @@ public class Level{
         for (int i = 0; i < blocked_buffs.length; i++) {
             blocked_buffs[i] = false;
         }
+        // bloquear todos os buffs inicialmente
+        for (int i = 6; i < blocked_buffs.length; i++) {
+            blocked_buffs[i] = true;
+        }
     }
 
     Level(){
@@ -28,6 +32,14 @@ public class Level{
 
     void updateCurrentMaxHP(){
          current_max_hp = game.healthSys.getMaxHp();
+    }
+
+    int getCurrentHp(){
+        return current_hp;
+    }
+
+    int getCurrentMaxHp(){
+        return current_max_hp;
     }
 
     ArrayList<coisa> getLevelObjectsBuffs(){

@@ -33,6 +33,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static buffSystem buffSys;
     static pointSystem pointSys;
     static healthSystem healthSys;
+    static Level lvl;
     static boolean game_start = false;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
@@ -131,11 +132,12 @@ public class game extends JPanel implements MouseListener, KeyListener {
         frame.pack();
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
-
+        
         healthSys = new healthSystem(5, true);
         gaming.add(healthSys); // Adds health as a panel on gaming
-
+        
         pointSys = new pointSystem();
+        lvl = new Level();
         lvl_map.add(new coisa(x_boundary - 40, y_boundary - 15, 40, coisa.ID_BALDE, gaming));
 
         timer = new Timer(16, e -> {
