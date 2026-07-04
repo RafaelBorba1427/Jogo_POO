@@ -36,8 +36,7 @@ public class Items implements MouseListener {
       @Override
       protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
-        g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+            g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
       }
     };
     panel.setOpaque(false);

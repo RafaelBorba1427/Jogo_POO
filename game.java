@@ -35,6 +35,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     static healthSystem healthSys;
     static Level lvl;
     static boolean game_start = false;
+    static Choice Choice;
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
 
@@ -50,13 +51,12 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
     static int x_boundary = 800;
     static int y_boundary = 600;
-    static double rescale_factor_x; 
+    static double rescale_factor_x;
     static double rescale_factor_y;
     static double rescale_factor_average;
-
     static String selected_resolution = "800x600";
 
-    static{
+    static {
         updateRescaleFactors();
     }
 
@@ -72,38 +72,43 @@ public class game extends JPanel implements MouseListener, KeyListener {
     private volatile boolean mouse_clicked;
     static inicial menu;
 
-    static int rescaleX(int x){
-        return (int) (x*rescale_factor_x);
+    static int rescaleX(int x) {
+        return (int) (x * rescale_factor_x);
     }
 
-    static int rescaleY(int y){
-        return (int) (y*rescale_factor_y);
+    static int rescaleY(int y) {
+        return (int) (y * rescale_factor_y);
     }
 
-    static int rescaleByAverage(int n){
-        return (int) (n*rescale_factor_average);
+    static int rescaleByAverage(int n) {
+        return (int) (n * rescale_factor_average);
     }
 
-    static void updateRescaleFactors(){
-        rescale_factor_x = x_boundary/800.0;
-        rescale_factor_y = y_boundary/600.0;
-        rescale_factor_average = (rescale_factor_x + rescale_factor_y)/2.0;
-        gravity = 0.5*rescale_factor_y;
+    static void updateRescaleFactors() {
+        rescale_factor_x = x_boundary / 800.0;
+        rescale_factor_y = y_boundary / 600.0;
+        rescale_factor_average = (rescale_factor_x + rescale_factor_y) / 2.0;
+        gravity = 0.5 * rescale_factor_y;
     }
 
-    static void updateResolution(){ //"800x600", "1140x720", "1280x800" ,"1440x900", "1920x1080"
-        if(selected_resolution == "800x600"){
-            x_boundary = 800; y_boundary = 600;
-        }else if(selected_resolution == "1140x720"){
-            x_boundary = 1140; y_boundary = 720;
-        }else if(selected_resolution == "1280x800"){
-            x_boundary = 1280; y_boundary = 800;
-        }else if(selected_resolution == "1440x900"){
-            x_boundary = 1440; y_boundary = 900;
-        }else{
-            x_boundary = 1920; y_boundary = 1080;
+    static void updateResolution() { // "800x600", "1140x720", "1280x800" ,"1440x900", "1920x1080"
+        if (selected_resolution == "800x600") {
+            x_boundary = 800;
+            y_boundary = 600;
+        } else if (selected_resolution == "1140x720") {
+            x_boundary = 1140;
+            y_boundary = 720;
+        } else if (selected_resolution == "1280x800") {
+            x_boundary = 1280;
+            y_boundary = 800;
+        } else if (selected_resolution == "1440x900") {
+            x_boundary = 1440;
+            y_boundary = 900;
+        } else {
+            x_boundary = 1920;
+            y_boundary = 1080;
         }
-        
+
     }
 
     public boolean createEnd() {
@@ -170,10 +175,13 @@ public class game extends JPanel implements MouseListener, KeyListener {
         gaming.frame = frame;
         menu = new inicial(gaming);
         frame.add(menu);
-        frame.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width/4, Toolkit.getDefaultToolkit().getScreenSize().height/8);
-        
+        frame.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 4,
+                Toolkit.getDefaultToolkit().getScreenSize().height / 8);
+
         // debug buffs
         // buffSys.ApplyBuff(buffSystem.buffs.TIME_TRAVEL, 10);
+
+        Choice = new Choice(gaming);
 
         dialog = new Items(gaming, 2);
         buffSys = new buffSystem();
@@ -325,11 +333,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
     }
 
     public void applyMouseInput() {
-        
+
         int x_diff = x_input - ((int) ball.getX());
         int y_diff = y_input - ((int) ball.getY());
-        ball.x_vel += (x_diff > 0)? Math.min(x_diff * 0.1, rescaleX(15)) : Math.max(x_diff * 0.1, -rescaleX(15));
-        ball.y_vel += (y_diff > 0)? Math.min(y_diff * 0.1, rescaleY(15)) : Math.max(y_diff * 0.1, -rescaleY(22));
+        ball.x_vel += (x_diff > 0) ? Math.min(x_diff * 0.1, rescaleX(15)) : Math.max(x_diff * 0.1, -rescaleX(15));
+        ball.y_vel += (y_diff > 0) ? Math.min(y_diff * 0.1, rescaleY(15)) : Math.max(y_diff * 0.1, -rescaleY(22));
 
         x_input = 0;
         y_input = 0;

@@ -104,10 +104,10 @@ public class coisa extends Rectangle {
         game.hitting = false;
         game.buffSys.EndBuffs();
         current.SetBallVelocity(0, 0);
-        //game.lvl.unblockBuff(9);
+        // game.lvl.unblockBuff(9);
 
         System.out.println("Bye World");
-        SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
+        SwingUtilities.invokeLater(() -> game.Choice.dialog_init());
 
         // in coisa verify():
 
