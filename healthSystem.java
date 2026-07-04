@@ -25,10 +25,10 @@ public class healthSystem extends JPanel {
         this.is_dead = false;
         setVisible(is_visible);
         setOpaque(false);
-        setPreferredSize(new Dimension(800, 100)); // Set preferred size of the panel
+        setPreferredSize(new Dimension(game.rescaleX(800), game.rescaleY(100))); // Set preferred size of the panel
 
         for (int i = 0; i < max_hp; i++) {
-            hp_sprites.add(new heart(i * 70, 10)); // Adjust position as needed
+            hp_sprites.add(new heart(i * game.rescaleX(70), 10)); // Adjust position as needed
         }
 
         Timer animation_timer = new Timer();
@@ -184,7 +184,7 @@ class heart {
     }
 
     public void paintHeart(Graphics g) {
-        g.drawImage(take_damage_animation[current_frame], pos_x, pos_y, 64, 64, null);
+        g.drawImage(take_damage_animation[current_frame], pos_x, pos_y, game.rescaleX(64), game.rescaleY(64), null);
         if (play_damage_animation) {
             if (current_frame >= take_damage_animation.length - 1) {
                 play_damage_animation = false;

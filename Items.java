@@ -22,7 +22,7 @@ public class Items implements MouseListener {
 
   void dialog_init(int numero) {
     game.timer.stop();
-    //game.healthSys.AddMaxHearts(1);
+    // game.healthSys.AddMaxHearts(1);
 
     System.out.println("Hello World");
     this.numero = numero; // reset here
@@ -62,7 +62,7 @@ public class Items implements MouseListener {
       int l;
       do {
         l = (int) (Math.random() * coisa.Quant_IDs);
-      } while (l == coisa.ID_BALDE || l == coisa.ID_ESTILINGUE || game.lvl.isBuffBlocked(l)); //
+      } while (l == coisa.ID_BALDE || l == coisa.ID_ESTILINGUE); //
       final int random_id = l;
       local = new JButton() {
         @Override
@@ -98,10 +98,10 @@ public class Items implements MouseListener {
     JButton clicked = (JButton) e.getSource();
     int chosen = list.get(clicked);
     if (chosen > 5) {
-      current.list.add(new buff(0, 0, 40, current.buffSys.returnBuff(chosen), chosen, current));
+      current.list.add(new buff(0, 0, game.rescaleByAverage(40), current.buffSys.returnBuff(chosen), chosen, current));
 
     } else {
-      current.list.add(new coisa(0, 0, 40, chosen, current));
+      current.list.add(new coisa(0, 0, game.rescaleByAverage(40), chosen, current));
 
     }
     panel.remove(clicked);
