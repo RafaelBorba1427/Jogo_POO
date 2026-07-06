@@ -41,7 +41,7 @@ public class Choice implements MouseListener {
   void dialog_init() {
     game.timer.stop();
     // game.healthSys.AddMaxHearts(1);
-
+    game.lvl.recChange();
     list.clear();
     current.ball.setPosition(10 + (int) current.ball.getDiameter(),
         current.y_boundary - (int) current.ball.getDiameter());
@@ -136,8 +136,9 @@ public class Choice implements MouseListener {
   public void mouseClicked(MouseEvent e) {
 
     dialog.dispose();
-    game.mode = game.GameModes.EDIT;
-    game.timer.start();
+    SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
+    // game.mode = game.GameModes.EDIT;
+    // game.timer.start();
   }
 
   @Override

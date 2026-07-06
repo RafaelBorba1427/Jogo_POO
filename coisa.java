@@ -105,10 +105,14 @@ public class coisa extends Rectangle {
         game.buffSys.EndBuffs();
         current.SetBallVelocity(0, 0);
         // game.lvl.unblockBuff(9);
-
+        game.lvl.number++;
         System.out.println("Bye World");
-        SwingUtilities.invokeLater(() -> game.Choice.dialog_init());
+        if (game.lvl.number >= game.lvl.level_rec)
+          SwingUtilities.invokeLater(() -> game.Choice.dialog_init());
+        else
+          SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));
 
+        System.out.println(game.lvl.number + "is number and " + game.lvl.level_rec + " is the requirement");
         // in coisa verify():
 
         return;

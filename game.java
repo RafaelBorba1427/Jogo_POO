@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 public class game extends JPanel implements MouseListener, KeyListener {
     static int lose_sprite = 0;
+    static int sling_counter = 0;
     static Items dialog;
     private Image image;
     static int anime = 0;
@@ -145,7 +146,19 @@ public class game extends JPanel implements MouseListener, KeyListener {
         addKeyListener(this);
         setBackground(Color.BLACK);
         setPreferredSize(new Dimension(x_boundary, y_boundary));
+        addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                x_input = e.getX(); // updates every time the mouse moves
+                y_input = e.getY();
+            }
 
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                x_input = e.getX(); // updates every time the mouse moves
+                y_input = e.getY();
+            }
+        });
         setFocusable(true);
         for (int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++) {
@@ -221,6 +234,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
             if (anime_help > 4) {
                 anime_help = 0;
                 anime++;
+                if (gaming.mode == GameModes.SHOOT && sling_counter < 5)
+                    sling_counter++;
+                else if (gaming.mode != GameModes.SHOOT && sling_counter != 0)
+                    sling_counter = 0;
+
             }
 
             if (anime >= 15) {
@@ -272,7 +290,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
             return;
         }
-
         // use mouse input to change ball trajectory
         else if (mouse_clicked) {
             if (mode == GameModes.SHOOT) {
@@ -447,6 +464,27 @@ public class game extends JPanel implements MouseListener, KeyListener {
                     plus_minus + point_bonus,
                     hudX + 15 + fm.stringWidth(pointsText),
                     hudY + 60);
+        }
+        if (mode == GameModes.SHOOT) {
+
+            double dx1 = ball.getX() - 2 * ball.getWidth() + 20;
+            double dx2 = ball.getX() + ball.getWidth() / 2 + 20;
+            double dy1 = ball.getY() - 2 * ball.getHeight() + 25;
+            double dy2 = ball.getY() + ball.getHeight() / 2 + 25;
+
+            double centerX = (dx1 + dx2) / 2.0;
+            double centerY = (dy1 + dy2) / 2.0;
+
+            double dx = x_input - centerX;
+            double dy = y_input - centerY;
+            double angle = Math.atan2(dy, dx);
+            BufferedImage slingFrame = sheet.getSubimage(
+                    sling_counter * sprite_col,
+                    coisa.ID_ESTILINGUE * sprite_lin,
+                    sprite_col,
+                    sprite_lin);
+            g2.rotate(angle, centerX, centerY);
+            g2.drawImage(slingFrame, (int) dx1, (int) dy1, (int) (dx2 - dx1), (int) (dy2 - dy1), null);
         }
 
         g2.dispose();
