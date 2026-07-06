@@ -108,6 +108,11 @@ public class game extends JPanel implements MouseListener, KeyListener {
             y_boundary = 1080;
         }
 
+        gaming.setPreferredSize(new Dimension(x_boundary, y_boundary));
+        menu.setPreferredSize(new Dimension(x_boundary, y_boundary));
+        lvl_map.get(0).setX(x_boundary - rescaleX(40));
+        lvl_map.get(0).setY(y_boundary - rescaleY(15));
+        frame.pack();
     }
 
     public boolean createEnd() {
