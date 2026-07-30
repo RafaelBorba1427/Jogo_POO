@@ -94,9 +94,8 @@ public class coisa extends Rectangle {
       bateuX = bola.bateuX;
       bateuY = bola.bateuY;
       game.pointSys.addPotentialPoints(this);
-
+      current.healthSys.takeDamageAndCheckDeath();
       if (id == ID_BALDE) {
-
         game.pointSys.processPoints();
         game.pointSys.removePotentialPoints();
 

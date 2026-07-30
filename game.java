@@ -385,6 +385,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         offscreenG.setComposite(AlphaComposite.Clear);
         offscreenG.fillRect(0, 0, getWidth(), getHeight());
         offscreenG.setComposite(AlphaComposite.SrcOver);
+
         // Draw ball in mode color
         if (mode == GameModes.EDIT) {
             offscreenG.setColor(Color.BLUE);
@@ -396,9 +397,40 @@ public class game extends JPanel implements MouseListener, KeyListener {
             offscreenG.setColor(ball_color);
         }
 
+        // --- Compute sling's destination rect, pivot, and angle ONCE, shared
+        // everywhere ---
+        boolean aiming = (mode == GameModes.SHOOT);
+        double centerX = 0, centerY = 0, angle = 0;
+        double slingDx1 = 0, slingDx2 = 0, slingDy1 = 0, slingDy2 = 0;
+
+        if (aiming) {
+            slingDx1 = ball.getX() - 2 * ball.getWidth() + 20;
+            slingDx2 = ball.getX() + ball.getWidth() / 2 + 20;
+            slingDy1 = ball.getY() - 2 * ball.getHeight() + 25;
+            slingDy2 = ball.getY() + ball.getHeight() / 2 + 25;
+
+            centerX = (slingDx1 + slingDx2) / 2.0;
+            centerY = (slingDy1 + slingDy2) / 2.0;
+
+            double dx = x_input - centerX;
+            double dy = y_input - centerY;
+            angle = Math.atan2(dy, dx);
+        }
+
+        // --- Ball position: orbit around the same pivot while aiming ---
+        double ballDrawX, ballDrawY;
+        if (aiming) {
+            double pouchRadius = rescaleByAverage(20); // tune so the ball sits in the pouch
+            ballDrawX = centerX + pouchRadius * Math.cos(angle);
+            ballDrawY = centerY + pouchRadius * Math.sin(angle);
+        } else {
+            ballDrawX = ball.getPaintX();
+            ballDrawY = ball.getPaintY();
+        }
+
         offscreenG.fillOval(
-                (int) (ball.getPaintX() - ball.getDiameter() / 2),
-                (int) (ball.getPaintY() - ball.getDiameter() / 2),
+                (int) (ballDrawX - ball.getDiameter() / 2),
+                (int) (ballDrawY - ball.getDiameter() / 2),
                 (int) ball.getDiameter(),
                 (int) ball.getDiameter());
 
@@ -406,85 +438,60 @@ public class game extends JPanel implements MouseListener, KeyListener {
         for (coisa c : lvl_map) {
             g.drawImage(
                     sheet,
-                    c.x - c.width / 2, // destination x on screen
-                    c.y - c.height / 2, // destination y on screen
-                    c.x + c.width / 2, // destination x2
-                    c.y + c.height / 2, // destination y2
-                    anime * sprite_col, // source x on spritesheet
-                    c.id * sprite_lin, // source y on spritesheet
-                    anime * sprite_col + sprite_col, // source x2
-                    c.id * sprite_lin + sprite_lin, // source y2
+                    c.x - c.width / 2,
+                    c.y - c.height / 2,
+                    c.x + c.width / 2,
+                    c.y + c.height / 2,
+                    anime * sprite_col,
+                    c.id * sprite_lin,
+                    anime * sprite_col + sprite_col,
+                    c.id * sprite_lin + sprite_lin,
                     null);
-        } // Draw transparent buffer over background
+        }
 
+        // Draw transparent buffer over background
         g.drawImage(offscreen, 0, 0, null);
 
         // PointSystem HUD
         Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
         int hudWidth = rescaleX(220);
         int hudHeight = rescaleY(80);
         int hudX = getWidth() - hudWidth - rescaleX(20);
         int hudY = rescaleY(20);
 
-        // Semi-transparent background
         g2.setColor(new Color(170, 8, 0, 65));
         g2.fillRoundRect(hudX, hudY, hudWidth, hudHeight, 10, 15);
 
-        // Text color
         g2.setColor(new Color(173, 133, 0));
 
-        // Total points
         g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, rescaleY(22)));
-        g2.drawString(
-                "Total Points: " + pointSys.getPoints(),
-                hudX + 15,
-                hudY + 30);
+        g2.drawString("Total Points: " + pointSys.getPoints(), hudX + 15, hudY + 30);
 
-        // Potential points
         g2.setFont(new Font("TeX Gyre Bonum", Font.BOLD, rescaleY(18)));
-        g2.drawString(
-                "Points: " + pointSys.getPotentialPoints(),
-                hudX + 15,
-                hudY + 60);
+        g2.drawString("Points: " + pointSys.getPotentialPoints(), hudX + 15, hudY + 60);
 
         if (point_bonus_anime != 0) {
             String pointsText = "Points: " + pointSys.getPotentialPoints();
             FontMetrics fm = g2.getFontMetrics();
-            String plus_minus;
-            if (point_bonus >= 0)
-                plus_minus = " +";
-            else
-                plus_minus = " ";
-
-            g2.drawString(
-                    plus_minus + point_bonus,
-                    hudX + 15 + fm.stringWidth(pointsText),
-                    hudY + 60);
+            String plus_minus = (point_bonus >= 0) ? " +" : " ";
+            g2.drawString(plus_minus + point_bonus, hudX + 15 + fm.stringWidth(pointsText), hudY + 60);
         }
-        if (mode == GameModes.SHOOT) {
 
-            double dx1 = ball.getX() - 2 * ball.getWidth() + 20;
-            double dx2 = ball.getX() + ball.getWidth() / 2 + 20;
-            double dy1 = ball.getY() - 2 * ball.getHeight() + 25;
-            double dy2 = ball.getY() + ball.getHeight() / 2 + 25;
-
-            double centerX = (dx1 + dx2) / 2.0;
-            double centerY = (dy1 + dy2) / 2.0;
-
-            double dx = x_input - centerX;
-            double dy = y_input - centerY;
-            double angle = Math.atan2(dy, dx);
+        // --- Sling drawing reuses the SAME rect/angle/pivot computed above ---
+        if (aiming) {
             BufferedImage slingFrame = sheet.getSubimage(
                     sling_counter * sprite_col,
                     coisa.ID_ESTILINGUE * sprite_lin,
                     sprite_col,
                     sprite_lin);
+
             g2.rotate(angle, centerX, centerY);
-            g2.drawImage(slingFrame, (int) dx1, (int) dy1, (int) (dx2 - dx1), (int) (dy2 - dy1), null);
+            g2.drawImage(slingFrame,
+                    (int) slingDx1, (int) slingDy1,
+                    (int) (slingDx2 - slingDx1), (int) (slingDy2 - slingDy1),
+                    null);
         }
 
         g2.dispose();

@@ -19,10 +19,11 @@ public class Choice implements MouseListener {
   JDialog dialog;
   boolean active;
   JPanel panel;
-
+  JButton first;
+  JButton second;
   private ArrayList<JButton> list = new ArrayList<JButton>();
   public BufferedImage sheet;
-  int width = 100, height = 100, number_of_things = 5, pass = 4;
+  int width = 100, height = 100, number_of_things = 5, pass = 4, id;
   static Timer timer;
 
   Choice(game current) {
@@ -60,16 +61,16 @@ public class Choice implements MouseListener {
     };
     panel.setOpaque(false);
     panel.setLayout(null);
-    JButton local = new JButton() {
+    JButton local = new JButton("First") {
       @Override
       protected void paintComponent(Graphics g) {
 
         g.drawImage(sheet,
             0, 0, getWidth(), getHeight(),
             current.anime * width,
-            4 * height,
+            1 * height,
             current.anime * width + width,
-            4 * height + height,
+            1 * height + height,
             null);
       }
     };
@@ -78,16 +79,19 @@ public class Choice implements MouseListener {
     local.addMouseListener(this);
     local.setOpaque(false);
     local.setBorderPainted(false);
-    list.add(local);
-    panel.add(local);
+    first = local;
+    list.add(first);
+    panel.add(first);
     // THEN create and add buttons
 
     int l;
     do {
       l = (int) (Math.random() * number_of_things);
-    } while (l != 1); //
+    } while (l == 1);
+    System.out.println("l is " + l);
     final int random_id = l;
-    local = new JButton() {
+    id = l;
+    local = new JButton("Second") {
       @Override
       protected void paintComponent(Graphics g) {
         g.drawImage(sheet,
@@ -103,8 +107,9 @@ public class Choice implements MouseListener {
     local.addMouseListener(this);
     local.setOpaque(false);
     local.setBorderPainted(false);
-    list.add(local);
-    panel.add(local); // safe now
+    second = local;
+    list.add(second);
+    panel.add(second); // safe now
 
     dialog = new JDialog(current.frame, "Choose Your Item", true);
     dialog.setUndecorated(true);
@@ -134,6 +139,25 @@ public class Choice implements MouseListener {
 
   @Override
   public void mouseClicked(MouseEvent e) {
+    if (e.getSource() == first) {
+      current.healthSys.heal();
+      System.out.println("HEEEEEEEEE");
+    } else if (id == 0) {
+
+    } else if (id == 2) {
+      current.healthSys.AddMaxHearts(1);
+    } else if (id == 3) {
+    } else if (id == 4) {
+      current.lvl.addListCoisa(current.lvl_map);
+      System.out.println("Id is" + id);
+    }
+    if (current.lvl.getLevelObjectsBuffs().size() == 0) {
+      current.lvl_map.clear();
+      current.lvl_map.add(new coisa(current.x_boundary - current.rescaleX(40),
+          current.y_boundary - current.rescaleY(15), current.rescaleByAverage(40),
+          coisa.ID_BALDE, current));
+    } else
+      current.lvl_map = current.lvl.getLevelObjectsBuffs();
 
     dialog.dispose();
     SwingUtilities.invokeLater(() -> game.dialog.dialog_init(2));

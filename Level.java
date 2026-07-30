@@ -4,10 +4,9 @@ import java.util.Queue;
 public class Level {
     private int current_hp;
     private int current_max_hp;
-    private ArrayList<coisa> objects_buffs;
+    private ArrayList<coisa> objects_buffs = new ArrayList<>();
     private Queue<Long> points_till_next_stage;
     private static String current_background_image_path = "Frat_background.png";
-    private int stages_till_next_background;
     private static boolean[] blocked_buffs = new boolean[coisa.Quant_IDs];
     public int number = 0, count = 0;
     public int level_rec = 0;
@@ -22,7 +21,7 @@ public class Level {
     }
 
     Level() {
-        stages_till_next_background = 6;
+        level_rec = 3;
         updateCurrentHP();
         updateCurrentMaxHP();
         recChange();
@@ -70,10 +69,6 @@ public class Level {
         current_background_image_path = path;
     }
 
-    void changeNumStagesTillNextBackground(int num) {
-        stages_till_next_background = num;
-    }
-
     boolean isBuffBlocked(int id) {
         return blocked_buffs[id];
     }
@@ -84,6 +79,10 @@ public class Level {
 
     void blockBuff(int id) {
         blocked_buffs[id] = true;
+    }
+
+    void addListCoisa(ArrayList<coisa> objects_buffs) {
+        this.objects_buffs = objects_buffs;
     }
 
 }
