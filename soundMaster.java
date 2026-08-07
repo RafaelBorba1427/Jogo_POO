@@ -10,7 +10,7 @@ public class soundMaster {
 
         // Add sound file paths to the HashMap
         // Use this exclusively for sounds to avoid confusion
-        // Original file names kept for reference, map name indicates actual purpose
+        // Original file names kept for reference, key name indicates actual purpose
 
         soundFilePaths.put("bounce0", "sounds/sfx/400 Sounds Pack/UI/select_1.wav");
         soundFilePaths.put("bounce1", "sounds/sfx/400 Sounds Pack/UI/select_2.wav");
