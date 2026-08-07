@@ -177,6 +177,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
 
         setVisible(true);
 
+        musicMaster.changeTrackAndPlay("menu");
     }
 
     public static void main(String[] args) {

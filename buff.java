@@ -22,6 +22,8 @@ class buff extends coisa {
       game.gaming.buffSys.ApplyBuff(buff_active, buffSystem.standard_buff_duration.get(buff_active));
       bateu = true;
 
+      game.soundMaster.playBuffSound();
+
     } else {
       game.add++;
       bateu = false;

@@ -12,15 +12,17 @@ public class soundMaster {
         // Use this exclusively for sounds to avoid confusion
         // Original file names kept for reference, key name indicates actual purpose
 
+        // implemented
         soundFilePaths.put("bounce0", "sounds/sfx/400 Sounds Pack/UI/select_1.wav");
         soundFilePaths.put("bounce1", "sounds/sfx/400 Sounds Pack/UI/select_2.wav");
         soundFilePaths.put("bounce2", "sounds/sfx/400 Sounds Pack/UI/select_3.wav");
         soundFilePaths.put("bounce3", "sounds/sfx/400 Sounds Pack/UI/select_4.wav");
 
-        soundFilePaths.put("goal", "sounds/sfx/400 Sounds Pack/Musical Effects/8_bit_level_start.wav");
+        soundFilePaths.put("goal", "sounds/sfx/400 Sounds Pack/Musical Effects/8_bit_level_start.wav"); // implemented
         soundFilePaths.put("damage", "sounds/sfx/400 Sounds Pack/Retro/lose.wav");
         soundFilePaths.put("napkin", "sounds/sfx/400 Sounds Pack/Other/paste.wav");
 
+        // implemented
         soundFilePaths.put("buff0", "sounds/sfx/400 Sounds Pack/Retro/power_up.wav");
         soundFilePaths.put("buff1", "sounds/sfx/400 Sounds Pack/Retro/power_up_2.wav");
         soundFilePaths.put("buff2", "sounds/sfx/SweetSounds_SFX/WAV/Powerup.wav");

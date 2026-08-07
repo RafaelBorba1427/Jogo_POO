@@ -166,6 +166,8 @@ public class inicial extends JPanel implements MouseListener, ActionListener {
   @Override
   public void mouseClicked(MouseEvent e) {
     if (e.getSource() == start) {
+      game.musicMaster.changeTrackAndPlay("gameOverworld0");
+      
       game_sys.frame.add(game_sys.gaming);
       game.game_start = true;
       game_sys.frame.remove(this);

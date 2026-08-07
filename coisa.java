@@ -114,6 +114,8 @@ public class coisa extends Rectangle {
         System.out.println(game.lvl.number + "is number and " + game.lvl.level_rec + " is the requirement");
         // in coisa verify():
 
+        game.soundMaster.playSound("napkin");
+
         return;
       } else if (id == ID_PLATAFORMA_CONGELADA) {
         game.gaming.buffSys.ApplyBuff(buffSystem.buffs.SLIPPERY, 1);

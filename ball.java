@@ -226,7 +226,6 @@ public class ball extends Ellipse2D.Double {
                 x_vel *= bounce_factor;
             } // Apply damping
             x_vel = -x_vel;
-            game.soundMaster.playBounceSound();
         }
     }
 
@@ -250,7 +249,6 @@ public class ball extends Ellipse2D.Double {
             } else {
                 y_vel = -y_vel * bounce_factor;
             }
-            game.soundMaster.playBounceSound();
         }
     }
 

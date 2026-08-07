@@ -22,7 +22,7 @@ public class musicMaster {
         // Use this exclusively for music to avoid confusion
         // Original file names kept for reference, key name indicates actual purpose
 
-        musicFilePaths.put("menuMusic", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Rabbit Town.wav");
+        musicFilePaths.put("menu", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Rabbit Town.wav");
 
         musicFilePaths.put("gameOverworld0", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Candy.wav");
         musicFilePaths.put("gameOverworld1", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Go.wav");
