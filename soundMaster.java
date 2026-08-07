@@ -5,6 +5,8 @@ public class soundMaster {
 
     public HashMap<String, String> soundFilePaths;
 
+    private Clip currentMusicClip;
+
     public soundMaster() {
         // sfx files
         soundFilePaths = new HashMap<>();
@@ -32,8 +34,10 @@ public class soundMaster {
 
 
         // music files
+        soundFilePaths.put("lv1", "sounds/music/Three Red Hearts/Three Red Hearts - Go.ogg");
+        
 
-
+        currentMusicClip = null;
     }
 
     public void playSound(String sound) {
@@ -57,18 +61,49 @@ public class soundMaster {
         }
     }
 
+    public void changeMusic(String music) {
+        if (currentMusicClip != null) {
+            currentMusicClip.stop();
+        }
+
+        String musicFilePath = soundFilePaths.get(music);
+        if (musicFilePath == null) {
+            System.err.println("Music file not found for key: " + music);
+            return;
+        }
+        
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundMaster.class.getResource(musicFilePath));
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+            currentMusicClip = clip;
+
+            currentMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     // Example usage, delete later
     public static void main(String[] args) {
         // Example usage: play a sound file located in the resources folder
         soundMaster soundMaster = new soundMaster();
-        while(true){
-            soundMaster.playSound("bounce");
+            soundMaster.playSound("bounce0");
             soundMaster.playSound("goal");
             try {
-                Thread.sleep(1000); // Wait for 1 second before playing the sound again
+                Thread.sleep(5000); // Wait for 1 second before playing the sound again
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
+
+            soundMaster.changeMusic("lv1");
+
+            try {
+                Thread.sleep(5000); // Wait for 1 second before playing the sound again
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            soundMaster.changeMusic(null);
     }
 }
