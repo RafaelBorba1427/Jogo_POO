@@ -5,10 +5,7 @@ public class soundMaster {
 
     public HashMap<String, String> soundFilePaths;
 
-    private Clip currentMusicClip;
-
     public soundMaster() {
-        // sfx files
         soundFilePaths = new HashMap<>();
 
         // Add sound file paths to the HashMap
@@ -22,7 +19,7 @@ public class soundMaster {
 
         soundFilePaths.put("goal", "sounds/sfx/400 Sounds Pack/Musical Effects/8_bit_level_start.wav");
         soundFilePaths.put("damage", "sounds/sfx/400 Sounds Pack/Retro/lose.wav");
-        soundFilePaths.put("show_napkin", "");
+        soundFilePaths.put("napkin", "sounds/sfx/400 Sounds Pack/Other/paste.wav");
 
         soundFilePaths.put("buff0", "sounds/sfx/400 Sounds Pack/Retro/power_up.wav");
         soundFilePaths.put("buff1", "sounds/sfx/400 Sounds Pack/Retro/power_up_2.wav");
@@ -31,14 +28,8 @@ public class soundMaster {
         soundFilePaths.put("debuff0", "sounds/sfx/400 Sounds Pack/Retro/power_down.wav");
         soundFilePaths.put("debuff1", "sounds/sfx/400 Sounds Pack/Retro/power_down_2.wav");
         soundFilePaths.put("debuff2", "sounds/sfx/SweetSounds_SFX/WAV/Powerdown.wav");
-
-
-        // music files
-        soundFilePaths.put("lv1", "sounds/music/Three Red Hearts/Three Red Hearts - Go.ogg");
-        
-
-        currentMusicClip = null;
     }
+
 
     public void playSound(String sound) {
         String soundFilePath = soundFilePaths.get(sound);
@@ -61,49 +52,50 @@ public class soundMaster {
         }
     }
 
-    public void changeMusic(String music) {
-        if (currentMusicClip != null) {
-            currentMusicClip.stop();
+
+    // Subroutines for playing random sounds from a category
+        public void playBounceSound() {
+            Random random = new Random();
+            int randomIndex = random.nextInt(4); // Generate a random index between 0 and 3
+            String soundKey = "bounce" + randomIndex; // Construct the sound key based on the random index
+            playSound(soundKey); // Play the randomly selected bounce sound
         }
 
-        String musicFilePath = soundFilePaths.get(music);
-        if (musicFilePath == null) {
-            System.err.println("Music file not found for key: " + music);
-            return;
-        }
-        
-        try {
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundMaster.class.getResource(musicFilePath));
-            Clip clip = AudioSystem.getClip();
-            clip.open(audioInputStream);
-            currentMusicClip = clip;
 
-            currentMusicClip.loop(Clip.LOOP_CONTINUOUSLY);
-        } catch (Exception e) {
-            e.printStackTrace();
+        public void playBuffSound() {
+            Random random = new Random();
+            int randomIndex = random.nextInt(3); // Generate a random index between 0 and 2
+            String soundKey = "buff" + randomIndex; // Construct the sound key based on the random index
+            playSound(soundKey); // Play the randomly selected buff sound
         }
-    }
+
+
+        public void playDebuffSound() {
+            Random random = new Random();
+            int randomIndex = random.nextInt(3); // Generate a random index between 0 and 2
+            String soundKey = "debuff" + randomIndex; // Construct the sound key based on the random index
+            playSound(soundKey); // Play the randomly selected debuff sound
+        }
 
     // Example usage, delete later
     public static void main(String[] args) {
         // Example usage: play a sound file located in the resources folder
         soundMaster soundMaster = new soundMaster();
-            soundMaster.playSound("bounce0");
-            soundMaster.playSound("goal");
-            try {
-                Thread.sleep(5000); // Wait for 1 second before playing the sound again
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+
+
+            //soundMaster.playSound("goal");
+
+            for(int i = 0; i < 20; i++) {
+                //soundMaster.playBounceSound();
+                //soundMaster.playBuffSound();
+                soundMaster.playDebuffSound();
+                try {
+                    Thread.sleep(1000); // Wait for 1 second before playing the sound again
+                }
+                catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
 
-            soundMaster.changeMusic("lv1");
-
-            try {
-                Thread.sleep(5000); // Wait for 1 second before playing the sound again
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            soundMaster.changeMusic(null);
     }
 }
