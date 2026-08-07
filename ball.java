@@ -118,8 +118,10 @@ public class ball extends Ellipse2D.Double {
                 y_vel = 0;
             } else if (game.buffSys.HasBuff(buffSystem.buffs.ELASTIC_COLLISION)) {
                 y_vel = -(y_vel - game.gravity);
+                game.soundMaster.playBounceSound();
             } else {
                 y_vel = -y_vel * bounce_factor;
+                game.soundMaster.playBounceSound();
             }
 
             if (!game.buffSys.HasBuff(buffSystem.buffs.SLIPPERY)
@@ -145,6 +147,7 @@ public class ball extends Ellipse2D.Double {
             } else {
                 y_vel = -y_vel * bounce_factor;
             }
+            game.soundMaster.playBounceSound();
         }
 
         // left wall collision
@@ -155,6 +158,7 @@ public class ball extends Ellipse2D.Double {
             } else {
                 x_vel = -x_vel * bounce_factor;
             }
+            game.soundMaster.playBounceSound();
         }
 
         // right wall collision
@@ -165,6 +169,7 @@ public class ball extends Ellipse2D.Double {
             } else {
                 x_vel = -x_vel * bounce_factor;
             }
+            game.soundMaster.playBounceSound();
         }
 
         if (Math.abs(x_vel) < min_X_speed) {
@@ -200,10 +205,8 @@ public class ball extends Ellipse2D.Double {
             } else {
                 this.y += (this.y < coisa.y) ? -penY : penY;
                 bounceY();
-
             }
         }
-
     }
 
     public void bounceX() {
@@ -223,6 +226,7 @@ public class ball extends Ellipse2D.Double {
                 x_vel *= bounce_factor;
             } // Apply damping
             x_vel = -x_vel;
+            game.soundMaster.playBounceSound();
         }
     }
 
@@ -246,6 +250,7 @@ public class ball extends Ellipse2D.Double {
             } else {
                 y_vel = -y_vel * bounce_factor;
             }
+            game.soundMaster.playBounceSound();
         }
     }
 

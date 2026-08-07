@@ -40,6 +40,9 @@ public class game extends JPanel implements MouseListener, KeyListener {
     int sprite_col = 16, sprite_lin = 16;
     int option = 0;
 
+    static soundMaster soundMaster = new soundMaster();
+    static musicMaster musicMaster = new musicMaster();
+
     private Image floorImage;
     static end fin;
     static Queue<coisa> list = new LinkedList<>();

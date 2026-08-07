@@ -23,11 +23,9 @@ public class musicMaster {
         // Original file names kept for reference, key name indicates actual purpose
 
         musicFilePaths.put("menuMusic", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Rabbit Town.wav");
-        
+
         musicFilePaths.put("gameOverworld0", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Candy.wav");
         musicFilePaths.put("gameOverworld1", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Go.wav");
-
-        changeTrackAndPlay("menuMusic"); // Play the initial music
     }
 
     public void changeTrackAndPlay(String music) {
