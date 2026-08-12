@@ -22,10 +22,12 @@ public class musicMaster {
         // Use this exclusively for music to avoid confusion
         // Original file names kept for reference, key name indicates actual purpose
 
-        musicFilePaths.put("menu", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Rabbit Town.wav");
+        musicFilePaths.put("menu", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Connected.wav");
 
         musicFilePaths.put("gameOverworld0", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Candy.wav");
         musicFilePaths.put("gameOverworld1", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Go.wav");
+
+        musicFilePaths.put("defeat", "sounds/music/EloLeChan - Funky Victory Draw Loss Themes/lose...wav");
     }
 
     public void changeTrackAndPlay(String music) {
@@ -44,7 +46,14 @@ public class musicMaster {
 
             clip.open(audioInputStream);
 
-            clip.loop(Clip.LOOP_CONTINUOUSLY); // Loop the music continuously
+            if(music.equals("defeat")){
+                clip.start();
+                clip.loop(0); // Play the defeat music only once
+            }
+            else{
+                clip.start();
+                clip.loop(Clip.LOOP_CONTINUOUSLY); // Loop the music continuously
+            }
 
             clip.start();
 
@@ -57,7 +66,7 @@ public class musicMaster {
     public static void main(String[] args) {
         musicMaster musicMaster = new musicMaster();
 
-        musicMaster.changeTrackAndPlay("menuMusic"); // Play the initial music
+        musicMaster.changeTrackAndPlay("menu"); // Play the initial music
         
         Scanner in = new Scanner(System.in);
         while(true) {
@@ -69,7 +78,10 @@ public class musicMaster {
                 musicMaster.changeTrackAndPlay("gameOverworld1"); // Change to another track
             }
             else if(a == 0) {
-                musicMaster.changeTrackAndPlay("menuMusic"); // Change back to the initial track
+                musicMaster.changeTrackAndPlay("menu"); // Change back to the initial track
+            }
+            else if(a == 3) {
+                musicMaster.changeTrackAndPlay("defeat"); // Change to defeat track
             }
             else{
                 break; // Exit the loop if the input is not recognized

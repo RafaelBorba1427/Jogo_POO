@@ -176,8 +176,6 @@ public class game extends JPanel implements MouseListener, KeyListener {
         // lvl_map.add(new coisa(400, 300, 40, 0));
 
         setVisible(true);
-
-        musicMaster.changeTrackAndPlay("menu");
     }
 
     public static void main(String[] args) {
@@ -343,6 +341,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
                 // Handle game over logic here
                 // System.out.println("Game Over!");
                 SwingUtilities.invokeLater(() -> createEnd());
+                musicMaster.changeTrackAndPlay("defeat");
                 // Implement game over logic
             }
         }

@@ -80,6 +80,8 @@ public class inicial extends JPanel implements MouseListener, ActionListener {
 
     repaint();
 
+    // starts menu music every time menu is instanciated
+    game.musicMaster.changeTrackAndPlay("menu");
   }
 
   public void settingsPanel() {

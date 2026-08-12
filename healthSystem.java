@@ -59,6 +59,10 @@ public class healthSystem extends JPanel {
             hp_sprites.get(current_hp).playDamageAnimation(); // Assuming you have a method to play the damage animation
                                                               // on the heart sprite
             game.soundMaster.playSound("damage");
+
+            if(current_hp <= max_hp / 2) {
+                game.musicMaster.changeTrackAndPlay("gameOverworld1");
+            }
         }
 
         if (current_hp <= 0) {
