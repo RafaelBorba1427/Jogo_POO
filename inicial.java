@@ -85,17 +85,39 @@ public class inicial extends JPanel implements MouseListener, ActionListener {
   }
 
   public void settingsPanel() {
-        JPanel settingsJPanel = new JPanel(new BorderLayout()),
-               screenSizePanel = new JPanel(new BorderLayout()),
-               ballColorPanel = new JPanel(new BorderLayout());
- 
-        // Give the whole panel some breathing room from the frame edges
+        JPanel settingsJPanel = new JPanel(new BorderLayout()){
+          @Override
+          public void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            g.drawImage(img, 0, 0, getWidth(), getHeight(), this);
+          }
+        },
+        screenSizePanel = new JPanel(new BorderLayout()),
+        ballColorPanel = new JPanel(new BorderLayout());
+        screenSizePanel.setOpaque(false);
+        ballColorPanel.setOpaque(false);
+
+        // Add frame edges
         settingsJPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
  
         // Screen size
         JLabel screenSizeLabel = new JLabel("Screen Size:");
-        String[] resolutions = {"800x600", "1140x720", "1280x800" ,"1440x900", "1920x1080"};
-        JComboBox<String> resolutionBox = new JComboBox<>(resolutions);
+        screenSizeLabel.setForeground(new Color(0,0,0));
+        screenSizeLabel.setOpaque(true);
+        screenSizeLabel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
+
+        Dimension[] resolutions = {new Dimension(800,600), new Dimension(1140,720), new Dimension(1280,
+          800) ,new Dimension(1440,900), new Dimension(1920,1080)};
+
+        ArrayList<String> valid_resolutions = new ArrayList<>();
+        Dimension max_screen_size = Toolkit.getDefaultToolkit().getScreenSize();
+        for(int i=0; i<resolutions.length; i++){
+          if(max_screen_size.width >= resolutions[i].width && max_screen_size.height >= resolutions[i].height){
+            valid_resolutions.add(String.valueOf(resolutions[i].width)+"x"+String.valueOf(resolutions[i].height));
+          }
+        }
+        String[] resolutions_strings = valid_resolutions.toArray(String[]::new);
+        JComboBox<String> resolutionBox = new JComboBox<>(resolutions_strings);
         resolutionBox.setSelectedItem(game.selected_resolution);
  
         resolutionBox.addActionListener(e ->
@@ -108,23 +130,59 @@ public class inicial extends JPanel implements MouseListener, ActionListener {
  
         // Ball color
         JLabel ballColorLabel = new JLabel("Ball Color:");
+        ballColorLabel.setOpaque(true);
+        ballColorLabel.setForeground(new Color(0,0,0));
+        ballColorLabel.setBorder(BorderFactory.createEmptyBorder(5, 5,5,5));
         JButton colorButton = new JButton("Choose Color");
  
         colorButton.addActionListener(e -> {
-            Color picked = JColorChooser.showDialog(
-                    settingsJPanel, "Pick a Ball Color", game.ball_color);
-            if (picked != null) {
-                game.ball_color = picked;
-                colorButton.setBackground(game.ball_color);
+        JColorChooser color_chooser = new JColorChooser(game.ball_color);
+
+        // Panel that draws the ball color dynamically
+        JPanel ballPreview = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                int diameter = 60;
+                int x = (getWidth() - diameter) / 2;
+                int y = (getHeight() - diameter) / 2;
+
+                g2.setColor(color_chooser.getColor());
+                g2.fillOval(x, y, diameter, diameter);
+                g2.setColor(Color.BLACK);
+                g2.drawOval(x, y, diameter, diameter);
             }
-        });
- 
+        };
+        ballPreview.setPreferredSize(new Dimension(150, 80));
+
+        color_chooser.getSelectionModel().addChangeListener(ev -> ballPreview.repaint());
+        color_chooser.setPreviewPanel(ballPreview);
+
+        JDialog dialog = JColorChooser.createDialog(
+                settingsJPanel,
+                "Pick a Ball Color",
+                true,
+                color_chooser,
+                ev -> {
+                    game.ball_color = color_chooser.getColor();
+                    colorButton.setBackground(game.ball_color);
+                    colorButton.repaint();
+                },
+                null // Cancel button does nothing
+        );
+        dialog.setVisible(true);
+    });
+
         ballColorPanel.add(ballColorLabel, BorderLayout.WEST);
         ballColorPanel.add(colorButton, BorderLayout.EAST);
  
         // Panels stacked in rows vertically
         JPanel rowsContainer = new JPanel();
         rowsContainer.setLayout(new BoxLayout(rowsContainer, BoxLayout.Y_AXIS));
+        rowsContainer.setOpaque(false);
         rowsContainer.add(screenSizePanel);
         rowsContainer.add(ballColorPanel);
  
@@ -137,6 +195,7 @@ public class inicial extends JPanel implements MouseListener, ActionListener {
         );
  
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.setOpaque(false);
         buttonPanel.add(applyButton);
         settingsJPanel.add(buttonPanel, BorderLayout.SOUTH);
         
