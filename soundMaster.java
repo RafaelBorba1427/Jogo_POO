@@ -62,16 +62,12 @@ public class soundMaster {
             String soundKey = "bounce" + randomIndex; // Construct the sound key based on the random index
             playSound(soundKey); // Play the randomly selected bounce sound
         }
-
-
         public void playBuffSound() {
             Random random = new Random();
             int randomIndex = random.nextInt(3); // Generate a random index between 0 and 2
             String soundKey = "buff" + randomIndex; // Construct the sound key based on the random index
             playSound(soundKey); // Play the randomly selected buff sound
         }
-
-
         public void playDebuffSound() {
             Random random = new Random();
             int randomIndex = random.nextInt(3); // Generate a random index between 0 and 2
@@ -79,25 +75,30 @@ public class soundMaster {
             playSound(soundKey); // Play the randomly selected debuff sound
         }
 
+        
     // Example usage, delete later
     public static void main(String[] args) {
         // Example usage: play a sound file located in the resources folder
         soundMaster soundMaster = new soundMaster();
 
+        Scanner in = new Scanner(System.in);
 
-            //soundMaster.playSound("goal");
+        while(true) {
+            int a = in.nextInt(); // Wait for user input to play a sound
 
-            for(int i = 0; i < 20; i++) {
-                //soundMaster.playBounceSound();
-                //soundMaster.playBuffSound();
-                soundMaster.playDebuffSound();
-                try {
-                    Thread.sleep(1000); // Wait for 1 second before playing the sound again
-                }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            if(a == 1) {
+                soundMaster.playBounceSound(); // Play a random bounce sound
             }
+            else if(a == 2) {
+                soundMaster.playBuffSound(); // Play a random buff sound
+            }
+            else if(a == 3) {
+                soundMaster.playDebuffSound(); // Play a random debuff sound
+            }
+            else{
+                break; // Exit the loop if the input is not recognized
+            }
+        }
 
     }
 }
