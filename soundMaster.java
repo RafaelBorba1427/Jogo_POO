@@ -12,6 +12,8 @@ public class soundMaster {
         // Use this exclusively for sounds to avoid confusion
         // Original file names kept for reference, key name indicates actual purpose
 
+
+        soundFilePaths.put("bounce_realistic", "sounds/sfx/table-tennis-ball-hit-om-fx-1-00-01.wav"); // implemented
         // implemented
         soundFilePaths.put("bounce0", "sounds/sfx/400 Sounds Pack/UI/select_1.wav");
         soundFilePaths.put("bounce1", "sounds/sfx/400 Sounds Pack/UI/select_2.wav");
@@ -57,10 +59,15 @@ public class soundMaster {
 
     // Subroutines for playing random sounds from a category
         public void playBounceSound() {
+
+            /*
             Random random = new Random();
             int randomIndex = random.nextInt(4); // Generate a random index between 0 and 3
             String soundKey = "bounce" + randomIndex; // Construct the sound key based on the random index
             playSound(soundKey); // Play the randomly selected bounce sound
+            */
+
+            playSound("bounce_realistic"); // Play the realistic bounce sound
         }
         public void playBuffSound() {
             Random random = new Random();
