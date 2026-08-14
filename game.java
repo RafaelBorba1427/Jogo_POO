@@ -2,13 +2,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class game extends JPanel implements MouseListener, KeyListener {
+public class Game extends JPanel implements MouseListener, KeyListener {
   int resolution_x, resolution_y;
 
   boolean game_over = false;
 
   // Initialise all parameters and start the game loop
-  public game(int resolution_x, int resolution_y){
+  public Game(int resolution_x, int resolution_y){
     this.resolution_x = resolution_x;
     this.resolution_y = resolution_y;
 
@@ -33,7 +33,10 @@ public class game extends JPanel implements MouseListener, KeyListener {
     setVisible(true);
 
 
-    // Start the game loop
+    
+  }
+
+  public void startGame(){
     Timer timer = new Timer(16, e -> {
         Timer t = (Timer) e.getSource();
 
@@ -61,7 +64,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
     
-    
+
   }
 
 

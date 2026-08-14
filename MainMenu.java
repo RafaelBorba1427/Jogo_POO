@@ -3,25 +3,22 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
-import java.math.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.BufferedImage;
-
 import javax.imageio.ImageIO;
 import java.io.File;
 
-public class inicial extends JPanel implements MouseListener, ActionListener {
+public class MainMenu extends JPanel implements MouseListener, ActionListener {
   game game_sys;
   Image img;
   BufferedImage sprite;
   JButton start, settings;
   JPanel second = new JPanel(new GridBagLayout()), third = new JPanel(new BorderLayout());
 
-  inicial(game game_sys) {
+  MainMenu(game game_sys) {
     setLayout(new BorderLayout());
     this.game_sys = game_sys;
     setPreferredSize(new Dimension(game.x_boundary,game.y_boundary));
-    img = new ImageIcon("inicial_screen.png").getImage();
+    img = new ImageIcon("MainMenu_screen.png").getImage();
     try {
       sprite = ImageIO.read(new File("spritesheet/Menu_Stuff(1).png"));
     } catch (Exception e) {
