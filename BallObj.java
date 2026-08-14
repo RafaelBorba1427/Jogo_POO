@@ -1,31 +1,20 @@
 import java.awt.geom.Ellipse2D;
 
-public class BallObj extends Object{
+public class BallObj extends MovableObj{
     //global quantifiers
     private static int global_quantity = 0;
     private static int global_active = 0;
 
     //movable objects variables
-    public Ellipse2D hit_box;
-    public float 
-                x_vel = 0, y_vel = 0,
-            x_accel = 0, y_accel = 0;
 
     
-    BallObj(float x_pos, float y_pos, float width, float height, boolean active, int obj_type, int obj_id){
-        super(x_pos, y_pos, width, height, false, active, obj_type, obj_id);
-        hit_box = new Ellipse2D.Float(x_pos,y_pos,width,height);
-        global_quantity++;
-        if(active) global_active++;
+    BallObj(float x_pos, float y_pos, float width, float height, boolean active, int obj_type, int obj_id, float elastic_factor){
+        super(x_pos, y_pos, width, height, active, obj_type, obj_id, elastic_factor);
     }
 
-    public void updateVelocity(float new_x_vel, float new_y_vel){
-        this.x_vel = new_x_vel;
-        this.y_vel = new_y_vel;
+    @Override
+    public void createHitBox(){
+        hit_box = new Ellipse2D.Float( x_pos, y_pos, dimensions.width, dimensions.height);
     }
 
-    public void updateAcceleration(float new_x_accel, float new_y_accel){
-        this.x_accel = new_x_accel;
-        this.y_accel = new_y_accel;
-    }
 }

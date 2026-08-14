@@ -1,20 +1,23 @@
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.RectangularShape;
 
 public class Object {
     //object variables
-    private float x_pos, y_pos;
-    private DimensionFloat dimensions;
-    
+    protected float x_pos, y_pos;
+    protected DimensionFloat dimensions;
+    protected RectangularShape hit_box;
+
     //object parameters            
-    private boolean movable;
-    private boolean active;
+    protected boolean movable;
+    protected boolean active;
     
     //sprite reference
-    private BufferedImage sprite;
+    protected BufferedImage sprite;
     
     //object type codes
-    private int obj_type;
+    protected int obj_type;
     public static final int   
             RIGID_OBJ = 0,
           MOVABLE_OBJ = 1,
@@ -23,7 +26,7 @@ public class Object {
     EVENT_TRIGGER_OBJ = 4;
     
     //object IDs
-    private int obj_id;
+    protected int obj_id;
     public static final int
    ID_PLATAFORMA_CONGELADA = 0,
              ID_PLATAFORMA = 1,
@@ -54,38 +57,58 @@ ID_BUFF_ELASTIC_COLLISION = 11,
         g2.drawImage(sprite, (int) x_pos, (int) y_pos, (int) dimensions.width, (int) dimensions.height, null);
     }
 
-
+    //Getter methods
     public float getX(){
         return this.x_pos;}
+        
     public float getY(){
         return this.y_pos;}
+
     public DimensionFloat getDimension(){
         return this.dimensions;}
+    
+    public RectangularShape getHitBox(){
+        return this.hit_box;}
+
     public int getObjType(){
         return this.obj_type;}
+
     public int getObjId(){
         return this.obj_id;}
 
-    public boolean isActive(){
-        return active;}
-    public boolean isMovable(){
-        return movable;}
-    
     public BufferedImage getSprite(){
         return this.sprite;}
 
+    public boolean isActive(){
+        return active;}
 
+    public boolean isMovable(){
+        return movable;}
+    
+
+    //Setter methods
     public void move(int new_x_pos, int new_y_pox){
         this.x_pos = new_x_pos;
         this.y_pos = new_y_pox;
     }
+
+    public void updateHitBox(){
+        hit_box.setFrame(x_pos,y_pos,dimensions.width,dimensions.height);
+    }
+
     public void changeDimensions(float new_width, float new_height){
         this.dimensions.setSize(new_width, new_height);
+        updateHitBox();
     }
+
     public void changeSprite(BufferedImage new_sprite){
         this.sprite = new_sprite;
     }
-    
+
+    //Colision Detection
+    public boolean collides(Object outro_obj){
+        return this.hit_box.intersects((Rectangle2D)outro_obj.getHitBox());
+    }
 
     public void deactivate(Object object){
         object.active = false;
