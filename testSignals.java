@@ -1,3 +1,5 @@
+// A test class for Signals, not a part of the game
+
 public class testSignals {
   public static void main(String[] args) {
     Signal<String> signal = new Signal<>();
