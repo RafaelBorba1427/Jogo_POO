@@ -83,9 +83,11 @@ public class AnimationMaster {
   }
 
 
+  /*
   public static void main(String[] args) {
     BufferedImage[] sprites = new BufferedImage[5]; // Replace with actual sprite images
     AnimationMaster animationMaster = new AnimationMaster(10, 100, sprites);
     initializeAnimationMasterTimer();
   }
+  */
 }

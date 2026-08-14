@@ -8,13 +8,13 @@ import javax.imageio.ImageIO;
 import java.io.File;
 
 public class MainMenu extends JPanel implements MouseListener, ActionListener {
-  game game_sys;
+  Main game_sys;
   Image img;
   BufferedImage sprite;
   JButton start, settings;
   JPanel second = new JPanel(new GridBagLayout()), third = new JPanel(new BorderLayout());
 
-  MainMenu(game game_sys) {
+  MainMenu(Main game_sys) {
     setLayout(new BorderLayout());
     this.game_sys = game_sys;
     setPreferredSize(new Dimension(game.x_boundary,game.y_boundary));
