@@ -3,14 +3,16 @@ import java.awt.image.BufferedImage;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 
-public class Object {
+public class GameObject {
     //object variables
-    protected float x_pos, y_pos;
-    protected DimensionFloat dimensions;
-    protected RectangularShape hit_box;
+    protected Vector2D position;
+    protected Vector2D dimensions;
+    protected double rotation;
+    protected HitBox hit_box; 
 
     //object parameters            
     protected boolean movable;
+    protected boolean rotatable;
     protected boolean active;
     
     //sprite reference
@@ -42,11 +44,12 @@ public class Object {
 ID_BUFF_ELASTIC_COLLISION = 11,
                 Quant_IDs = 12;
                     
-    Object(float x_pos, float y_pos, float width, float height, boolean movable, boolean active, int obj_type, int obj_id){
-        this.x_pos = x_pos;
-        this.y_pos = y_pos;
-         this.dimensions = new DimensionFloat(width, height);
+    GameObject(double x_pos, double y_pos, double width, double height, double rotation, boolean movable, boolean rotatable, boolean active, int obj_type, int obj_id){
+        this.position = new Vector2D(x_pos, y_pos);
+        this.dimensions = new Vector2D(width, height);
+        this.rotation = rotation;
         this.movable = movable;
+        this.rotatable = rotatable;
         this.active = active;
         this.obj_type = obj_type;
         this.obj_id = obj_id;
@@ -54,20 +57,24 @@ ID_BUFF_ELASTIC_COLLISION = 11,
 
     public void draw(Graphics2D g2){
         if(this.isActive())
-        g2.drawImage(sprite, (int) x_pos, (int) y_pos, (int) dimensions.width, (int) dimensions.height, null);
+        g2.drawImage(sprite, (int) position.x, (int) position.y, (int) dimensions.x, (int) dimensions.y, null);
     }
 
     //Getter methods
-    public float getX(){
-        return this.x_pos;}
+    public double getX(){
+        return this.position.x;}
         
-    public float getY(){
-        return this.y_pos;}
+    public double getY(){
+        return this.position.y;}
 
-    public DimensionFloat getDimension(){
-        return this.dimensions;}
+    public Vector2D getPosition(){
+        return new Vector2D(this.position);
+    } 
+
+    public Vector2D getDimension(){
+        return new Vector2D(this.dimensions);}
     
-    public RectangularShape getHitBox(){
+    public HitBox getHitBox(){
         return this.hit_box;}
 
     public int getObjType(){
@@ -88,15 +95,20 @@ ID_BUFF_ELASTIC_COLLISION = 11,
 
     //Setter methods
     public void move(int new_x_pos, int new_y_pox){
-        this.x_pos = new_x_pos;
-        this.y_pos = new_y_pox;
+        this.position.x = new_x_pos;
+        this.position.y = new_y_pox;
+    }
+
+    public void move(Vector2D new_pos){
+        this.position.x = new_pos.x;
+        this.position.y = new_pos.y;
     }
 
     public void updateHitBox(){
-        hit_box.setFrame(x_pos,y_pos,dimensions.width,dimensions.height);
+
     }
 
-    public void changeDimensions(float new_width, float new_height){
+    public void changeDimensions(double new_width, double new_height){
         this.dimensions.setSize(new_width, new_height);
         updateHitBox();
     }
@@ -105,12 +117,12 @@ ID_BUFF_ELASTIC_COLLISION = 11,
         this.sprite = new_sprite;
     }
 
-    //Colision Detection
-    public boolean collides(Object outro_obj){
-        return this.hit_box.intersects((Rectangle2D)outro_obj.getHitBox());
+    //Template, overriden in subclasses
+    public boolean collides(GameObject outro_obj){
+        return false;
     }
 
-    public void deactivate(Object object){
+    public void deactivate(GameObject object){
         object.active = false;
     }
 }

@@ -1,6 +1,6 @@
 import java.awt.geom.Rectangle2D;
 
-public class BuffObj extends Object{
+public class BuffObj extends GameObject{
     //global quantifiers
     private static int global_quantity = 0;
     private static int global_active = 0;
@@ -8,13 +8,16 @@ public class BuffObj extends Object{
     //buff objects variables
 
     
-    BuffObj(float x_pos, float y_pos, float width, float height, boolean movable, boolean active, int obj_type, int obj_id){
-        super(x_pos, y_pos, width, height, false, active, obj_type, obj_id);
+    // ------------------------------------------------------------
+    // Obj inherited methods
+    // ------------------------------------------------------------
+    BuffObj(double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_type, int obj_id){
+        super(x_pos, y_pos, width, height, rotation, true, rotatable, active, GameObject.BUFF_OBJ, obj_id);
         
-        hit_box = new Rectangle2D.Float(x_pos,y_pos,width,height);
+        hit_box = new RectangularHitBox(position, dimensions, rotation);
 
-        this.global_quantity++;
-        if(active) this.global_active++;
+        global_quantity++;
+        if(active) global_active++;
     }
 
 }
