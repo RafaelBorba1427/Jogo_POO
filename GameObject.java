@@ -1,9 +1,12 @@
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
 
 public class GameObject {
+
+    // ------------------------------------------------------------
+    // Variables
+    // ------------------------------------------------------------
+
     //object variables
     protected Vector2D position;
     protected Vector2D dimensions;
@@ -43,7 +46,12 @@ public class GameObject {
               ID_BUFF_LAG = 10,
 ID_BUFF_ELASTIC_COLLISION = 11,
                 Quant_IDs = 12;
-                    
+    
+
+    // ------------------------------------------------------------
+    // Constructor
+    // ------------------------------------------------------------
+
     GameObject(double x_pos, double y_pos, double width, double height, double rotation, boolean movable, boolean rotatable, boolean active, int obj_type, int obj_id){
         this.position = new Vector2D(x_pos, y_pos);
         this.dimensions = new Vector2D(width, height);
@@ -104,9 +112,7 @@ ID_BUFF_ELASTIC_COLLISION = 11,
         this.position.y = new_pos.y;
     }
 
-    public void updateHitBox(){
-
-    }
+    public void updateHitBox(){}
 
     public void changeDimensions(double new_width, double new_height){
         this.dimensions.setSize(new_width, new_height);
@@ -119,8 +125,7 @@ ID_BUFF_ELASTIC_COLLISION = 11,
 
     //Template, overriden in subclasses
     public boolean collides(GameObject outro_obj){
-        return false;
-    }
+        return false;}
 
     public void deactivate(GameObject object){
         object.active = false;

@@ -22,7 +22,7 @@ public class GameMap {
             0,
             0,
             width,
-            800);
+            height);
         
         collision_detection =
         new QuadTree<>(

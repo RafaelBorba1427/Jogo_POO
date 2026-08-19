@@ -1,4 +1,3 @@
-import java.awt.geom.Rectangle2D;
 import java.math.*;
 
 public class MovableObj extends GameObject{
@@ -77,9 +76,12 @@ public class MovableObj extends GameObject{
     public void bounce(GameObject outro_obj){
         double target_height = outro_obj.dimensions.x,
               target_width = outro_obj.dimensions.y;
-
-              
-        //terminar a implementação              
+        
+        //---------------------------------------------------------------------
+        // Implementação temporária, o sistema correto será implementado depois
+        bounceX();
+        bounceY();
+        //---------------------------------------------------------------------
     }
 
     public void update(){

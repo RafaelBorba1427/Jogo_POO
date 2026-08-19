@@ -7,10 +7,11 @@ public class RectangularHitBox implements HitBox{
     private double halfWidth;
     private double halfHeight;
 
-    // Rotation in radians.
+    // Rotation in radians, and the precomputed cos/sin.
     private double rotation;
+    private double cos, sin;
 
-    //it's Axis Aligned Bounding Box
+    //its Axis Aligned Bounding Box
     private AABB aabb;
 
     public RectangularHitBox(double x, double y,
@@ -32,6 +33,8 @@ public class RectangularHitBox implements HitBox{
         this.halfWidth = dimensions.x / 2.0;
         this.halfHeight = dimensions.y / 2.0;
         this.rotation = rotation;
+        this.cos = Math.cos(rotation);
+        this.sin = Math.sin(rotation);
         this.aabb = new AABB(this);
     }
 
@@ -74,29 +77,46 @@ public class RectangularHitBox implements HitBox{
 
     public void setRotation(double rotation) {
         this.rotation = rotation;
+        updateCosSin();
     }
 
     public void rotate(double amount) {
         rotation += amount;
+        updateCosSin();
+    }
+
+    private void updateCosSin(){
+        this.cos = Math.cos(rotation);
+        this.sin = Math.sin(rotation);
     }
 
     public void updateHitBox(Vector2D center,
                Vector2D dimensions,
                double rotation) 
     {
+        if(this.center != center ||
+            this.halfWidth != dimensions.x / 2.0 ||
+            this.halfHeight != dimensions.y / 2.0)
+        {
+            this.center = center;
+            this.halfWidth = dimensions.x / 2.0;
+            this.halfHeight = dimensions.y / 2.0;
+            this.aabb.update(this);
+        }
 
-        this.center = center;
-        this.halfWidth = dimensions.x / 2.0;
-        this.halfHeight = dimensions.y / 2.0;
-        this.rotation = rotation;
-        this.aabb.update(this);
+        if(this.rotation != rotation){
+            this.rotation = rotation;
+            this.updateCosSin();
+        }
+
+        
     }
 
     // Returns the rectangle's local X axis.
     // This is the direction vector of its width.
     public Vector2D getAxisX() {
-        double cos = Math.cos(rotation);
-        double sin = Math.sin(rotation);
+        double cos = this.cos;
+        double sin = this.sin;
 
         return new Vector2D(cos, sin);
     }
@@ -104,8 +124,8 @@ public class RectangularHitBox implements HitBox{
     // Returns the rectangle's local Y axis.
     // This is the direction vector of its height.
     public Vector2D getAxisY() {
-        double cos = Math.cos(rotation);
-        double sin = Math.sin(rotation);
+        double cos = this.cos;
+        double sin = this.sin;
 
         return new Vector2D(-sin, cos);
     }

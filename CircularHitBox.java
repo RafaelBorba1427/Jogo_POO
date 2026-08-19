@@ -28,9 +28,11 @@ public class CircularHitBox implements HitBox{
     }
     
     public void updateHitBox(Vector2D center, double radius){
-        this.center = center;
-        this.radius = radius;
-        this.aabb.update(this);
+        if(this.center != center || this.radius != radius){
+            this.center = center;
+            this.radius = radius;
+            this.aabb.update(this);
+        }
     }
 
     public void setCenter(double x, double y) {
