@@ -13,8 +13,6 @@ public class BuffObj extends GameObject{
     // ------------------------------------------------------------
     BuffObj(double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_type, int obj_id){
         super(x_pos, y_pos, width, height, rotation, true, rotatable, active, GameObject.BUFF_OBJ, obj_id);
-        
-        hit_box = new RectangularHitBox(position, dimensions, rotation);
 
         global_quantity++;
         if(active) global_active++;

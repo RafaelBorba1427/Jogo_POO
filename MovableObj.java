@@ -18,33 +18,13 @@ public class MovableObj extends GameObject{
     // Obj inherited methods
     // ------------------------------------------------------------
 
-    MovableObj(double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_type, int obj_id, double elastic_factor){
+    MovableObj(double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_id, double elastic_factor){
         super(x_pos, y_pos, width, height, rotation, true, rotatable, active, GameObject.MOVABLE_OBJ, obj_id);
 
-        createHitBox();
         this.elastic_factor = elastic_factor; 
 
         global_quantity++;
         if(active) global_active++;
-    }
-
-
-    public void createHitBox(){
-        hit_box = new RectangularHitBox(this.position, this.dimensions, this.rotation);
-    }
-
-    @Override
-    public void updateHitBox(){
-        ((RectangularHitBox)hit_box).updateHitBox(position, dimensions, rotation);
-    }
-
-    @Override
-    //Colision Detection
-    public boolean collides(GameObject outro_obj){
-        if(outro_obj.getObjType() == GameObject.BALL_OBJ){
-            return ((RectangularHitBox) this.hit_box).intersects((CircularHitBox) outro_obj.getHitBox()); 
-        }
-        return ((RectangularHitBox) this.hit_box).intersects((RectangularHitBox) outro_obj.getHitBox());
     }
 
     // ------------------------------------------------------------

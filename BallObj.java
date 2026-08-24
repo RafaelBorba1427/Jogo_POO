@@ -1,4 +1,7 @@
-import java.awt.geom.Ellipse2D;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+
 
 public class BallObj extends MovableObj{
     //global quantifiers
@@ -12,8 +15,26 @@ public class BallObj extends MovableObj{
     // Obj inherited methods
     // ------------------------------------------------------------
     
-    BallObj(double x_pos, double y_pos, double radius, double rotation, boolean rotatable, boolean active, int obj_type, int obj_id, double elastic_factor){
-        super(x_pos, y_pos, radius, radius, rotation, rotatable, active, obj_type, GameObject.BALL_OBJ, elastic_factor);
+    BallObj(double x_pos, double y_pos, double radius, boolean active, int obj_id, double elastic_factor){
+        super(x_pos, y_pos, radius, radius, 0, false, active, obj_id, elastic_factor);
+        obj_type = GameObject.BALL_OBJ;
+    }
+
+    @Override
+    public void drawHitbox(Graphics2D g2d){
+        if(this.isActive()){
+            g2d = (Graphics2D) g2d.create(); // copy of g2d
+
+            // 1. Draw hitbox body at target location
+            g2d.setColor(new Color(255,0,0,64));
+            g2d.fillOval((int) position.x, (int) position.y, (int) dimensions.x, (int) dimensions.x);
+
+            // 2. Draw hitbox outline
+            g2d.setColor(new Color(255,0,0,255));
+            g2d.drawOval((int) position.x, (int) position.y, (int) dimensions.x, (int) dimensions.x);
+            
+            g2d.dispose();
+        }
     }
 
     @Override

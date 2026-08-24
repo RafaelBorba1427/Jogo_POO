@@ -12,10 +12,8 @@ public class RigidObj extends GameObject{
     // Obj inherited methods
     // ------------------------------------------------------------
     
-    RigidObj(double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_type, int obj_id){
+    RigidObj(double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_id){
         super(x_pos, y_pos, width, height, rotation, false, rotatable, active, GameObject.RIGID_OBJ, obj_id);
-
-        hit_box = new RectangularHitBox(position, dimensions, rotation);
 
         global_quantity++;
         if(active) global_active++;

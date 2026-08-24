@@ -1,5 +1,8 @@
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 public class GameObject {
 
@@ -10,7 +13,7 @@ public class GameObject {
     //object variables
     protected Vector2D position;
     protected Vector2D dimensions;
-    protected double rotation;
+    protected double rotation; // in radians
     protected HitBox hit_box; 
 
     //object parameters            
@@ -61,11 +64,33 @@ ID_BUFF_ELASTIC_COLLISION = 11,
         this.active = active;
         this.obj_type = obj_type;
         this.obj_id = obj_id;
+
+        createHitBox();
     }
 
-    public void draw(Graphics2D g2){
-        if(this.isActive())
-        g2.drawImage(sprite, (int) position.x, (int) position.y, (int) dimensions.x, (int) dimensions.y, null);
+    public void drawHitbox(Graphics2D g2d){
+        //g2.drawImage(sprite, (int) position.x, (int) position.y, (int) dimensions.x, (int) dimensions.y, null);
+        if(this.isActive()){
+            g2d = (Graphics2D) g2d.create(); // copy of g2d
+
+            // 1. Compute the center of the image
+            Vector2D center = new Vector2D(position.x + dimensions.x/2, position.y + dimensions.y/2);
+
+            g2d.translate((int) center.x, (int) center.y);
+
+            // 2. Apply the rotation
+            g2d.rotate(rotation);
+
+            // 3. Draw hitbox body at target location
+            g2d.setColor(new Color(255,0,0,64));
+            g2d.fillRect((int) (-dimensions.x/2), (int) (-dimensions.y/2), (int) dimensions.x, (int) dimensions.y);
+
+            // 4. Draw hitbox outline
+            g2d.setColor(new Color(255,0,0,255));
+            g2d.drawRect((int) (-dimensions.x/2), (int) (-dimensions.y/2), (int) dimensions.x, (int) dimensions.y);
+            
+            g2d.dispose();
+        }
     }
 
     //Getter methods
@@ -112,7 +137,28 @@ ID_BUFF_ELASTIC_COLLISION = 11,
         this.position.y = new_pos.y;
     }
 
-    public void updateHitBox(){}
+    public void changeRotation(double rotation){
+        if(this.rotatable){
+            this.rotation = rotation;
+            updateHitBox();    
+        }
+    }
+
+    public void rotate(double rotation){
+        if(this.rotatable){
+            this.rotation =
+            Math.IEEEremainder(this.rotation + rotation, 2.0 * Math.PI);
+            updateHitBox();
+        }
+    }
+
+    public void createHitBox(){
+        hit_box = new RectangularHitBox(this.position, this.dimensions, this.rotation);
+    }
+
+    public void updateHitBox(){
+        ((RectangularHitBox)hit_box).updateHitBox(position, dimensions, rotation);
+    }
 
     public void changeDimensions(double new_width, double new_height){
         this.dimensions.setSize(new_width, new_height);
@@ -123,9 +169,13 @@ ID_BUFF_ELASTIC_COLLISION = 11,
         this.sprite = new_sprite;
     }
 
-    //Template, overriden in subclasses
+    //Colision Detection
     public boolean collides(GameObject outro_obj){
-        return false;}
+        if(outro_obj.getObjType() == GameObject.BALL_OBJ){
+            return ((RectangularHitBox) this.hit_box).intersects((CircularHitBox) outro_obj.getHitBox()); 
+        }
+        return ((RectangularHitBox) this.hit_box).intersects((RectangularHitBox) outro_obj.getHitBox());
+    }
 
     public void deactivate(GameObject object){
         object.active = false;
