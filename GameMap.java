@@ -42,16 +42,16 @@ public class GameMap {
             height);
 
         //Game Boundaries
-        left_wall = new RigidObj(0, 0, 1, height,
+        left_wall = new RigidObj(0, 0, 0.025*width, height,
              0, false, true, 0);
 
-        right_wall = new RigidObj(width-1, 0, 1, height,
+        right_wall = new RigidObj(width-0.025*width, 0, 0.025*width, height,
              0, false, true, 0);
 
-        floor = new RigidObj(1, height-1, width-1, 1,
+        floor = new RigidObj(0.025*width, height-0.025*height, width-0.025*width, 0.025*height,
              0, false, true, 0);
 
-        roof = new RigidObj(1, 0, width-1, 1,
+        roof = new RigidObj(0.025*width, 0, width-0.025*width, 0.025*height,
              0, false, true, 0);
         
         permanent_objects.add(left_wall);
@@ -88,17 +88,14 @@ public class GameMap {
         if(flag){
         switch(target.obj_type){
             case GameObject.MOVABLE_OBJ:{
-                if(flag)
                 moving_objects.add(target);
             }break;
 
             case GameObject.BALL_OBJ:{
-                if(flag)
                 moving_objects.add(target);
             }break;
 
             default:{
-                if(flag)
                 immovable_objects.add(target);
             }break;
         }
@@ -110,11 +107,7 @@ public class GameMap {
 
     void deleteInactiveObjs(){
         for(ArrayList<GameObject> obj_list :  all_objects){
-            for (GameObject object : obj_list) {
-                if(!object.isActive()){
-                    obj_list.remove(object);
-                }
-            }
+            obj_list.removeIf(obj -> !obj.isActive());
         }
     }
 
@@ -155,8 +148,7 @@ public class GameMap {
                 collision_detection.query(bounds);
 
             for (GameObject candidate : candidates) {
-
-                if (moving.collides(candidate)) {
+                if (!(candidate == moving) && moving.collides(candidate)) {
                     ((MovableObj)moving).bounce(candidate);
                 }
             }

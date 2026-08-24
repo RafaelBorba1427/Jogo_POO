@@ -11,8 +11,9 @@ public class MovableObj extends GameObject{
               acceleration = new Vector2D(0, GameRules.gravity);
 
     protected double elastic_factor;
-    public static final double MIN_VELOCITY = 0.01F;
-
+    public static final double MIN_VELOCITY = 0.001,
+                               TERMINAL_VELOCITY = 30,
+                               MAX_VELOCITY = 50;
 
     // ------------------------------------------------------------
     // Obj inherited methods
@@ -30,6 +31,14 @@ public class MovableObj extends GameObject{
     // ------------------------------------------------------------
     // MovableObj exclusive methods
     // ------------------------------------------------------------
+
+    public Vector2D getVelocity(){
+        return new Vector2D(velocity);
+    }
+
+    public Vector2D getAcceleration(){
+        return new Vector2D(acceleration);
+    }
 
     public void updateVelocity(double new_x_vel, double new_y_vel){
         this.velocity.x = new_x_vel;
@@ -72,7 +81,10 @@ public class MovableObj extends GameObject{
             position.y += velocity.y;
             
             if(Math.abs(velocity.x) < MIN_VELOCITY) velocity.x = 0;
+            else if(Math.abs(velocity.x) > MAX_VELOCITY) velocity.x = MAX_VELOCITY;
             if(Math.abs(velocity.y) < MIN_VELOCITY) velocity.y = 0;
+            else if(velocity.y < -MAX_VELOCITY) velocity.y = -MAX_VELOCITY;
+            else if(velocity.y > TERMINAL_VELOCITY) velocity.y = TERMINAL_VELOCITY;
 
             updateHitBox();
         }

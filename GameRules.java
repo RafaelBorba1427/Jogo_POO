@@ -5,5 +5,5 @@ public class GameRules {
     public static boolean cheats1 = false;
 
     // constants
-    public static double gravity = 0.01;
+    public static double gravity = 0.05;
 }

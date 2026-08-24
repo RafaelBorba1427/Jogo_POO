@@ -59,4 +59,8 @@ public class Vector2D {
     public String toString() {
         return "(" + x + ", " + y + ")";
     }
+
+    public void printValues(){
+        System.out.print("(" + x + ", " + y + ")" + "\n");
+    }
 }

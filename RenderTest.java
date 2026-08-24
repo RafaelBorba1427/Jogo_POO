@@ -13,9 +13,9 @@ public class RenderTest extends JPanel implements MouseListener, KeyListener {
   //--------------------------------------------------------
   //render test, delete later 
   //double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_type, int obj_id
-  MovableObj obj_render_test1 = new MovableObj(400f,300f,100f,50f, (Math.PI/4),true,true,0,1);
+  MovableObj obj_render_test1 = new MovableObj(400f,300f,50f,40f, (Math.PI/4),true,true,0,1);
   //(double x_pos, double y_pos, double radius, boolean active, int obj_id, double elastic_factor)
-  BallObj obj_render_test2 = new BallObj(200f,200f,100f, true,0,1);
+  BallObj obj_render_test2 = new BallObj(200f,200f,50f, true,0,1);
   //---------------------------------------------------------
 
   // Initialise all parameters and start the game loop
@@ -58,6 +58,7 @@ public class RenderTest extends JPanel implements MouseListener, KeyListener {
   public void startGame(){
 
     //render test, delete later
+    GameRules.physics_on = true;
     game_map.addObject(obj_render_test1);
     game_map.addObject(obj_render_test2);
     //------------------------
@@ -76,6 +77,8 @@ public class RenderTest extends JPanel implements MouseListener, KeyListener {
         obj_render_test1.rotate(0.1);
         game_map.handleCollisions();
         game_map.updateMovingObjs();
+        //obj_render_test1.getVelocity().printValues();
+        //obj_render_test2.getVelocity().printValues();
         //------------------------
         
       }
