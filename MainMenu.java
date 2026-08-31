@@ -1,4 +1,3 @@
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,7 +10,7 @@ public class MainMenu extends JPanel implements MouseListener, ActionListener {
   Main game_sys;
   Image img;
   BufferedImage sprite;
-  JButton start, settings;
+  MenuButton start, settings;
   JPanel second = new JPanel(new GridBagLayout()), third = new JPanel(new BorderLayout());
 
   MainMenu(Main game_sys) {
@@ -19,41 +18,10 @@ public class MainMenu extends JPanel implements MouseListener, ActionListener {
     this.game_sys = game_sys;
     setPreferredSize(new Dimension(game.x_boundary,game.y_boundary));
     img = new ImageIcon("MainMenu_screen.png").getImage();
-    try {
-      sprite = ImageIO.read(new File("spritesheet/Menu_Stuff(1).png"));
-    } catch (Exception e) {
-      System.out.println(e);
-    }
-    start = new JButton() {
-      @Override
-      public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+    
+    start = new MenuButton();
+    settings = new MenuButton();
 
-        g.drawImage(sprite,
-            0, 0, getWidth(), getHeight(),
-            game_sys.anime % 4 * 32,
-            0 * 32,
-            game_sys.anime % 4 * 32 + 32,
-            0 * 32 + 32,
-            null);
-
-      }
-    };
-    settings = new JButton() {
-      @Override
-      public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        g.drawImage(sprite,
-            0, 0, getWidth(), getHeight(),
-            game_sys.anime % 4 * 32,
-            1 * 32,
-            game_sys.anime % 4 * 32 + 32,
-            1 * 32 + 32,
-            null);
-
-      }
-    };
     start.setPreferredSize(new Dimension(game.rescaleX(200), game.rescaleY(200)));
     start.setContentAreaFilled(false);
     start.setBorderPainted(false);
@@ -224,8 +192,6 @@ public class MainMenu extends JPanel implements MouseListener, ActionListener {
   @Override
   public void mouseClicked(MouseEvent e) {
     if (e.getSource() == start) {
-      game.musicMaster.changeTrackAndPlay("gameOverworld0");
-      
       game_sys.frame.add(game_sys.gaming);
       game.game_start = true;
       game_sys.frame.remove(this);
@@ -257,4 +223,28 @@ public class MainMenu extends JPanel implements MouseListener, ActionListener {
   public void mouseExited(MouseEvent e) {
   }
 
+}
+
+class MenuButton extends JButton{
+  AnimationMaster animation;
+  BufferedImage sprite;
+
+  int position_x, position_y;
+
+  public MenuButton(){
+    try {
+      sprite = ImageIO.read(new File("spritesheet/Menu_Stuff(1).png"));
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+
+    animation = new AnimationMaster(1, 2, null);
+  }
+
+  @Override
+  public void paintComponent(Graphics g){
+    super.paintComponent(g);
+    
+    animation.paint(g, position_x, position_y);
+  }
 }
