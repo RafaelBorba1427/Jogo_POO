@@ -73,7 +73,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
     private volatile int x_input;
     private volatile int y_input;
     private volatile boolean mouse_clicked;
-    static inicial menu;
+    // static inicial menu;
 
     static int rescaleX(int x) {
         return (int) (x * rescale_factor_x);
@@ -113,7 +113,7 @@ public class game extends JPanel implements MouseListener, KeyListener {
         }
 
         gaming.setPreferredSize(new Dimension(x_boundary, y_boundary));
-        menu.setPreferredSize(new Dimension(x_boundary, y_boundary));
+        // menu.setPreferredSize(new Dimension(x_boundary, y_boundary));
         lvl_map.get(0).setX(x_boundary - rescaleX(40));
         lvl_map.get(0).setY(y_boundary - rescaleY(15));
         frame.pack();
@@ -192,8 +192,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
         SwingUtilities.invokeLater(() -> gaming.requestFocusInWindow());
 
         gaming.frame = frame;
-        menu = new inicial(gaming);
-        frame.add(menu);
+        // menu = new inicial(gaming);
+        // frame.add(menu);
         frame.setLocation(Toolkit.getDefaultToolkit().getScreenSize().width / 4,
                 Toolkit.getDefaultToolkit().getScreenSize().height / 8);
 
@@ -227,8 +227,8 @@ public class game extends JPanel implements MouseListener, KeyListener {
             gaming.update();
             if (game_start)
                 gaming.repaint();
-            else
-                menu.repaint();
+         //   else
+          //      menu.repaint();
             buffSys.DecrementBuffTimers();
             if (point_bonus_anime != 0)
                 point_bonus_anime--;

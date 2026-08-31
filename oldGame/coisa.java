@@ -35,7 +35,7 @@ public class coisa extends Rectangle {
   public coisa(int x, int y, int diametro, int id, game current) {
     int width = diametro, height = diametro;
 
-    super(x - width / 2, y - height / 2, width, height);
+    // super(x - width / 2, y - height / 2, width, height);
 
     this.id = id;
     this.width = width;
