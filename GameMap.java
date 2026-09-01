@@ -11,10 +11,12 @@ public class GameMap {
 
     private AABB world_bounds;
 
-    ArrayList<ArrayList<GameObject>> all_objects = new ArrayList<>();
-    ArrayList<GameObject> immovable_objects = new ArrayList<>();
-    ArrayList<GameObject> moving_objects = new ArrayList<>();
-    ArrayList<GameObject> permanent_objects = new ArrayList<>();
+    public static boolean is_loaded = false;
+
+    private static ArrayList<ArrayList<GameObject>> all_objects = new ArrayList<>();
+    private ArrayList<GameObject> immovable_objects = new ArrayList<>();
+    private ArrayList<GameObject> moving_objects = new ArrayList<>();
+    private ArrayList<GameObject> permanent_objects = new ArrayList<>();
 
 
     GameObject left_wall,
@@ -48,10 +50,10 @@ public class GameMap {
         right_wall = new RigidObj(width-0.025*width, 0, 0.025*width, height,
              0, false, true, 0);
 
-        floor = new RigidObj(0.025*width, height-0.025*height, width-0.025*width, 0.025*height,
+        floor = new RigidObj(0.025*width, height-0.025*height, width-0.050*width, 0.025*height,
              0, false, true, 0);
 
-        roof = new RigidObj(0.025*width, 0, width-0.025*width, 0.025*height,
+        roof = new RigidObj(0.025*width, 0, width-0.050*width, 0.025*height,
              0, false, true, 0);
         
         permanent_objects.add(left_wall);
@@ -64,6 +66,8 @@ public class GameMap {
             world_bounds,
             8, // max objects per cell
             8); // maximum recursion depth
+
+        is_loaded = true;
 
     }
 
@@ -154,6 +158,15 @@ public class GameMap {
             }
         }
     }
+
+    //--------------------------
+    // Getter methods
+    //--------------------------
+    public static ArrayList<ArrayList<GameObject>> getAllObjects(){ 
+        return all_objects;
+    }
+
+
 
 }
 
