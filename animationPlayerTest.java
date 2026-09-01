@@ -17,13 +17,13 @@ public class animationPlayerTest {
     AnimationPlayer.initializeAnimationPlayerTimer();
     
     try {
-      AnimationPlayer animation_player = new AnimationPlayer("heart", 5);
+      AnimationPlayer animation_player = new AnimationPlayer("heart", 5, 5);
 
       JPanel panel = new JPanel() {
         @Override
         protected void paintComponent(Graphics g) {
           super.paintComponent(g);
-          animation_player.paint(g, 100, 100); // Draw the animation at (100, 100)
+          animation_player.paint(g, 100, 100, new Vector2D(16, 16), 1); // Draw the animation at (100, 100)
 
           repaint();
         }

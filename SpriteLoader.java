@@ -3,7 +3,7 @@ import java.util.*;
 
 public class SpriteLoader {
     private static final HashMap<String, BufferedImage> spritesheets = new HashMap<>();
-    private static final HashMap<String, BufferedImage[]> sprites_spliced = new HashMap<>();
+    private static final HashMap<String, AnimationFrame[]> sprites_spliced = new HashMap<>();
 
     // Loads a spritesheet and splices it into an array of sprites
     // sprite_height_offset is used to specify the row in which the desired sprites are located, in case the spritesheet contains multiple rows of sprites
@@ -16,13 +16,15 @@ public class SpriteLoader {
         }
 
         BufferedImage spritesheet = null;
-        BufferedImage[] sprites = new BufferedImage[num_sprites];
+        AnimationFrame[] sprites = new AnimationFrame[num_sprites];
+        
         try{
             spritesheet = javax.imageio.ImageIO.read(new java.io.File(image_path));
             spritesheets.put(animation_key, spritesheet);
 
             for (int i = 0; i < num_sprites; i++) {
-                sprites[i] = spritesheet.getSubimage(i * sprite_width, 0, sprite_width, sprite_height * (1 + sprite_height_offset));
+                BufferedImage sprite_image = spritesheet.getSubimage(i * sprite_width, 0, sprite_width, sprite_height * (1 + sprite_height_offset));
+                sprites[i] = new AnimationFrame(sprite_image, sprite_width, sprite_height);
             }
 
             sprites_spliced.put(animation_key, sprites);
@@ -35,7 +37,7 @@ public class SpriteLoader {
         sprites_spliced.put(animation_key, sprites);
     }
 
-    public static BufferedImage[] getSplicedSprites(String animation_key) {
+    public static AnimationFrame[] getSplicedSprites(String animation_key) {
         return sprites_spliced.get(animation_key);
     }
 }
