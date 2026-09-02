@@ -25,19 +25,42 @@ public class AnimationPlayer {
   // Declares an animation with a unique key, the last frame index, and an array of sprites
   // Also connects it to the global animation loop
   // Due to variance in sprite storing method, this class expects the sprites to already be coverted into an array beforehand
-  public AnimationPlayer(String animation_key, int last_frame, int fps) throws Exception {
+  public AnimationPlayer(String animation_key, int fps) throws Exception {
 
     if(SpriteLoader.getSplicedSprites(animation_key) == null) {
       throw new Exception("AnimationPlayer: No sprites found for animation key " + animation_key);
     }
 
     this.animation_key = animation_key;
-    this.last_frame = last_frame;
+    this.last_frame = SpriteLoader.getSplicedSprites(animation_key).length - 1;
     this.fps = fps;
 
     animation_players.add(this);
     
     syncToAnimationType(); // Sync the current frame with other animations of the same type, if there are any
+
+    update_animations.connect((Boolean value) -> {
+        update(value);
+      }
+    );
+  }
+
+  // Optimised constructor that loads the spritesheet and creates an animation player in one step
+  // Kept the old one for compatibility with existing code, but this one is preferred
+  public AnimationPlayer(String animation_key, String image_path, int sprite_width, int sprite_height,
+                          int sprite_height_offset, int num_sprites, int fps) throws Exception {
+
+    SpriteLoader.loadSpritesheet(animation_key, image_path, sprite_width, sprite_height, num_sprites, sprite_height_offset);
+    if(SpriteLoader.getSplicedSprites(animation_key) == null) {
+      throw new Exception("AnimationPlayer: No sprites found for animation key " + animation_key);
+    }
+    this.animation_key = animation_key;
+    this.last_frame = SpriteLoader.getSplicedSprites(animation_key).length - 1;
+    this.fps = fps;
+
+    syncToAnimationType(); // Sync the current frame with other animations of the same type, if there are any
+
+    animation_players.add(this);
 
     update_animations.connect((Boolean value) -> {
         update(value);

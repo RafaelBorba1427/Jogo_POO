@@ -12,13 +12,10 @@ public class animationPlayerTest {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setSize(400, 400);
 
-    // Load spritesheet and create AnimationPlayer
-    SpriteLoader.loadSpritesheet("heart", "spritesheet/heart.png", 16, 16, 5, 0);
-
     AnimationPlayer.initializeAnimationPlayerTimer();
     
     try {
-      AnimationPlayer animation_player = new AnimationPlayer("heart", 5, 5);
+      AnimationPlayer animation_player = new AnimationPlayer("heart", "spritesheet/heart.png", 16, 16, 0, 5, 5);
 
       JPanel panel = new JPanel() {
         @Override
