@@ -1,99 +1,105 @@
 import java.math.*;
 
-public class MovableObj extends GameObject{
-    //global quantifiers
+public class MovableObj extends GameObject {
+    // global quantifiers
     private static int global_quantity = 0;
     private static int global_active = 0;
 
-    //movable objects variables
-    protected Vector2D 
-              velocity = new Vector2D(0,0),
-              acceleration = new Vector2D(0, GameRules.gravity),
-              angular_velocity = new Vector2D(0,0),
-              angular_acceleration = new Vector2D(0,0);
-
+    // movable objects variables
+    protected Vector2D velocity = new Vector2D(0, 0),
+            acceleration = new Vector2D(0, GameRules.gravity);
     protected double elastic_factor;
+
+    protected double angular_velocity = 0, angular_acceleration = 0;
+
     public static final double MIN_VELOCITY = 0.001,
-                               TERMINAL_VELOCITY = 30,
-                               MAX_VELOCITY = 50;
+            TERMINAL_VELOCITY = 30,
+            MAX_VELOCITY = 50;
 
     // ------------------------------------------------------------
     // Obj inherited methods
     // ------------------------------------------------------------
 
-    MovableObj(double x_pos, double y_pos, double width, double height, double rotation, double mass, boolean rotatable, boolean active, int obj_id, double elastic_factor){
+    MovableObj(double x_pos, double y_pos, double width, double height, double rotation, double mass, boolean rotatable,
+            boolean active, int obj_id, double elastic_factor) {
         super(x_pos, y_pos, width, height, rotation, mass, true, rotatable, active, GameObject.MOVABLE_OBJ, obj_id);
 
-        this.elastic_factor = elastic_factor; 
+        this.elastic_factor = elastic_factor;
 
         global_quantity++;
-        if(active) global_active++;
+        if (active)
+            global_active++;
     }
 
     @Override
-    protected void updateInertialVariables(){
-        this.inverse_mass = 1.0/mass;
-        this.moment_inertia = (mass*dimensions.lengthSquared())/12.0;
-        this.inverse_moment_inertia = 1.0/this.moment_inertia; 
+    protected void updateInertialVariables() {
+        this.inverse_mass = 1.0 / mass;
+        this.moment_inertia = (mass * dimensions.lengthSquared()) / 12.0;
+        this.inverse_moment_inertia = 1.0 / this.moment_inertia;
     }
 
     // ------------------------------------------------------------
     // MovableObj exclusive methods
     // ------------------------------------------------------------
 
-    public Vector2D getVelocity(){
+    public Vector2D getVelocity() {
         return new Vector2D(velocity);
     }
 
-    public Vector2D getAcceleration(){
+    public Vector2D getAcceleration() {
         return new Vector2D(acceleration);
     }
 
-    public void updateVelocity(double new_x_vel, double new_y_vel){
+    public void updateVelocity(double new_x_vel, double new_y_vel) {
         this.velocity.x = new_x_vel;
         this.velocity.y = new_y_vel;
     }
 
-    public void updateAcceleration(double new_x_accel, double new_y_accel){
+    public void updateAcceleration(double new_x_accel, double new_y_accel) {
         this.acceleration.x = new_x_accel;
         this.acceleration.y = new_y_accel;
     }
 
-    public void changeElasticFactor(double new_elastic_factor){
-        this.elastic_factor = new_elastic_factor;   
+    public void changeElasticFactor(double new_elastic_factor) {
+        this.elastic_factor = new_elastic_factor;
     }
 
-    public void bounceX(){
-        velocity.x = -velocity.x*elastic_factor;
+    public void bounceX() {
+        velocity.x = -velocity.x * elastic_factor;
     }
 
-    public void bounceY(){
-        velocity.y = -velocity.y*elastic_factor;
+    public void bounceY() {
+        velocity.y = -velocity.y * elastic_factor;
     }
 
-    public void bounce(GameObject outro_obj){
+    public void bounce(GameObject outro_obj) {
         double target_height = outro_obj.dimensions.x,
-              target_width = outro_obj.dimensions.y;
-        
-        //---------------------------------------------------------------------
+                target_width = outro_obj.dimensions.y;
+
+        // ---------------------------------------------------------------------
         // Implementação temporária, o sistema correto será implementado depois
         bounceX();
         bounceY();
-        //---------------------------------------------------------------------
+        // ---------------------------------------------------------------------
     }
 
-    public void update(){
-        if(GameRules.physics_on){
+    public void update() {
+        if (GameRules.physics_on) {
             velocity.x += acceleration.x;
             velocity.y += acceleration.y;
             position.x += velocity.x;
             position.y += velocity.y;
-            
-            if(Math.abs(velocity.x) < MIN_VELOCITY) velocity.x = 0;
-            else if(Math.abs(velocity.x) > MAX_VELOCITY) velocity.x = MAX_VELOCITY;
-            if(Math.abs(velocity.y) < MIN_VELOCITY) velocity.y = 0;
-            else if(velocity.y < -MAX_VELOCITY) velocity.y = -MAX_VELOCITY;
-            else if(velocity.y > TERMINAL_VELOCITY) velocity.y = TERMINAL_VELOCITY;
+
+            if (Math.abs(velocity.x) < MIN_VELOCITY)
+                velocity.x = 0;
+            else if (Math.abs(velocity.x) > MAX_VELOCITY)
+                velocity.x = MAX_VELOCITY;
+            if (Math.abs(velocity.y) < MIN_VELOCITY)
+                velocity.y = 0;
+            else if (velocity.y < -MAX_VELOCITY)
+                velocity.y = -MAX_VELOCITY;
+            else if (velocity.y > TERMINAL_VELOCITY)
+                velocity.y = TERMINAL_VELOCITY;
 
             updateHitBox();
         }

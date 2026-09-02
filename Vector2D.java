@@ -7,12 +7,12 @@ public class Vector2D {
         this.y = y;
     }
 
-    public Vector2D(Vector2D other_vec){
+    public Vector2D(Vector2D other_vec) {
         this.x = other_vec.x;
         this.y = other_vec.y;
     }
 
-    public void setSize(double new_x, double new_y){
+    public void setSize(double new_x, double new_y) {
         this.x = new_x;
         this.y = new_y;
     }
@@ -31,6 +31,10 @@ public class Vector2D {
 
     public double dot(Vector2D other) {
         return x * other.x + y * other.y;
+    }
+
+    static Vector2D cross_especial(Vector2D rb, double vel_ang) {
+        return new Vector2D(-vel_ang * rb.y, vel_ang * rb.x);
     }
 
     public double cross(Vector2D other) {
@@ -64,7 +68,7 @@ public class Vector2D {
         return "(" + x + ", " + y + ")";
     }
 
-    public void printValues(){
+    public void printValues() {
         System.out.print("(" + x + ", " + y + ")" + "\n");
     }
 }
