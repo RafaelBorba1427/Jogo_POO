@@ -8,7 +8,9 @@ public class MovableObj extends GameObject{
     //movable objects variables
     protected Vector2D 
               velocity = new Vector2D(0,0),
-              acceleration = new Vector2D(0, GameRules.gravity);
+              acceleration = new Vector2D(0, GameRules.gravity),
+              angular_velocity = new Vector2D(0,0),
+              angular_acceleration = new Vector2D(0,0);
 
     protected double elastic_factor;
     public static final double MIN_VELOCITY = 0.001,
@@ -19,13 +21,20 @@ public class MovableObj extends GameObject{
     // Obj inherited methods
     // ------------------------------------------------------------
 
-    MovableObj(double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_id, double elastic_factor){
-        super(x_pos, y_pos, width, height, rotation, true, rotatable, active, GameObject.MOVABLE_OBJ, obj_id);
+    MovableObj(double x_pos, double y_pos, double width, double height, double rotation, double mass, boolean rotatable, boolean active, int obj_id, double elastic_factor){
+        super(x_pos, y_pos, width, height, rotation, mass, true, rotatable, active, GameObject.MOVABLE_OBJ, obj_id);
 
         this.elastic_factor = elastic_factor; 
 
         global_quantity++;
         if(active) global_active++;
+    }
+
+    @Override
+    protected void updateInertialVariables(){
+        this.inverse_mass = 1.0/mass;
+        this.moment_inertia = (mass*dimensions.lengthSquared())/12.0;
+        this.inverse_moment_inertia = 1.0/this.moment_inertia; 
     }
 
     // ------------------------------------------------------------

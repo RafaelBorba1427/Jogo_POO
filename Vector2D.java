@@ -33,6 +33,10 @@ public class Vector2D {
         return x * other.x + y * other.y;
     }
 
+    public double cross(Vector2D other) {
+        return (x * other.y) - (other.x * y);
+    }
+
     public double lengthSquared() {
         return x * x + y * y;
     }

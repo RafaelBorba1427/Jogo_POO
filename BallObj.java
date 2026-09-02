@@ -15,8 +15,8 @@ public class BallObj extends MovableObj{
     // Obj inherited methods
     // ------------------------------------------------------------
     
-    BallObj(double x_pos, double y_pos, double radius, boolean active, int obj_id, double elastic_factor){
-        super(x_pos, y_pos, radius, radius, 0, false, active, obj_id, elastic_factor);
+    BallObj(double x_pos, double y_pos, double radius, double mass, boolean active, int obj_id, double elastic_factor){
+        super(x_pos, y_pos, radius, radius, 0, mass, true, active, obj_id, elastic_factor);
         obj_type = GameObject.BALL_OBJ;
     }
 
@@ -45,6 +45,13 @@ public class BallObj extends MovableObj{
     @Override
     public void updateHitBox(){
         ((CircularHitBox)hit_box).updateHitBox(position, dimensions.x);
+    }
+
+    @Override
+    protected void updateInertialVariables(){
+        this.inverse_mass = 1.0/mass;
+        this.moment_inertia = (mass*dimensions.x*dimensions.x)/2.0;
+        this.inverse_moment_inertia = 1.0/this.moment_inertia; 
     }
 
     @Override

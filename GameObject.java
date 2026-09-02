@@ -14,6 +14,10 @@ public class GameObject {
     protected Vector2D position;
     protected Vector2D dimensions;
     protected double rotation; // in radians
+    protected double mass; 
+    protected double moment_inertia; 
+    protected double inverse_mass;
+    protected double inverse_moment_inertia;
     protected HitBox hit_box; 
 
     //object parameters            
@@ -32,6 +36,7 @@ public class GameObject {
              BALL_OBJ = 2,
              BUFF_OBJ = 3,
     EVENT_TRIGGER_OBJ = 4;
+    
     
     //object IDs
     protected int obj_id;
@@ -55,10 +60,12 @@ ID_BUFF_ELASTIC_COLLISION = 11,
     // Constructor
     // ------------------------------------------------------------
 
-    GameObject(double x_pos, double y_pos, double width, double height, double rotation, boolean movable, boolean rotatable, boolean active, int obj_type, int obj_id){
+    GameObject(double x_pos, double y_pos, double width, double height, double rotation, double mass, boolean movable, boolean rotatable, boolean active, int obj_type, int obj_id){
         this.position = new Vector2D(x_pos, y_pos);
         this.dimensions = new Vector2D(width, height);
         this.rotation = rotation;
+        this.mass = mass;
+        this.updateInertialVariables();
         this.movable = movable;
         this.rotatable = rotatable;
         this.active = active;
@@ -70,7 +77,6 @@ ID_BUFF_ELASTIC_COLLISION = 11,
 
     public void drawHitbox(Graphics2D g2d){
         //g2.drawImage(sprite, (int) position.x, (int) position.y, (int) dimensions.x, (int) dimensions.y, null);
-        if(this.isActive()){
             g2d = (Graphics2D) g2d.create(); // copy of g2d
 
             // 1. Compute the center of the image
@@ -90,7 +96,6 @@ ID_BUFF_ELASTIC_COLLISION = 11,
             g2d.drawRect((int) (-dimensions.x/2), (int) (-dimensions.y/2), (int) dimensions.x, (int) dimensions.y);
             
             g2d.dispose();
-        }
     }
 
     //Getter methods
@@ -107,6 +112,22 @@ ID_BUFF_ELASTIC_COLLISION = 11,
     public Vector2D getDimension(){
         return new Vector2D(this.dimensions);}
     
+    public double getRotation(){
+        return this.rotation;
+    }
+
+    public double getMass(){
+        return this.mass;
+    }
+
+    public double getMomentOfInertia(){
+        return this.moment_inertia;
+    }
+
+    public Vector2D getInverseInertialVariables(){
+        return new Vector2D(inverse_mass,inverse_moment_inertia);
+    }
+
     public HitBox getHitBox(){
         return this.hit_box;}
 
@@ -150,6 +171,14 @@ ID_BUFF_ELASTIC_COLLISION = 11,
             Math.IEEEremainder(this.rotation + rotation, 2.0 * Math.PI);
             updateHitBox();
         }
+    }
+
+    public void changeMass(double mass){
+        this.mass = mass;
+        updateInertialVariables();
+    }
+
+    protected void updateInertialVariables(){ 
     }
 
     public void createHitBox(){

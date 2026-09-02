@@ -177,28 +177,46 @@ public class RectangularHitBox implements HitBox{
 
     // Checks if this rectangle intersects another rotated rectangle.
     // Uses the Separating Axis Theorem.
-    public boolean intersects(RectangularHitBox other) {
+    public record overlap_data(boolean intersects, double overlap, Vector2D overlap_axis, 
+                               RectangularHitBox referenceBody, RectangularHitBox incidentBody) {}
 
-        Vector2D[] axes = {
-            // This rectangle's axes
-            getAxisX(),
-            getAxisY(),
-            // Other rectangle's axes
-            other.getAxisX(),
-            other.getAxisY()
-        };
+    public overlap_data intersects(RectangularHitBox other) {
+        double best_overlap = Double.POSITIVE_INFINITY;
+        Vector2D best_axis = null;
+        RectangularHitBox refBody = null, incBody = null;
+        int bestAxisOwner = -1; // 0 = this, 1 = other
+        int bestAxisIndex = -1; // 0 = X, 1 = Y
 
-        for (Vector2D axis : axes) {
+        Vector2D[] axes = { getAxisX(), getAxisY(), other.getAxisX(), other.getAxisY() };
+        RectangularHitBox[] owners = { this, this, other, other };
 
+        boolean intersects = true;
+        for (int i = 0; i < axes.length; i++) {
+            Vector2D axis = axes[i];
             Projection projectionA = projectOnto(axis);
             Projection projectionB = other.projectOnto(axis);
 
             if (projectionA.isSeparatedFrom(projectionB)) {
-                return false;
+                return new overlap_data(false, 0, null, null, null);
+            }
+
+            double overlap = Math.min(projectionA.max, projectionB.max)
+                            - Math.max(projectionA.min, projectionB.min);
+            if (overlap < best_overlap) {
+                best_overlap = overlap;
+                best_axis = axis;
+                refBody = owners[i];
+                incBody = (owners[i] == this) ? other : this;
             }
         }
 
-        return true;
+        double direction = (incBody.getCenter().subtract(refBody.getCenter())).dot(best_axis);
+        if (direction < 0) {
+            best_axis = best_axis.multiply(-1);
+        }
+
+        return new overlap_data(true, best_overlap, best_axis, refBody, incBody);
+        
     }
 
     // Circle / Rectangle intersection

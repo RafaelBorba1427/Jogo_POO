@@ -14,9 +14,9 @@ public class RenderTest extends JPanel implements MouseListener, KeyListener {
   //--------------------------------------------------------
   //render test, delete later 
   //double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_type, int obj_id
-  MovableObj obj_render_test1 = new MovableObj(400f,300f,50f,40f, (Math.PI/4),true,true,0,1);
+  MovableObj obj_render_test1 = new MovableObj(400f,300f,50f,40f, (Math.PI/4), 1,true,true,0,1);
   //(double x_pos, double y_pos, double radius, boolean active, int obj_id, double elastic_factor)
-  BallObj obj_render_test2 = new BallObj(200f,200f,32f, true,0,1);
+  BallObj obj_render_test2 = new BallObj(200f,200f,32f,1, true,0,1);
   //---------------------------------------------------------
 
   // Initialise all parameters and start the game loop
@@ -104,6 +104,7 @@ public class RenderTest extends JPanel implements MouseListener, KeyListener {
     if(GameMap.is_loaded){
       for(ArrayList<GameObject> obj_list :  GameMap.getAllObjects()){
           for (GameObject object : obj_list) {
+            if(object.isActive())
             object.drawHitbox(g2d);
           }
       }
