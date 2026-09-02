@@ -1,5 +1,4 @@
 import java.util.*;
-import java.awt.image.BufferedImage;
 import java.awt.*;
 
 
@@ -49,7 +48,7 @@ public class AnimationPlayer {
 
   // The timer is shared between all animations, so it must be initialised statically
   public static void initializeAnimationPlayerTimer() {
-    // 16ms = ~60fps for reference
+    // 16ms = ~60fps
     animation_timer = new javax.swing.Timer(16, e -> {
         AnimationPlayer.update_animations.emit(true);
       }
@@ -104,13 +103,11 @@ public class AnimationPlayer {
 
     // 3. Draw sprite at proper rotation and position
     if (sprites != null && current_frame < sprites.length) {
-      g.drawImage(sprites[current_frame].getImage(), position_x, position_y,
-                  (int)(sprites[current_frame].getDimension_x() * rescale_factor),
-                  (int)(sprites[current_frame].getDimension_y() * rescale_factor), null);
+        int drawWidth = (int) (sprites[current_frame].getDimension_x() * rescale_factor);
+        int drawHeight = (int) (sprites[current_frame].getDimension_y() * rescale_factor);
+
+        g2d.drawImage(sprites[current_frame].getImage(), -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight, null);
     }
-    
-            
-    g2d.dispose();
   }
 
   public static void setRescaleFactor(double factor) {
