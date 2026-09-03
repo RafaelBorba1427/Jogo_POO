@@ -1,8 +1,6 @@
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 public class GameObject {
 
@@ -10,34 +8,50 @@ public class GameObject {
     // Variables
     // ------------------------------------------------------------
 
-    //object variables
+    //Collision ID
+    //Obs:
+    // Identificador unico por instancia. Serve para dar uma ordem estavel aos
+    // pares de colisao (a normal do manifold sempre aponta do menor uid para o
+    // maior) e para indexar o cache de warm starting do GameMap.
+    // O obj_id nao serve para isso: ele identifica o TIPO do objeto.
+    private static int next_uid = 0;
+    protected final int uid = next_uid++;
+
+    //Object variables
+    //Obs:
+    // position e o CANTO SUPERIOR ESQUERDO do objeto sem rotacao.
+    // O centro (de massa, e em torno do qual o objeto gira) e
+    // position + dimensions / 2 -> getCenterOfMass().
     protected Vector2D position;
     protected Vector2D dimensions;
     protected double rotation; // in radians
-    protected double mass; 
-    protected double moment_inertia; 
+    protected double mass;
+    protected double moment_inertia;
     protected double inverse_mass;
     protected double inverse_moment_inertia;
-    protected HitBox hit_box; 
+    protected HitBox hit_box;
 
-    //object parameters            
+    //Object Friction
+    protected double friction = 0.3;
+
+    //object parameters
     protected boolean movable;
     protected boolean rotatable;
     protected boolean active;
-    
+
     //sprite reference
     protected BufferedImage sprite;
-    
+
     //object type codes
     protected int obj_type;
-    public static final int   
+    public static final int
             RIGID_OBJ = 0,
           MOVABLE_OBJ = 1,
              BALL_OBJ = 2,
              BUFF_OBJ = 3,
     EVENT_TRIGGER_OBJ = 4;
-    
-    
+
+
     //object IDs
     protected int obj_id;
     public static final int
@@ -54,7 +68,7 @@ public class GameObject {
               ID_BUFF_LAG = 10,
 ID_BUFF_ELASTIC_COLLISION = 11,
                 Quant_IDs = 12;
-    
+
 
     // ------------------------------------------------------------
     // Constructor
@@ -76,11 +90,10 @@ ID_BUFF_ELASTIC_COLLISION = 11,
     }
 
     public void drawHitbox(Graphics2D g2d){
-        //g2.drawImage(sprite, (int) position.x, (int) position.y, (int) dimensions.x, (int) dimensions.y, null);
             g2d = (Graphics2D) g2d.create(); // copy of g2d
 
             // 1. Compute the center of the image
-            Vector2D center = new Vector2D(position.x + dimensions.x/2, position.y + dimensions.y/2);
+            Vector2D center = getCenterOfMass();
 
             g2d.translate((int) center.x, (int) center.y);
 
@@ -94,24 +107,33 @@ ID_BUFF_ELASTIC_COLLISION = 11,
             // 4. Draw hitbox outline
             g2d.setColor(new Color(255,0,0,255));
             g2d.drawRect((int) (-dimensions.x/2), (int) (-dimensions.y/2), (int) dimensions.x, (int) dimensions.y);
-            
+
             g2d.dispose();
     }
 
     //Getter methods
+    public int getUid(){
+        return this.uid;}
+
     public double getX(){
         return this.position.x;}
-        
+
     public double getY(){
         return this.position.y;}
 
     public Vector2D getPosition(){
         return new Vector2D(this.position);
-    } 
+    }
+
+    // Centro de massa em coordenadas do mundo.
+    public Vector2D getCenterOfMass(){
+        return new Vector2D(position.x + dimensions.x/2.0,
+                            position.y + dimensions.y/2.0);
+    }
 
     public Vector2D getDimension(){
         return new Vector2D(this.dimensions);}
-    
+
     public double getRotation(){
         return this.rotation;
     }
@@ -122,6 +144,14 @@ ID_BUFF_ELASTIC_COLLISION = 11,
 
     public double getMomentOfInertia(){
         return this.moment_inertia;
+    }
+
+    public double getInverseMass(){
+        return this.inverse_mass;
+    }
+
+    public double getInverseMomentOfInertia(){
+        return this.inverse_moment_inertia;
     }
 
     public Vector2D getInverseInertialVariables(){
@@ -145,23 +175,63 @@ ID_BUFF_ELASTIC_COLLISION = 11,
 
     public boolean isMovable(){
         return movable;}
-    
+
+
+    // ------------------------------------------------------------
+    // Methods used in the Collision Solver
+    // ------------------------------------------------------------
+
+    // Center of mass Linear velocity, zero for static bodies.
+    public Vector2D getLinearVelocity(){
+        return new Vector2D(0, 0);
+    }
+
+    // zero for static bodies.
+    public double getAngularVelocity(){
+        return 0.0;
+    }
+
+    //static body -> zero effect
+    public void applyImpulse(Vector2D impulse, Vector2D contact_arm){
+    }
+
+    //static body -> zero effect
+    public void translate(Vector2D delta){
+    }
+
+    // Restitution Coeficient (collision after effect). 
+    // Obs: 
+    // Corpos rigidos nao devolvem energia por conta propria; o par usa o maior dos dois valores.
+    public double getRestitution(){
+        return 0.0;
+    }
+
+    public double getFriction(){
+        return this.friction;
+    }
+
+    public void changeFriction(double new_friction){
+        this.friction = Math.max(0.0, new_friction);
+    }
+
 
     //Setter methods
     public void move(int new_x_pos, int new_y_pox){
         this.position.x = new_x_pos;
         this.position.y = new_y_pox;
+        updateHitBox();
     }
 
     public void move(Vector2D new_pos){
         this.position.x = new_pos.x;
         this.position.y = new_pos.y;
+        updateHitBox();
     }
 
     public void changeRotation(double rotation){
         if(this.rotatable){
             this.rotation = rotation;
-            updateHitBox();    
+            updateHitBox();
         }
     }
 
@@ -178,7 +248,7 @@ ID_BUFF_ELASTIC_COLLISION = 11,
         updateInertialVariables();
     }
 
-    protected void updateInertialVariables(){ 
+    protected void updateInertialVariables(){
     }
 
     public void createHitBox(){
@@ -191,6 +261,7 @@ ID_BUFF_ELASTIC_COLLISION = 11,
 
     public void changeDimensions(double new_width, double new_height){
         this.dimensions.setSize(new_width, new_height);
+        updateInertialVariables();
         updateHitBox();
     }
 
@@ -198,12 +269,16 @@ ID_BUFF_ELASTIC_COLLISION = 11,
         this.sprite = new_sprite;
     }
 
-    //Colision Detection
+    // ------------------------------------------------------------
+    // Colision Detection
+    // ------------------------------------------------------------
     public boolean collides(GameObject outro_obj){
-        if(outro_obj.getObjType() == GameObject.BALL_OBJ){
-            return ((RectangularHitBox) this.hit_box).intersects((CircularHitBox) outro_obj.getHitBox()); 
-        }
-        return ((RectangularHitBox) this.hit_box).intersects((RectangularHitBox) outro_obj.getHitBox());
+        if(outro_obj == null || outro_obj == this) return false;
+
+        HitBox other_hit_box = outro_obj.getHitBox();
+        if(this.hit_box == null || other_hit_box == null) return false;
+
+        return this.hit_box.intersects(other_hit_box);
     }
 
     public void deactivate(GameObject object){

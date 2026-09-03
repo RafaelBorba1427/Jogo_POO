@@ -2,6 +2,7 @@
 // Axis Aligned Bounding Box
 // * used to make the partition system for the collision detection system very efficient
 // ------------------------------------------------------------
+
 public class AABB {
     public Vector2D min_pos, max_pos;
 
