@@ -11,8 +11,8 @@ public class Main {
     frame.setVisible(true);
 
     // Isso não deveria estar no game ao invés de estar na main????
-    LevelRules rules = new LevelRules(frame);
-    rules.nextLevel();
+    //LevelRules rules = new LevelRules(frame);
+    //rules.nextLevel();
     //
 
     //render test, delete later

@@ -246,6 +246,7 @@ public class QuadTree<T> {
                     );
 
                     objects.remove(i);
+                    movedSomething = true;
 
                 } else {
 
