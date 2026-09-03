@@ -61,9 +61,6 @@ public class GameMap {
     // ------------------------------------------------------------
 
     GameMap(double width, double height){
-        // all_objects e estatico: sem limpar, cada GameMap novo acumulava as
-        // listas do mapa anterior e os objetos antigos continuavam sendo
-        // desenhados e simulados.
         all_objects.clear();
         all_objects.add(permanent_objects);
         all_objects.add(immovable_objects);
@@ -79,16 +76,16 @@ public class GameMap {
 
         //Game Boundaries
         left_wall = new RigidObj(0, 0, 0.025*width, height,
-             0, false, true, 0);
+             0,GameRules.DEFAULT_FRICTION, false, true, 0);
 
         right_wall = new RigidObj(width-0.025*width, 0, 0.025*width, height,
-             0, false, true, 0);
+             0, GameRules.DEFAULT_FRICTION, false, true, 0);
 
         floor = new RigidObj(0.025*width, height-0.025*height, width-0.050*width, 0.025*height,
-             0, false, true, 0);
+             0, GameRules.DEFAULT_FRICTION, false, true, 0);
 
         roof = new RigidObj(0.025*width, 0, width-0.050*width, 0.025*height,
-             0, false, true, 0);
+             0, GameRules.DEFAULT_FRICTION, false, true, 0);
 
         permanent_objects.add(left_wall);
         permanent_objects.add(right_wall);

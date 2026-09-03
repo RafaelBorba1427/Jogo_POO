@@ -22,8 +22,8 @@ public class BallObj extends MovableObj{
     // ------------------------------------------------------------
 
     // diameter: largura total da bola, igual a que aparece na tela.
-    BallObj(double x_pos, double y_pos, double diameter, double mass, boolean active, int obj_id, double elastic_factor){
-        super(x_pos, y_pos, diameter, diameter, 0, mass, true, active, obj_id, elastic_factor);
+    BallObj(double x_pos, double y_pos, double diameter, double mass, double friction, boolean active, int obj_id, double elastic_factor){
+        super(x_pos, y_pos, diameter, diameter, 0, mass, friction,true, true, active, obj_id, elastic_factor);
         obj_type = GameObject.BALL_OBJ;
     }
 

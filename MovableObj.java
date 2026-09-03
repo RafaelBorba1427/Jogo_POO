@@ -5,7 +5,7 @@ public class MovableObj extends GameObject{
 
     //movable objects variables
     protected Vector2D velocity = new Vector2D(0,0);
-    protected Vector2D acceleration = new Vector2D(0, GameRules.gravity);
+    protected Vector2D acceleration = new Vector2D(0, GameRules.GRAVITY);
 
     protected double angular_velocity = 0.0;
     protected double angular_acceleration = 0.0;
@@ -20,8 +20,8 @@ public class MovableObj extends GameObject{
     // Obj inherited methods
     // ------------------------------------------------------------
 
-    MovableObj(double x_pos, double y_pos, double width, double height, double rotation, double mass, boolean rotatable, boolean active, int obj_id, double elastic_factor){
-        super(x_pos, y_pos, width, height, rotation, mass, true, rotatable, active, GameObject.MOVABLE_OBJ, obj_id);
+    MovableObj(double x_pos, double y_pos, double width, double height, double rotation, double mass, double friction, boolean movable, boolean rotatable, boolean active, int obj_id, double elastic_factor){
+        super(x_pos, y_pos, width, height, rotation, mass, friction, movable, rotatable, active, GameObject.MOVABLE_OBJ, obj_id);
 
         this.elastic_factor = elastic_factor;
 
@@ -90,21 +90,30 @@ public class MovableObj extends GameObject{
         return new Vector2D(acceleration);
     }
 
-    public void updateVelocity(double new_x_vel, double new_y_vel){
+    public void changeVelocity(double new_x_vel, double new_y_vel){
         this.velocity.x = new_x_vel;
         this.velocity.y = new_y_vel;
     }
 
-    public void updateAcceleration(double new_x_accel, double new_y_accel){
+    public void addVelocity(double delta_x, double delta_y){
+        this.velocity.x = delta_x;
+        this.velocity.y = delta_y;
+    }
+
+    public void changeAcceleration(double new_x_accel, double new_y_accel){
         this.acceleration.x = new_x_accel;
         this.acceleration.y = new_y_accel;
     }
 
-    public void updateAngularVelocity(double new_angular_velocity){
+    public void changeAngularVelocity(double new_angular_velocity){
         this.angular_velocity = new_angular_velocity;
     }
 
-    public void updateAngularAcceleration(double new_angular_acceleration){
+    public void addAngularVelocity(double delta){
+        this.angular_velocity += delta;
+    }
+
+    public void changeAngularAcceleration(double new_angular_acceleration){
         this.angular_acceleration = new_angular_acceleration;
     }
 

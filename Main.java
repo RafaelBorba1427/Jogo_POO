@@ -9,7 +9,7 @@ public class Main {
     frame.setVisible(true);
 
     //render test, delete later
-    RenderTest game = new RenderTest(800,600);
+    Game game = new Game(800,600);
     frame.add(game);
     frame.pack();
     game.startGame();

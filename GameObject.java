@@ -74,11 +74,12 @@ ID_BUFF_ELASTIC_COLLISION = 11,
     // Constructor
     // ------------------------------------------------------------
 
-    GameObject(double x_pos, double y_pos, double width, double height, double rotation, double mass, boolean movable, boolean rotatable, boolean active, int obj_type, int obj_id){
+    GameObject(double x_pos, double y_pos, double width, double height, double rotation, double mass, double friction, boolean movable, boolean rotatable, boolean active, int obj_type, int obj_id){
         this.position = new Vector2D(x_pos, y_pos);
         this.dimensions = new Vector2D(width, height);
         this.rotation = rotation;
         this.mass = mass;
+        this.friction = friction;
         this.updateInertialVariables();
         this.movable = movable;
         this.rotatable = rotatable;

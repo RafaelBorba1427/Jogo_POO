@@ -12,7 +12,7 @@ public class BuffObj extends GameObject{
     // Obj inherited methods
     // ------------------------------------------------------------
     BuffObj(double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_type, int obj_id){
-        super(x_pos, y_pos, width, height, rotation, 0, true, rotatable, active, GameObject.BUFF_OBJ, obj_id);
+        super(x_pos, y_pos, width, height, rotation, 0,0, true, rotatable, active, GameObject.BUFF_OBJ, obj_id);
 
         global_quantity++;
         if(active) global_active++;
