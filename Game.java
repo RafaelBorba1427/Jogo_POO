@@ -1,22 +1,35 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ArrayList;
 
 public class Game extends JPanel implements MouseListener, KeyListener {
-  int resolution_x, resolution_y;
-
+  //---------------------------------------------
+  //Game variable
+  //---------------------------------------------
+  int initial_resolution_x, initial_resolution_y;
   boolean game_over = false;
+  GameMap game_map;
+
+  //--------------------------------------------------------
+  //render test, delete later 
+  //double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable, boolean active, int obj_type, int obj_id
+  MovableObj obj_render_test1 = new MovableObj(400f,300f,50f,40f, (Math.PI/4), 1,GameRules.DEFAULT_FRICTION,true,true,true,0,0.5);
+  //(double x_pos, double y_pos, double radius, boolean active, int obj_id, double elastic_factor)
+  BallObj obj_render_test2 = new BallObj(200f,200f,32f,1,GameRules.DEFAULT_FRICTION, true,0,0.8);
+  //---------------------------------------------------------
 
   // Initialise all parameters and start the game loop
-  public Game(int resolution_x, int resolution_y){
-    this.resolution_x = resolution_x;
-    this.resolution_y = resolution_y;
+  public Game(int initial_resolution_x, int initial_resolution_y){
+    this.initial_resolution_x = initial_resolution_x;
+    this.initial_resolution_y = initial_resolution_y;
 
-    setPreferredSize(new Dimension(resolution_x, resolution_y));
+    this.setPreferredSize(new Dimension(initial_resolution_x, initial_resolution_y));
 
     // Implement input
     addMouseListener(this);
     addKeyListener(this);
+    
     addMouseMotionListener(new MouseMotionListener() {
         @Override
         public void mouseMoved(MouseEvent e) {
@@ -28,15 +41,31 @@ public class Game extends JPanel implements MouseListener, KeyListener {
           
         }
       }
+
     );
     setFocusable(true);
     setVisible(true);
 
+    game_map = new GameMap((double) initial_resolution_x, (double) initial_resolution_y);
 
-    
+    //render test, delete later
+    this.setBackground(Color.BLACK);
+    //------------------------
+
   }
 
+
+
   public void startGame(){
+
+    //render test, delete later
+    GameRules.physics_on = true;
+    game_map.addObject(obj_render_test1);
+    game_map.addObject(obj_render_test2);
+    obj_render_test1.addVelocity(10, 10);
+    obj_render_test2.addVelocity(-10, 10);
+    //------------------------
+
     Timer timer = new Timer(16, e -> {
         Timer t = (Timer) e.getSource();
 
@@ -46,6 +75,8 @@ public class Game extends JPanel implements MouseListener, KeyListener {
             return;
         }
         repaint();
+
+        game_map.step(1); // collision and physics simulation        
       }
     );
 
@@ -63,7 +94,16 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   @Override
   public void paintComponent(Graphics g) {
     super.paintComponent(g);
-    
+    Graphics2D g2d = (Graphics2D) g;
+
+    if(GameMap.is_loaded){
+      for(ArrayList<GameObject> obj_list :  GameMap.getAllObjects()){
+          for (GameObject object : obj_list) {
+            if(object.isActive())
+            object.drawHitbox(g2d);
+          }
+      }
+    }
 
   }
 
