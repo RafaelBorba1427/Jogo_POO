@@ -48,7 +48,8 @@ public class GameObject {
             MOVABLE_OBJ = 1,
             BALL_OBJ = 2,
             BUFF_OBJ = 3,
-            EVENT_TRIGGER_OBJ = 4, PLAYER = 5;
+            EVENT_TRIGGER_OBJ = 4, 
+            PLAYER = 5;
 
     // object IDs
     protected int obj_id;

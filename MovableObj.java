@@ -3,7 +3,6 @@ public class MovableObj extends GameObject {
 
     private static int global_quantity = 0;
     private static int global_active = 0;
-    public boolean click = false;
 
     // movable objects variables
     protected Vector2D velocity = new Vector2D(0, 0);
@@ -189,7 +188,7 @@ public class MovableObj extends GameObject {
     // Mantido para uso avulso e compatibilidade; o caminho normal e o
     // GameMap.step(), que intercala o solver entre as duas metades.
     public void update() {
-        if (GameRules.physics_on && !(GameRules.ballGravity == false && obj_id != -1)) {
+        if (GameRules.physics_on) {
             integrateForces(1.0);
             integrateVelocity(1.0);
         }

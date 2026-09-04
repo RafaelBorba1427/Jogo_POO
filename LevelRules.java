@@ -35,7 +35,6 @@ class LevelRules {
          }
          this.counter = 0;
          this.generate_cap();
-         Game.pingbongBall.acceleration.y = GameRules.GRAVITY;
       }
    }
 }

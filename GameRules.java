@@ -7,11 +7,11 @@ public class GameRules {
     // constants
     static double GRAVITY = 0.3;
     static double DEFAULT_FRICTION = 0.3;
-    static boolean qubeGravity = false;
     static boolean ballGravity = true;
 
     static enum GameModes {
         GAMELOOP, EDIT;
     };
+    static GameModes current_game_mode = GameModes.GAMELOOP;
 
 }

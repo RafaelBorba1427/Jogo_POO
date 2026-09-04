@@ -15,8 +15,9 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   // render test, delete later
   // double x_pos, double y_pos, double width, double height, double rotation,
   // boolean rotatable, boolean active, int obj_type, int obj_id
-  RigidObj balde = new RigidObj(400f, 300f, 50f, 40f, (Math.PI / 4), GameRules.DEFAULT_FRICTION, true, true,
-      GameObject.ID_BALDE);
+  
+  EventTriggerObj balde = new EventTriggerObj(400f, 300f, 50f, 40f, (Math.PI / 4), true, true, GameObject.ID_BALDE);
+
   RigidObj obj_render_test3 = new RigidObj(100f, 300f, 50f, 40f, (Math.PI / 4), GameRules.DEFAULT_FRICTION, true, true,
       0);
 
@@ -67,12 +68,10 @@ public class Game extends JPanel implements MouseListener, KeyListener {
     // render test, delete later
     GameRules.physics_on = true;
     game_map.addObject(balde);
-    // game_map.addObject(obj_render_test2);
     game_map.addObject(obj_render_test3);
     game_map.addObject(pingbongBall);
     balde.move(300, 300);
-    // obj_render_test2.addVelocity(10, 0);
-    pingbongBall.addVelocity(0, 0);
+    pingbongBall.changeVelocity(0, 0);
     pingbongBall.move(300, 200);
     pingbongBall.setPlayer();
     // ------------------------
@@ -119,13 +118,13 @@ public class Game extends JPanel implements MouseListener, KeyListener {
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    int x = e.getX();
-    int y = e.getY();
-    pingbongBall.velocity.x += (x - pingbongBall.getCenterOfMass().x) *
-        pingbongBall.inverse_mass;
-    pingbongBall.velocity.y += (y - pingbongBall.getCenterOfMass().y) *
-        pingbongBall.inverse_mass;
+    Vector2D xy = new Vector2D(e.getX(),e.getY()).subtract(pingbongBall.getCenterOfMass());
+    pingbongBall.velocity = xy.add(pingbongBall.velocity).multiply(0.05*pingbongBall.inverse_mass);
 
+    if(GameRules.current_game_mode == GameRules.GameModes.EDIT){
+      GameRules.current_game_mode = GameRules.GameModes.GAMELOOP;
+      pingbongBall.changeAcceleration(0, GameRules.GRAVITY);
+    } 
   }
 
   @Override

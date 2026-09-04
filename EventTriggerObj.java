@@ -12,7 +12,7 @@ public class EventTriggerObj extends GameObject {
     // ------------------------------------------------------------
 
     EventTriggerObj(double x_pos, double y_pos, double width, double height, double rotation, boolean rotatable,
-            boolean active, int obj_type, int obj_id) {
+            boolean active, int obj_id) {
         super(x_pos, y_pos, width, height, rotation, 0, 0, false, rotatable, active, GameObject.EVENT_TRIGGER_OBJ,
                 obj_id);
 

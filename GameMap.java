@@ -27,6 +27,8 @@ public class GameMap {
 
     private QuadTree<GameObject> collision_detection;
 
+    static boolean next_level = false;
+
     // ------------------------------------------------------------
     // Parametros do passo de fisica
     // ------------------------------------------------------------
@@ -145,6 +147,21 @@ public class GameMap {
     // dt = 1.0 default
     public void step(double dt) {
         step(dt, DEFAULT_SUBSTEPS, DEFAULT_SOLVER_ITERATIONS);
+
+        // Gera o Popup
+        if (next_level) { 
+            synchronized (Main.rules) {
+                Main.rules.nextLevel();
+            }
+            Game.pingbongBall.move(100, 100);
+            Game.pingbongBall.changeVelocity(0.0, 0.0);
+            Game.pingbongBall.changeAcceleration(0, 0);
+            Game.pingbongBall.changeRotation(0);
+            Game.pingbongBall.changeAngularVelocity(0);
+            Game.pingbongBall.changeAngularAcceleration(0);
+            next_level = false;
+            GameRules.current_game_mode = GameRules.GameModes.EDIT;
+        }
     }
 
     // Ordem do passo:
@@ -227,7 +244,7 @@ public class GameMap {
         HashSet<Long> already_tested = new HashSet<>();
 
         active_manifolds.clear();
-        boolean nextLevel = false;
+
         for (GameObject moving : moving_objects) {
             if (!moving.isActive())
                 continue;
@@ -254,10 +271,11 @@ public class GameMap {
                 CollisionManifold manifold = CollisionManifold.generate(body_a, body_b);
                 if (manifold == null)
                     continue;
-                if ((body_a.getObjId() == GameObject.ID_BALDE | body_b.getObjId() == GameObject.ID_BALDE)
-                        && (body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER)) {
-                    nextLevel = true;
 
+                if(body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ){
+                    if(body_a.getObjId() == GameObject.ID_BALDE || body_b.getObjType() == GameObject.ID_BALDE &&
+                        body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER)
+                        next_level = true;
                 }
 
                 manifold.inheritImpulses(manifold_cache.get(key));
@@ -268,16 +286,6 @@ public class GameMap {
         }
 
         manifold_cache = new_cache;
-        if (nextLevel) {
-            synchronized (Main.rules) {
-
-                Main.rules.nextLevel();
-
-            }
-            Game.pingbongBall.move(100, 100);
-            Game.pingbongBall.changeVelocity(0.0, 0.0);
-            Game.pingbongBall.acceleration.y = 0;
-        }
     }
 
     // Chave simetrica do par, montada a partir dos uids.
