@@ -96,18 +96,23 @@ public class CollisionManifold {
     // os corpos pelo uID para garantir isso).
 
     public static CollisionManifold generate(GameObject a, GameObject b) {
-        if (a == null || b == null || a == b) return null;
-        if (!a.isActive() || !b.isActive()) return null;
+        if (a == null || b == null || a == b)
+            return null;
+        if (!a.isActive() || !b.isActive())
+            return null;
 
         // Dois corpos de massa infinita não possuem resolução
-        if (a.getInverseMass() == 0.0 && b.getInverseMass() == 0.0) return null;
+        if (a.getInverseMass() == 0.0 && b.getInverseMass() == 0.0)
+            return null;
 
         HitBox hitbox_a = a.getHitBox();
         HitBox hitbox_b = b.getHitBox();
-        if (hitbox_a == null || hitbox_b == null) return null;
+        if (hitbox_a == null || hitbox_b == null)
+            return null;
 
-        // Teste rápido e barato antes do check geometrico mais caro 
-        if (!hitbox_a.getAABB().intersect(hitbox_b.getAABB())) return null;
+        // Teste rápido e barato antes do check geometrico mais caro
+        if (!hitbox_a.getAABB().intersect(hitbox_b.getAABB()))
+            return null;
 
         if (hitbox_a instanceof RectangularHitBox && hitbox_b instanceof RectangularHitBox) {
             return rectangleVsRectangle(a, b, (RectangularHitBox) hitbox_a, (RectangularHitBox) hitbox_b);
@@ -121,6 +126,7 @@ public class CollisionManifold {
         if (hitbox_a instanceof CircularHitBox && hitbox_b instanceof CircularHitBox) {
             return circleVsCircle(a, b, (CircularHitBox) hitbox_a, (CircularHitBox) hitbox_b);
         }
+
         return null;
     }
 
@@ -129,27 +135,29 @@ public class CollisionManifold {
     // ------------------------------------------------------------
     //
     // 1. O SAT devolve, para cada corpo, a face cuja separacao e maxima.
-    //    Se alguma separacao for positiva os corpos nao se tocam.
+    // Se alguma separacao for positiva os corpos nao se tocam.
     // 2. O corpo cuja separacao eh maior vira o corpo de REFERENCIA, e sua
-    //    face vira o plano contra o qual tudo e medido.
+    // face vira o plano contra o qual tudo e medido.
     // 3. No outro corpo (INCIDENTE) escolhe-se a face mais anti-paralela
-    //    a normal de referencia.
+    // a normal de referencia.
     // 4. A aresta incidente eh recortada pelos dois planos laterais da face de
-    //    referencia; o que sobra e que fica atras do plano da face sao os
-    //    pontos de contato, com a profundidade de cada um.
+    // referencia; o que sobra e que fica atras do plano da face sao os
+    // pontos de contato, com a profundidade de cada um.
     //
     // O passo 4 e o que produz DOIS pontos quando duas faces se encostam, e e
     // ele que permite que uma caixa fique apoiada sem cair de lado.
 
     private static CollisionManifold rectangleVsRectangle(GameObject a, GameObject b,
-                                                          RectangularHitBox rect_a, RectangularHitBox rect_b) {
+            RectangularHitBox rect_a, RectangularHitBox rect_b) {
         int[] face_a = new int[1];
         double separation_a = maxSeparation(face_a, rect_a, rect_b);
-        if (separation_a > 0.0) return null;
+        if (separation_a > 0.0)
+            return null;
 
         int[] face_b = new int[1];
         double separation_b = maxSeparation(face_b, rect_b, rect_a);
-        if (separation_b > 0.0) return null;
+        if (separation_b > 0.0)
+            return null;
 
         RectangularHitBox reference, incident;
         int reference_face;
@@ -177,20 +185,22 @@ public class CollisionManifold {
         Vector2D[] incident_corners = incident.getCorners();
 
         ClipVertex[] edge = new ClipVertex[] {
-            new ClipVertex(incident_corners[incident_face],
-                           featureId(reference_face, incident_face, 0, flipped)),
-            new ClipVertex(incident_corners[(incident_face + 1) % 4],
-                           featureId(reference_face, incident_face, 1, flipped))
+                new ClipVertex(incident_corners[incident_face],
+                        featureId(reference_face, incident_face, 0, flipped)),
+                new ClipVertex(incident_corners[(incident_face + 1) % 4],
+                        featureId(reference_face, incident_face, 1, flipped))
         };
 
         // Recorta pelos dois planos laterais da face de referencia.
         edge = clipSegment(edge, side.multiply(-1), reference_start,
-                           featureId(reference_face, incident_face, 2, flipped));
-        if (edge == null) return null;
+                featureId(reference_face, incident_face, 2, flipped));
+        if (edge == null)
+            return null;
 
         edge = clipSegment(edge, side, reference_end,
-                           featureId(reference_face, incident_face, 3, flipped));
-        if (edge == null) return null;
+                featureId(reference_face, incident_face, 3, flipped));
+        if (edge == null)
+            return null;
 
         double face_offset = reference_start.dot(reference_normal);
 
@@ -201,7 +211,8 @@ public class CollisionManifold {
                 contacts.add(new ContactPoint(vertex.point, -separation, vertex.id));
             }
         }
-        if (contacts.isEmpty()) return null;
+        if (contacts.isEmpty())
+            return null;
 
         // reference_normal aponta para fora do corpo de referencia, ou seja,
         // do corpo de referencia para o incidente. Se a referencia virou B,
@@ -228,7 +239,8 @@ public class CollisionManifold {
             double support = Double.MAX_VALUE;
             for (Vector2D corner : other_corners) {
                 double projection = corner.dot(face_normal);
-                if (projection < support) support = projection;
+                if (projection < support)
+                    support = projection;
             }
 
             double separation = support - reference_corners[i].dot(face_normal);
@@ -261,15 +273,17 @@ public class CollisionManifold {
     // isto e, onde (p - plane_point) . plane_normal <= 0.
     // Retorna sempre 2 vertices, ou null se o segmento ficou completamente fora.
     private static ClipVertex[] clipSegment(ClipVertex[] input, Vector2D plane_normal,
-                                            Vector2D plane_point, int new_id) {
+            Vector2D plane_point, int new_id) {
         ClipVertex[] output = new ClipVertex[2];
         int count = 0;
 
         double distance_0 = input[0].point.subtract(plane_point).dot(plane_normal);
         double distance_1 = input[1].point.subtract(plane_point).dot(plane_normal);
 
-        if (distance_0 <= 0.0) output[count++] = input[0];
-        if (distance_1 <= 0.0 && count < 2) output[count++] = input[1];
+        if (distance_0 <= 0.0)
+            output[count++] = input[0];
+        if (distance_1 <= 0.0 && count < 2)
+            output[count++] = input[1];
 
         // O segmento cruza o plano: gera o vertice da intersecao.
         if (distance_0 * distance_1 < 0.0 && count < 2) {
@@ -278,7 +292,8 @@ public class CollisionManifold {
             output[count++] = new ClipVertex(crossing, new_id);
         }
 
-        if (count < 2) return null;
+        if (count < 2)
+            return null;
         return output;
     }
 
@@ -305,18 +320,18 @@ public class CollisionManifold {
     // O circulo e levado para o sistema local do retangulo (eixos X e Y do OBB),
     // onde o problema vira um AABB x circulo. Dois casos:
     //
-    //   a) centro do circulo FORA do retangulo -> o ponto mais proximo e o
-    //      centro clampado nos meios-lados; a normal e a direcao desse ponto
-    //      ate o centro do circulo.
+    // a) centro do circulo FORA do retangulo -> o ponto mais proximo e o
+    // centro clampado nos meios-lados; a normal e a direcao desse ponto
+    // ate o centro do circulo.
     //
-    //   b) centro do circulo DENTRO do retangulo -> nao existe direcao de saida
-    //      bem definida pelo ponto mais proximo (a distancia seria zero), entao
-    //      empurra-se pela face mais proxima, e a penetracao inclui o raio
-    //      inteiro mais o quanto o centro entrou.
+    // b) centro do circulo DENTRO do retangulo -> nao existe direcao de saida
+    // bem definida pelo ponto mais proximo (a distancia seria zero), entao
+    // empurra-se pela face mais proxima, e a penetracao inclui o raio
+    // inteiro mais o quanto o centro entrou.
 
     private static CollisionManifold rectangleVsCircle(GameObject a, GameObject b,
-                                                       RectangularHitBox rect, CircularHitBox circle,
-                                                       boolean rectangle_is_a) {
+            RectangularHitBox rect, CircularHitBox circle,
+            boolean rectangle_is_a) {
         Vector2D rect_center = rect.getCenter();
         Vector2D circle_center = circle.getCenter();
         double radius = circle.getRadius();
@@ -332,7 +347,7 @@ public class CollisionManifold {
 
         boolean center_inside = Math.abs(local_x) <= half_width && Math.abs(local_y) <= half_height;
 
-        Vector2D normal;        // do retangulo para o circulo
+        Vector2D normal; // do retangulo para o circulo
         Vector2D contact_point;
         double penetration;
 
@@ -347,7 +362,8 @@ public class CollisionManifold {
             Vector2D difference = circle_center.subtract(closest);
             double distance_squared = difference.lengthSquared();
 
-            if (distance_squared > radius * radius) return null;
+            if (distance_squared > radius * radius)
+                return null;
 
             double distance = Math.sqrt(distance_squared);
 
@@ -399,12 +415,13 @@ public class CollisionManifold {
     // ------------------------------------------------------------
 
     private static CollisionManifold circleVsCircle(GameObject a, GameObject b,
-                                                    CircularHitBox circle_a, CircularHitBox circle_b) {
+            CircularHitBox circle_a, CircularHitBox circle_b) {
         Vector2D difference = circle_b.getCenter().subtract(circle_a.getCenter());
         double radius_sum = circle_a.getRadius() + circle_b.getRadius();
         double distance_squared = difference.lengthSquared();
 
-        if (distance_squared > radius_sum * radius_sum) return null;
+        if (distance_squared > radius_sum * radius_sum)
+            return null;
 
         double distance = Math.sqrt(distance_squared);
 
@@ -438,18 +455,20 @@ public class CollisionManifold {
     // Contatos sao pareados pelo feature_id, entao um contato que mudou de
     // face (o objeto girou, por exemplo) corretamente comeca do zero.
     public void inheritImpulses(CollisionManifold previous) {
-        if (previous == null) return;
+        if (previous == null)
+            return;
 
         boolean same_order = (previous.body_a == this.body_a && previous.body_b == this.body_b);
 
         for (ContactPoint contact : contacts) {
             for (ContactPoint old_contact : previous.contacts) {
-                if (old_contact.feature_id != contact.feature_id) continue;
+                if (old_contact.feature_id != contact.feature_id)
+                    continue;
 
                 contact.normal_impulse = old_contact.normal_impulse;
                 // Se a ordem dos corpos inverteu, a tangente inverte junto.
                 contact.tangent_impulse = same_order ? old_contact.tangent_impulse
-                                                     : -old_contact.tangent_impulse;
+                        : -old_contact.tangent_impulse;
                 break;
             }
         }
@@ -478,23 +497,23 @@ public class CollisionManifold {
             // quanto cada um resiste a girar em torno do ponto de contato.
             double rn_a = contact.ra.cross(normal);
             double rn_b = contact.rb.cross(normal);
-            
+
             double k_normal = inverse_mass_a + inverse_mass_b
-                            + inverse_inertia_a * rn_a * rn_a
-                            + inverse_inertia_b * rn_b * rn_b;
+                    + inverse_inertia_a * rn_a * rn_a
+                    + inverse_inertia_b * rn_b * rn_b;
             contact.normal_mass = (k_normal > EPSILON) ? 1.0 / k_normal : 0.0;
 
             double rt_a = contact.ra.cross(tangent);
             double rt_b = contact.rb.cross(tangent);
             double k_tangent = inverse_mass_a + inverse_mass_b
-                             + inverse_inertia_a * rt_a * rt_a
-                             + inverse_inertia_b * rt_b * rt_b;
+                    + inverse_inertia_a * rt_a * rt_a
+                    + inverse_inertia_b * rt_b * rt_b;
             contact.tangent_mass = (k_tangent > EPSILON) ? 1.0 / k_tangent : 0.0;
 
             // Baumgarte: velocidade extra proporcional ao excesso de penetracao.
             double correction = Math.max(0.0, contact.penetration - PENETRATION_SLOP);
             contact.position_bias = Math.min(BAUMGARTE * inverse_dt * correction,
-                                             MAX_LINEAR_CORRECTION * inverse_dt);
+                    MAX_LINEAR_CORRECTION * inverse_dt);
 
             // Restituicao medida ANTES de qualquer impulso ser aplicado.
             // Velocidade normal negativa significa aproximacao.
@@ -510,7 +529,7 @@ public class CollisionManifold {
     public void warmStart() {
         for (ContactPoint contact : contacts) {
             Vector2D impulse = normal.multiply(contact.normal_impulse)
-                                     .add(tangent.multiply(contact.tangent_impulse));
+                    .add(tangent.multiply(contact.tangent_impulse));
 
             body_a.applyImpulse(impulse.multiply(-1), contact.ra);
             body_b.applyImpulse(impulse, contact.rb);
@@ -528,7 +547,7 @@ public class CollisionManifold {
             double normal_velocity = relativeVelocityAt(contact).dot(normal);
 
             double lambda = contact.normal_mass
-                          * (-normal_velocity + contact.position_bias + contact.restitution_bias);
+                    * (-normal_velocity + contact.position_bias + contact.restitution_bias);
 
             // Clamp do impulso ACUMULADO, nao do incremento: e isso que permite
             // que iteracoes sucessivas corrijam umas as outras sem que o
@@ -549,7 +568,7 @@ public class CollisionManifold {
             double max_friction = friction * contact.normal_impulse;
             double previous_tangent = contact.tangent_impulse;
             contact.tangent_impulse = clamp(previous_tangent + lambda_tangent,
-                                            -max_friction, max_friction);
+                    -max_friction, max_friction);
             lambda_tangent = contact.tangent_impulse - previous_tangent;
 
             Vector2D tangent_impulse = tangent.multiply(lambda_tangent);
@@ -579,27 +598,44 @@ public class CollisionManifold {
     // Getters
     // ------------------------------------------------------------
 
-    public GameObject getBodyA() { return body_a; }
+    public GameObject getBodyA() {
+        return body_a;
+    }
 
-    public GameObject getBodyB() { return body_b; }
+    public GameObject getBodyB() {
+        return body_b;
+    }
 
-    public Vector2D getNormal() { return new Vector2D(normal); }
+    public Vector2D getNormal() {
+        return new Vector2D(normal);
+    }
 
-    public Vector2D getTangent() { return new Vector2D(tangent); }
+    public Vector2D getTangent() {
+        return new Vector2D(tangent);
+    }
 
-    public List<ContactPoint> getContacts() { return contacts; }
+    public List<ContactPoint> getContacts() {
+        return contacts;
+    }
 
-    public int getContactCount() { return contacts.size(); }
+    public int getContactCount() {
+        return contacts.size();
+    }
 
-    public double getRestitution() { return restitution; }
+    public double getRestitution() {
+        return restitution;
+    }
 
-    public double getFriction() { return friction; }
+    public double getFriction() {
+        return friction;
+    }
 
     // Maior penetracao entre os contatos. Util para depuracao.
     public double getMaxPenetration() {
         double deepest = 0.0;
         for (ContactPoint contact : contacts) {
-            if (contact.penetration > deepest) deepest = contact.penetration;
+            if (contact.penetration > deepest)
+                deepest = contact.penetration;
         }
         return deepest;
     }
@@ -607,7 +643,7 @@ public class CollisionManifold {
     @Override
     public String toString() {
         return "CollisionManifold[" + body_a.getUid() + " x " + body_b.getUid()
-             + "] n=" + normal + " contacts=" + contacts.size()
-             + " depth=" + getMaxPenetration();
+                + "] n=" + normal + " contacts=" + contacts.size()
+                + " depth=" + getMaxPenetration();
     }
 }

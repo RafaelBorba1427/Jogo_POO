@@ -9,6 +9,7 @@ class LevelRules {
    JFrame frame;
    Item_Select god;
    Adding_to_Map adition;
+   boolean bateu = false;
 
    LevelRules(JFrame var1) {
       this.frame = var1;
@@ -21,17 +22,20 @@ class LevelRules {
    }
 
    public void nextLevel() {
+
       if (this.health == 0) {
          new End_of_game(this.frame, this.points);
       } else {
+
          this.counter++;
          this.god.dialogInit(this);
          if (this.counter >= this.level_cap) {
             this.adition.dialog_init(2, this);
-         }
 
+         }
          this.counter = 0;
          this.generate_cap();
+         Game.pingbongBall.acceleration.y = GameRules.GRAVITY;
       }
    }
 }
