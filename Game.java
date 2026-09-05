@@ -1,6 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Queue;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 
 public class Game extends JPanel implements MouseListener, KeyListener {
@@ -15,7 +17,7 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   // render test, delete later
   // double x_pos, double y_pos, double width, double height, double rotation,
   // boolean rotatable, boolean active, int obj_type, int obj_id
-  
+
   EventTriggerObj balde = new EventTriggerObj(400f, 300f, 50f, 40f, (Math.PI / 4), true, true, GameObject.ID_BALDE);
 
   RigidObj obj_render_test3 = new RigidObj(100f, 300f, 50f, 40f, (Math.PI / 4), GameRules.DEFAULT_FRICTION, true, true,
@@ -26,6 +28,8 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   BallObj obj_render_test2 = new BallObj(200f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, 0, 0.8);
   static BallObj pingbongBall = new BallObj(700f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, -1, 0.8);
 
+  // ------------ArrayList with items from item_select
+  Queue<GameObject> item_select_list = new ArrayDeque<GameObject>();
   // ---------------------------------------------------------
 
   // Initialise all parameters and start the game loop
@@ -118,13 +122,25 @@ public class Game extends JPanel implements MouseListener, KeyListener {
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    Vector2D xy = new Vector2D(e.getX(),e.getY()).subtract(pingbongBall.getCenterOfMass());
-    pingbongBall.velocity = xy.add(pingbongBall.velocity).multiply(0.05*pingbongBall.inverse_mass);
+    Vector2D xy = new Vector2D(e.getX(), e.getY()).subtract(pingbongBall.getCenterOfMass());
+    if (GameRules.current_game_mode == GameRules.GameModes.EDIT && item_select_list.size() != 0) {
+      GameObject temp = item_select_list.poll();
 
-    if(GameRules.current_game_mode == GameRules.GameModes.EDIT){
+      temp.move(e.getX(), e.getY());
+
+      game_map.addObject(temp);
+      System.out.println("printed");
+      repaint();
+      return;
+    }
+    pingbongBall.velocity = xy.add(pingbongBall.velocity).multiply(0.05 * pingbongBall.inverse_mass);
+
+    if (GameRules.current_game_mode == GameRules.GameModes.EDIT) {
       GameRules.current_game_mode = GameRules.GameModes.GAMELOOP;
       pingbongBall.changeAcceleration(0, GameRules.GRAVITY);
-    } 
+
+    }
+
   }
 
   @Override

@@ -149,10 +149,8 @@ public class GameMap {
         step(dt, DEFAULT_SUBSTEPS, DEFAULT_SOLVER_ITERATIONS);
 
         // Gera o Popup
-        if (next_level) { 
-            synchronized (Main.rules) {
-                Main.rules.nextLevel();
-            }
+        if (next_level) {
+            LevelRules.nextLevel(this);
             Game.pingbongBall.move(100, 100);
             Game.pingbongBall.changeVelocity(0.0, 0.0);
             Game.pingbongBall.changeAcceleration(0, 0);
@@ -272,9 +270,10 @@ public class GameMap {
                 if (manifold == null)
                     continue;
 
-                if(body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ){
-                    if(body_a.getObjId() == GameObject.ID_BALDE || body_b.getObjType() == GameObject.ID_BALDE &&
-                        body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER)
+                if (body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ
+                        || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ) {
+                    if (body_a.getObjId() == GameObject.ID_BALDE || body_b.getObjType() == GameObject.ID_BALDE &&
+                            body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER)
                         next_level = true;
                 }
 

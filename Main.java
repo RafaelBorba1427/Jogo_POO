@@ -13,7 +13,7 @@ public class Main {
     frame.setVisible(true);
 
     // Isso não deveria estar no game ao invés de estar na main????
-    rules = new LevelRules(frame);
+    // rules = new LevelRules(frame);
     // rules.nextLevel();
     //
 
@@ -22,6 +22,8 @@ public class Main {
     frame.add(game);
     frame.pack();
     game.startGame();
+    LevelRules.startRules(frame, game);
+
     // ------------------------
   }
 }

@@ -1,40 +1,46 @@
 import javax.swing.JFrame;
+import java.util.ArrayList;
 
 class LevelRules {
-   int counter = 0;
-   int level_cap = 0;
-   int level_count = 0;
-   int health = 1;
-   int points = 0;
-   JFrame frame;
-   Item_Select god;
-   Adding_to_Map adition;
-   boolean bateu = false;
+   static int counter = 0;
+   static int level_cap = 10;
+   static int level_count = 0;
+   static int health = 1;
+   static int points = 0;
+   static JFrame frame;
+   static Item_Select god;
+   static Adding_to_Map adition;
+   static boolean bateu = false;
+   static int Adding_to_Map_counter = 4;
+   ArrayList<GameObject> adicionar;
+   static Game game;
 
-   LevelRules(JFrame var1) {
-      this.frame = var1;
-      this.god = new Item_Select(var1);
-      this.adition = new Adding_to_Map(var1);
+   static void startRules(JFrame frame2, Game jogo) {
+      frame = frame2;
+      god = new Item_Select(frame2);
+      adition = new Adding_to_Map(frame2);
+      game = jogo;
    }
 
-   int generate_cap() {
-      return this.level_cap == 0 ? 1 : this.level_cap + 2 * (this.level_cap - 1);
+   static int generate_cap() {
+      return level_cap == 0 ? 1 : level_cap + 2 * (level_cap - 1);
    }
 
-   public void nextLevel() {
+   static void nextLevel(GameMap map) {
 
-      if (this.health == 0) {
-         new End_of_game(this.frame, this.points);
+      if (health == 0) {
+         new End_of_game(frame, points);
       } else {
 
-         this.counter++;
-         this.god.dialogInit(this);
-         if (this.counter >= this.level_cap) {
-            this.adition.dialog_init(2, this);
+         counter++;
+         game.item_select_list = adition.dialog_init(4, 4, map);
+
+         if (counter >= level_cap) {
+            god.dialogInit();
 
          }
-         this.counter = 0;
-         this.generate_cap();
+         counter = 0;
+         generate_cap();
       }
    }
 }

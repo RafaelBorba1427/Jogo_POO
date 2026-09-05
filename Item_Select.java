@@ -22,7 +22,6 @@ class Item_Select implements ActionListener {
    int id = 1;
    JFrame frame;
    public boolean finished = false;
-   LevelRules level;
 
    Item_Select(JFrame var1) {
       this.frame = var1;
@@ -39,8 +38,7 @@ class Item_Select implements ActionListener {
       this.panel.setLayout(null);
    }
 
-   public void dialogInit(LevelRules var1) {
-      this.level = var1;
+   public void dialogInit() {
       this.panel.removeAll();
       JButton var2 = new JButton("First");
       var2.setBounds(100, 160, 100, 100);

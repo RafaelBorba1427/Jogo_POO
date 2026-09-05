@@ -10,6 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.ArrayDeque;
 
 class Adding_to_Map implements ActionListener {
    JDialog dialog;
@@ -19,15 +22,21 @@ class Adding_to_Map implements ActionListener {
    private Map<JButton, Integer> list = new HashMap<>();
    JFrame frame;
    boolean finished = false;
-   LevelRules level;
+   GameMap current;
+   Queue<GameObject> objects = new ArrayDeque<GameObject>();
+   int counter = 0, aux_counter = 0;
 
    Adding_to_Map(JFrame var1) {
       this.frame = var1;
+
    }
 
-   void dialog_init(int var1, LevelRules var2) {
-      this.level = var2;
+   Queue<GameObject> dialog_init(int var1, int counter, GameMap current) {
+      objects.clear();
+      this.current = current;
+
       this.numero = var1;
+      this.counter = counter;
       this.panel = new JPanel() {
          Image img = new ImageIcon("spritesheet/Dialog.png").getImage();
 
@@ -40,24 +49,25 @@ class Adding_to_Map implements ActionListener {
       };
       this.panel.setOpaque(false);
       this.panel.setLayout(null);
-      JButton var3 = new JButton();
-      var3.setBounds(10, 80, 60, 60);
-      var3.addActionListener(this);
-      this.list.put(var3, 1);
-      this.panel.add(var3);
+      JButton local = new JButton();
+      local.setBounds(10, 80, 60, 60);
+      local.addActionListener(this);
+      this.list.put(local, 1);
+      this.panel.add(local);
 
-      for (int var4 = 1; var4 < 4; var4++) {
-         int var5;
+      for (int i = 1; i < numero; i++) {
+         int aux;
+         // TODO:: change ID for correct ID
          do {
-            var5 = (int) (Math.random() * 11.0);
-         } while (var5 == 3 || var5 == 4);
+            aux = (int) (Math.random() * 11.0);
+         } while (aux == GameObject.ID_BALDE || aux == GameObject.ID_ESTILINGUE);
 
-         int var6 = var5;
-         var3 = new JButton();
-         var3.setBounds(10 + var4 * 70, 80, 60, 60);
-         var3.addActionListener(this);
-         this.list.put(var3, var6);
-         this.panel.add(var3);
+         int id = aux;
+         local = new JButton();
+         local.setBounds(10 + i * 70, 80, 60, 60);
+         local.addActionListener(this);
+         this.list.put(local, id);
+         this.panel.add(local);
       }
 
       this.dialog = new JDialog(this.frame, "Choose Your Item", true);
@@ -69,12 +79,25 @@ class Adding_to_Map implements ActionListener {
       this.dialog.setLocationRelativeTo(this.frame);
       this.dialog.setContentPane(this.panel);
       this.dialog.setVisible(true);
+      return objects;
    }
 
    @Override
    public void actionPerformed(ActionEvent var1) {
       JButton var2 = (JButton) var1.getSource();
-      this.finished = true;
-      this.dialog.dispose();
+      this.panel.remove(var2);
+      this.dialog.repaint();
+      aux_counter++;
+
+      // current.addObject();
+      if (list.get(var2) < GameObject.ID_BUFF_ICED) {
+         objects.add(new RigidObj(400, 400, 60, 60, 0, 0.1, true, true, list.get(var2)));
+      }
+
+      if (aux_counter == counter) {
+         this.finished = true;
+         this.dialog.dispose();
+         aux_counter = 0;
+      }
    }
 }
