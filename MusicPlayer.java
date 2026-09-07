@@ -98,9 +98,11 @@ public class MusicPlayer {
         return currentTrack;
     }
 
+    /*
     public static void main(String[] args) {
 
         MusicPlayer.setTrackAndPlay("menu", true); // Play the initial music
+        
         
         Scanner in = new Scanner(System.in);
         while(true) {
@@ -122,6 +124,7 @@ public class MusicPlayer {
             }
         }
     }
+    */
 }
 
 class MusicPlayerListener implements LineListener {
