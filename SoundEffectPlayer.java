@@ -3,10 +3,17 @@ import java.util.*;
 
 public class SoundEffectPlayer {
 
-    public static HashMap<String, String> soundFilePaths = new HashMap<>();
+    private static HashMap<String, String> soundFilePaths = new HashMap<>();
+
+    private static float original_sample_rate;
+
+    // Settings and the like
+    private static boolean supports_sample_rate_control = false;
+
+    private static float volume;
 
     // Must be called before any sound is played to load the sound file paths into the HashMap
-    public static void loadSoundEffects() {
+    public static void initialiseSoundEffectPlayer() {
         // Add sound file paths to the HashMap
         // Use this exclusively for sounds to avoid confusion
         // Original file names kept for reference, key name indicates actual purpose
@@ -25,6 +32,59 @@ public class SoundEffectPlayer {
         soundFilePaths.put("debuff0", "sounds/sfx/400 Sounds Pack/Retro/power_down.wav");
         soundFilePaths.put("debuff1", "sounds/sfx/400 Sounds Pack/Retro/power_down_2.wav");
         soundFilePaths.put("debuff2", "sounds/sfx/SweetSounds_SFX/WAV/Powerdown.wav");
+
+
+        Clip test_clip;
+        try {
+            test_clip = AudioSystem.getClip();
+            original_sample_rate = ((FloatControl) test_clip.getControl(FloatControl.Type.SAMPLE_RATE)).getValue();
+            supports_sample_rate_control = test_clip.isControlSupported(FloatControl.Type.SAMPLE_RATE);
+            test_clip.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            supports_sample_rate_control = false;
+        }
+
+        volume = 0.1f;
+    }
+
+
+    public static void playSoundWithPitchShift(String sound){
+        if(supports_sample_rate_control) {
+            String soundFilePath = soundFilePaths.get(sound);
+            if (soundFilePath == null) {
+                System.err.println("Sound file not found for key: " + sound);
+                return;
+            }
+
+            try {
+            // Load the sound file
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(SoundEffectPlayer.class.getResource(soundFilePath));
+
+            Clip clip = AudioSystem.getClip();
+
+            clip.open(audioInputStream);
+
+            FloatControl sample_rate_control = (FloatControl) clip.getControl(FloatControl.Type.SAMPLE_RATE);
+            float random_sample_rate = original_sample_rate * (0.9f + (float) Math.random() * 0.2f); // Randomize between 90% and 110%
+            sample_rate_control.setValue(random_sample_rate);
+
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);        
+            gainControl.setValue(20f * (float) Math.log10(volume));
+
+            clip.start();
+
+            sample_rate_control.setValue(original_sample_rate); // Reset to original sample rate after playing
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else{
+            // Failsafe if the system doesn't support sample rate control, just play the sound normally
+            playSound(sound);
+        }
     }
 
 
@@ -37,9 +97,13 @@ public class SoundEffectPlayer {
         try {
             // Load the sound file
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(SoundEffectPlayer.class.getResource(soundFilePath));
+
             Clip clip = AudioSystem.getClip();
 
             clip.open(audioInputStream);
+
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);        
+            gainControl.setValue(20f * (float) Math.log10(volume));
 
             clip.start();
 
@@ -52,7 +116,7 @@ public class SoundEffectPlayer {
 
     // Subroutines for playing random sounds from a category
     public static void playBounceSound() {
-        playSound("bounce_realistic"); // Play the realistic bounce sound
+        playSoundWithPitchShift("bounce_realistic"); // Play the bounce sound with pitch shift
     }
     public static void playBuffSound() {
         Random random = new Random();
@@ -67,12 +131,16 @@ public class SoundEffectPlayer {
         playSound(soundKey); // Play the randomly selected debuff sound
     }
 
-    /*    
+
+    public static void updateVolume(float volume) {
+        SoundEffectPlayer.volume = volume;
+    }
+
+
+    /*
     // Example usage, delete later
     public static void main(String[] args) {
-        // Example usage: play a sound file located in the resources folder
-        SoundEffectPlayer SoundEffectPlayer = new SoundEffectPlayer();
-
+        SoundEffectPlayer.initialiseSoundEffectPlayer(); // Initialize the sound effect player
         Scanner in = new Scanner(System.in);
 
         while(true) {

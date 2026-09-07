@@ -14,8 +14,9 @@ public class MusicPlayer {
 
     // Play settings
     private static boolean isLooping = true; // Set to true to loop the music continuously
+    private static float volume; // Default volume level (0.0 to 1.0)
 
-    public void initialiseMusicPlayer() {
+    public static void initialiseMusicPlayer() {
         
         try{
             clip = AudioSystem.getClip();
@@ -39,6 +40,8 @@ public class MusicPlayer {
         musicFilePaths.put("gameOverworld1", "sounds/music/three-red-hearts-prepare-to-dev-download/Three Red Hearts - Go.wav");
 
         musicFilePaths.put("defeat", "sounds/music/EloLeChan - Funky Victory Draw Loss Themes/lose...wav");
+
+        volume = 0.1f; // Set the default volume level
     }
 
 
@@ -56,7 +59,6 @@ public class MusicPlayer {
             return;
         }
         try {
-            
             // Load the music file
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(MusicPlayer.class.getResource(musicFilePath));
             
@@ -64,6 +66,9 @@ public class MusicPlayer {
             clip.close(); // Close the current clip to release resources
 
             clip.open(audioInputStream);
+
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(20f * (float) Math.log10(volume));
 
             if(!isLooping){
                 clip.start();
@@ -82,11 +87,30 @@ public class MusicPlayer {
         return;
     }
 
-    // We use clip for all the tracks, never close the clip or the whole thing breaks
-    // Dw about resource leak, its just one clip, and it will be closed when the program ends
+
     public static void stopMusic() {
         if (clip != null && clip.isRunning()) {
             clip.stop();
+            clip.close();
+        }
+    }
+    public static void pauseMusic() {
+        if (clip != null && clip.isRunning()) {
+            clip.stop();
+        }
+    }
+    public static void resumeMusic() {
+        if (clip != null && !clip.isRunning()) {
+            clip.start();
+        }
+    }
+
+
+    public static void updateVolume(float volume) {
+        MusicPlayer.volume = volume; // Update the volume variable
+        if (clip != null) {
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(20f * (float) Math.log10(volume));
         }
     }
 
@@ -98,15 +122,16 @@ public class MusicPlayer {
         return currentTrack;
     }
 
-    /*
+    
     public static void main(String[] args) {
+        MusicPlayer.initialiseMusicPlayer(); // Initialize the music player
 
-        MusicPlayer.setTrackAndPlay("menu", true); // Play the initial music
+        MusicPlayer.setTrackAndPlay("menu"); // Play the initial music
         
         
         Scanner in = new Scanner(System.in);
         while(true) {
-            int a = in.nextInt(); // Wait for user input to change the track
+            int a = Integer.parseInt(in.nextLine()); // Wait for user input to change the track
             if(a == 1) {
                 MusicPlayer.setTrackAndPlay("gameOverworld0"); // Change to a different track
             }
@@ -119,12 +144,29 @@ public class MusicPlayer {
             else if(a == 3) {
                 MusicPlayer.setTrackAndPlay("defeat", false); // Change to defeat track
             }
+            else if(a == 4) {
+                MusicPlayer.stopMusic(); // Stop the music
+                System.out.println("Music stopped.");
+            }
+            else if(a == 5) {
+                MusicPlayer.pauseMusic(); // Pause the music
+                System.out.println("Music paused.");
+            }
+            else if(a == 6) {
+                MusicPlayer.resumeMusic(); // Resume the music
+                System.out.println("Music resumed.");
+            }
+            else if(a == 7) {
+                System.out.print("Enter volume (0.0 to 1.0): ");
+                float newVolume = Float.parseFloat(in.nextLine());
+                MusicPlayer.updateVolume(newVolume); // Update the volume
+            }
             else{
                 break; // Exit the loop if the input is not recognized
             }
         }
     }
-    */
+
 }
 
 class MusicPlayerListener implements LineListener {
@@ -132,7 +174,7 @@ class MusicPlayerListener implements LineListener {
     public void update(LineEvent event) {
         if (event.getType() == LineEvent.Type.START) {
             if (MusicPlayer.isLooping() == false) {
-                // If we ever wanna do syncing with the music
+                // If we ever wanna do syncing with music
                 MusicPlayer.musicFinished.emit(MusicPlayer.getCurrentTrack());
             }
         }
