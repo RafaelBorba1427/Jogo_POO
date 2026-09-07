@@ -143,7 +143,7 @@ public class MainMenu extends JPanel implements MouseListener, ActionListener {
   public void mouseClicked(MouseEvent e) {
     if (e.getSource() == start) {
       // game.musicMaster.changeTrackAndPlay("gameOverworld0");
-      Game gamimg = new Game(400, 400);
+      Game gamimg = new Game(Main.DEFAULT_RESOLUTION);
       frame.add(gamimg);
       frame.remove(this);
       frame.revalidate();

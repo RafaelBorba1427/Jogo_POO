@@ -21,7 +21,7 @@ public class Main {
     //
 
     // render test, delete later
-    Game game = new Game(DEFAULT_RESOLUTION.width, DEFAULT_RESOLUTION.height);
+    Game game = new Game(DEFAULT_RESOLUTION);
     frame.add(game);
     frame.pack();
     game.startGame();

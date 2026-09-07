@@ -21,7 +21,8 @@ public class animationPlayerTest {
         @Override
         protected void paintComponent(Graphics g) {
           super.paintComponent(g);
-          animation_player.paint(g, 100, 100, new Vector2D(16, 16), rotation); // Draw the animation at (100, 100)
+          Graphics2D g2d = (Graphics2D) g;
+          animation_player.paint(g2d, 100, 100, new Vector2D(16, 16), rotation); // Draw the animation at (100, 100)
 
           repaint();
         }
