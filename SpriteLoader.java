@@ -48,9 +48,9 @@ public class SpriteLoader {
         try {
             BufferedImage backgroundImage = javax.imageio.ImageIO.read(new java.io.File(path));
             return backgroundImage;
-            
+
         } catch (IOException e) {
-            System.out.println("Error loading spritesheet: " + e.getMessage());
+            System.out.println("Error loading background: " + e.getMessage());
             return null;
         }
 

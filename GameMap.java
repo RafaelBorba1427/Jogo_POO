@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,8 @@ public class GameMap {
     private QuadTree<GameObject> collision_detection;
 
     static boolean next_level = false;
+
+    public static Vector2D player_spawn_position = new Vector2D();
 
     // ------------------------------------------------------------
     // Parametros do passo de fisica
@@ -61,7 +64,7 @@ public class GameMap {
     // Map constructor
     // ------------------------------------------------------------
 
-    GameMap(double width, double height) {
+    GameMap(double width, double height, Vector2D player_spawn_position) {
         all_objects.clear();
         all_objects.add(permanent_objects);
         all_objects.add(immovable_objects);
@@ -97,7 +100,27 @@ public class GameMap {
                 8, // max objects per cell
                 8); // maximum recursion depth
 
+        this.player_spawn_position = new Vector2D(player_spawn_position);
         is_loaded = true;
+    }
+
+    // --------------------------
+    // Unit conversion methods
+    // --------------------------
+    public static int MapUnit_to_Pixel(double MapUnit){
+        return (int)(MapUnit*0.8);
+    }
+
+    public static Dimension MapUnit_to_Pixel(Vector2D MapDimension){
+        return new Dimension((int) (MapDimension.x*0.8), (int) (MapDimension.y*0.8));
+    }
+
+    public static double Pixel_to_MapUnit(int Pixel){
+        return (double)(Pixel*1.25);
+    }
+
+    public static Vector2D Pixel_to_MapUnit(Dimension PixelDimension){
+        return new Vector2D(PixelDimension);
     }
 
     // --------------------------
@@ -151,7 +174,7 @@ public class GameMap {
         // Gera o Popup
         if (next_level) {
             LevelRules.nextLevel(this);
-            Game.pingbongBall.move(100, 100);
+            Game.pingbongBall.move(player_spawn_position);
             Game.pingbongBall.changeVelocity(0.0, 0.0);
             Game.pingbongBall.changeAcceleration(0, 0);
             Game.pingbongBall.changeRotation(0);

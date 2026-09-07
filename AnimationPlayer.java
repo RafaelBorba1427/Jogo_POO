@@ -15,7 +15,7 @@ public class AnimationPlayer {
   private int current_frame;
   private int current_frame_time;
 
-  private static Vector2D render_rescale_factor = new Vector2D(Main.DEFAULT_RESOLUTION);
+  private static Vector2D render_rescale_factor = new Vector2D(1,1);
 
   private static Signal<Boolean> update_animations = new Signal<>();
 
@@ -121,7 +121,7 @@ public class AnimationPlayer {
     g2d = (Graphics2D) g2d.create(); // copy of g2d
 
     // 1. Compute the center of the image
-    Vector2D center = new Vector2D(position_x + dimensions.x/2, position_y + dimensions.y/2);
+    Vector2D center = new Vector2D((position_x + dimensions.x/2), (position_y + dimensions.y/2));
 
     g2d.translate((int) center.x, (int) center.y);
 

@@ -9,10 +9,10 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   // ---------------------------------------------
   // Game variable
   // ---------------------------------------------
-  int initial_resolution_x, initial_resolution_y;
   boolean game_over = false;
   boolean show_hit_boxes = true;
   GameMap game_map;
+  Camera game_camera;
 
   // --------------------------------------------------------
   // render test, delete later
@@ -34,11 +34,8 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   // ---------------------------------------------------------
 
   // Initialise all parameters and start the game loop
-  public Game(int initial_resolution_x, int initial_resolution_y) {
-    this.initial_resolution_x = initial_resolution_x;
-    this.initial_resolution_y = initial_resolution_y;
-
-    this.setPreferredSize(new Dimension(initial_resolution_x, initial_resolution_y));
+  public Game(Dimension resolution) {
+    this.setPreferredSize(resolution);
 
     // Implement input
     addMouseListener(this);
@@ -60,7 +57,9 @@ public class Game extends JPanel implements MouseListener, KeyListener {
     setFocusable(true);
     setVisible(true);
 
-    game_map = new GameMap((double) initial_resolution_x, (double) initial_resolution_y);
+    //map can have any size, this is just temporary
+    game_map = new GameMap((double) resolution.width, (double) resolution.height, new Vector2D(100,100));
+    game_camera = new Camera(GameMap.player_spawn_position, resolution);
   }
 
   public void startGame() {
