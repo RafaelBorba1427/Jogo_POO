@@ -5,6 +5,7 @@ public class SoundEffectPlayer {
 
     public static HashMap<String, String> soundFilePaths = new HashMap<>();
 
+    // Must be called before any sound is played to load the sound file paths into the HashMap
     public static void loadSoundEffects() {
         // Add sound file paths to the HashMap
         // Use this exclusively for sounds to avoid confusion
@@ -66,7 +67,7 @@ public class SoundEffectPlayer {
         playSound(soundKey); // Play the randomly selected debuff sound
     }
 
-        
+    /*    
     // Example usage, delete later
     public static void main(String[] args) {
         // Example usage: play a sound file located in the resources folder
@@ -92,4 +93,5 @@ public class SoundEffectPlayer {
         }
 
     }
+    */
 }
