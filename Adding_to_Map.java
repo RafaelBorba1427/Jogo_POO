@@ -60,7 +60,7 @@ class Adding_to_Map implements ActionListener {
          // TODO:: change ID for correct ID
          do {
             aux = (int) (Math.random() * 11.0);
-         } while (aux == GameObject.ID_BALDE || aux == GameObject.ID_ESTILINGUE);
+         } while (aux == GameObject.ID_BUCKET || aux == GameObject.ID_SLINGSHOT);
 
          int id = aux;
          local = new JButton();

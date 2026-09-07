@@ -75,17 +75,17 @@ public class GameMap {
                 height);
 
         // Game Boundaries
-        left_wall = new RigidObj(0, 0, 0.025 * width, height,
-                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PAREDE);
+        left_wall = new RigidObj(0, 0, 0.020 * width, height,
+                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PERMANENT_WALL);
 
-        right_wall = new RigidObj(width - 0.025 * width, 0, 0.025 * width, height,
-                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PAREDE);
+        right_wall = new RigidObj(width - 0.020 * width, 0, 0.020 * width, height,
+                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PERMANENT_WALL);
 
-        floor = new RigidObj(0.025 * width, height - 0.025 * height, width - 0.050 * width, 0.025 * height,
-                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PLATAFORMA);
+        floor = new RigidObj(0.020 * width, height - 0.020 * height, width - 0.040 * width, 0.020 * height,
+                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PERMANENT_FLOOR);
 
-        roof = new RigidObj(0.025 * width, 0, width - 0.050 * width, 0.025 * height,
-                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PLATAFORMA);
+        roof = new RigidObj(0.020 * width, 0, width - 0.040 * width, 0.020 * height,
+                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_INVISIBLE_OBJ);
 
         permanent_objects.add(left_wall);
         permanent_objects.add(right_wall);
@@ -272,7 +272,7 @@ public class GameMap {
 
                 if (body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ
                         || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ) {
-                    if (body_a.getObjId() == GameObject.ID_BALDE || body_b.getObjType() == GameObject.ID_BALDE &&
+                    if (body_a.getObjId() == GameObject.ID_BUCKET || body_b.getObjType() == GameObject.ID_BUCKET &&
                             body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER)
                         next_level = true;
                 }

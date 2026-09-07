@@ -53,23 +53,26 @@ public class GameObject {
 
     // object IDs
     protected int obj_id;
-    public static final int ID_PLATAFORMA_CONGELADA = 0,
-            ID_PLATAFORMA = 1,
-            ID_MESA = 2,
-            ID_PAREDE = 3,
-            ID_BALDE = 4,
-            ID_ESTILINGUE = 5,
+    public static final int ID_INVISIBLE_OBJ = -1, 
+            ID_FROZEN_PLATAFORM = 0,
+            ID_PLATFORM = 1,
+            ID_TABLE = 2,
+            ID_WALL = 3,
+            ID_BUCKET = 4,
+            ID_SLINGSHOT = 5,
             ID_BUFF_ICED = 6,
             ID_BUFF_SPEED_BOOST = 7,
             ID_BUFF_INTANGIBLE = 8,
             ID_BUFF_TIME_TRAVEL = 9,
             ID_BUFF_LAG = 10,
             ID_BUFF_ELASTIC_COLLISION = 11,
-            ID_BOLA_1 = 12,
-            ID_BOLA_2 = 13,
-            ID_BOLA_3 = 14,
-            ID_BOLA_4 = 15,
-            Quant_IDs = 16;
+            ID_BALL_1 = 12,
+            ID_BALL_2 = 13,
+            ID_BALL_3 = 14,
+            ID_BALL_4 = 15,
+            ID_PERMANENT_FLOOR = 16,
+            ID_PERMANENT_WALL = 17,
+            Quant_IDs = 19;
 
     // ------------------------------------------------------------
     // Constructor
@@ -136,10 +139,23 @@ public class GameObject {
 
     protected void createAnimationPlayer(){
         try {
-            if(obj_type != BALL_OBJ)
+            if(obj_id == ID_INVISIBLE_OBJ){
+                animation = null;
+                return;
+            }
+
+            if(obj_id == ID_PERMANENT_FLOOR)
+        this.animation = new AnimationPlayer("permanent_floor", "spritesheet/floor_plank_760x15.png", 760, 15, 0, 1, 1);
+
+            else if(obj_id == ID_PERMANENT_WALL)
+        this.animation = new AnimationPlayer("permanent_wall", "spritesheet/wall_plank_20x600.png", 20, 600, 0, 1, 1);
+
+            else if(obj_type != BALL_OBJ)
         this.animation = new AnimationPlayer("objects1_" + obj_id, "spritesheet/objects1.png", 16, 16, obj_id, 15, 15);
+
             else 
         this.animation = new AnimationPlayer("menu_" + obj_id, "spritesheet/Menu_Stuff(1).png", 32, 32, (obj_id-12+2), 4, 4);
+
             } catch (Exception e) {
         System.out.println(e.getMessage());
         }

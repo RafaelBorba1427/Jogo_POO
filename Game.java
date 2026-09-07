@@ -19,15 +19,15 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   // double x_pos, double y_pos, double width, double height, double rotation,
   // boolean rotatable, boolean active, int obj_type, int obj_id
   
-  EventTriggerObj balde = new EventTriggerObj(400f, 300f, 50f, 40f, (Math.PI / 4), true, true, GameObject.ID_BALDE);
+  EventTriggerObj balde = new EventTriggerObj(400f, 300f, 50f, 40f, (Math.PI / 4), true, true, GameObject.ID_BUCKET);
 
   RigidObj obj_render_test3 = new RigidObj(100f, 300f, 50f, 40f, (Math.PI / 4), GameRules.DEFAULT_FRICTION, true, true,
-      GameObject.ID_PLATAFORMA);
+      GameObject.ID_PLATFORM);
 
   // (double x_pos, double y_pos, double radius, boolean active, int obj_id,
   // double elastic_factor)
-  BallObj obj_render_test2 = new BallObj(200f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BOLA_2, 0.8);
-  static BallObj pingbongBall = new BallObj(700f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BOLA_1, 0.8);
+  BallObj obj_render_test2 = new BallObj(200f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BALL_2, 0.8);
+  static BallObj pingbongBall = new BallObj(700f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BALL_1, 0.8);
 
   // ------------ArrayList with items from item_select
   Queue<GameObject> item_select_list = new ArrayDeque<GameObject>();
@@ -116,6 +116,7 @@ public class Game extends JPanel implements MouseListener, KeyListener {
         for (GameObject object : obj_list) {
           if (object.isActive()){
             if(show_hit_boxes) object.drawHitbox(g2d);
+            if(object.obj_id != GameObject.ID_INVISIBLE_OBJ)
             object.drawSprite(g2d);
           }
             
