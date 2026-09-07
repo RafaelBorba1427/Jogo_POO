@@ -11,22 +11,23 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   // ---------------------------------------------
   int initial_resolution_x, initial_resolution_y;
   boolean game_over = false;
+  boolean show_hit_boxes = true;
   GameMap game_map;
 
   // --------------------------------------------------------
   // render test, delete later
   // double x_pos, double y_pos, double width, double height, double rotation,
   // boolean rotatable, boolean active, int obj_type, int obj_id
-
+  
   EventTriggerObj balde = new EventTriggerObj(400f, 300f, 50f, 40f, (Math.PI / 4), true, true, GameObject.ID_BALDE);
 
   RigidObj obj_render_test3 = new RigidObj(100f, 300f, 50f, 40f, (Math.PI / 4), GameRules.DEFAULT_FRICTION, true, true,
-      0);
+      GameObject.ID_PLATAFORMA);
 
   // (double x_pos, double y_pos, double radius, boolean active, int obj_id,
   // double elastic_factor)
-  BallObj obj_render_test2 = new BallObj(200f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, 0, 0.8);
-  static BallObj pingbongBall = new BallObj(700f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, -1, 0.8);
+  BallObj obj_render_test2 = new BallObj(200f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BOLA_2, 0.8);
+  static BallObj pingbongBall = new BallObj(700f, 200f, 32f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BOLA_1, 0.8);
 
   // ------------ArrayList with items from item_select
   Queue<GameObject> item_select_list = new ArrayDeque<GameObject>();
@@ -60,11 +61,6 @@ public class Game extends JPanel implements MouseListener, KeyListener {
     setVisible(true);
 
     game_map = new GameMap((double) initial_resolution_x, (double) initial_resolution_y);
-
-    // render test, delete later
-    this.setBackground(Color.BLACK);
-    // ------------------------
-
   }
 
   public void startGame() {
@@ -110,14 +106,22 @@ public class Game extends JPanel implements MouseListener, KeyListener {
     Graphics2D g2d = (Graphics2D) g;
 
     if (GameMap.is_loaded) {
+
+      if (LevelRules.background_image != null) {
+            // Draws the image stretched to fill the entire panel
+            g2d.drawImage(LevelRules.background_image, 0, 0, Main.frame.getWidth(), Main.frame.getHeight(), this);
+        }
+
       for (ArrayList<GameObject> obj_list : GameMap.getAllObjects()) {
         for (GameObject object : obj_list) {
-          if (object.isActive())
-            object.drawHitbox(g2d);
+          if (object.isActive()){
+            if(show_hit_boxes) object.drawHitbox(g2d);
+            object.drawSprite(g2d);
+          }
+            
         }
       }
     }
-
   }
 
   @Override

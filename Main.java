@@ -1,24 +1,27 @@
+import java.awt.Dimension;
 import javax.swing.*;
 
 public class Main {
   static LevelRules rules;
+  static JFrame frame;
+  static final Dimension DEFAULT_RESOLUTION = new Dimension(800,600);
 
   public static void main(String[] args) {
-    JFrame frame = new JFrame("Game");
+    frame = new JFrame("Game");
     // MainMenu menu = new MainMenu(frame);
 
     // frame.add(menu);
-    frame.setSize(800, 600);
+    frame.setSize(DEFAULT_RESOLUTION.width, DEFAULT_RESOLUTION.height);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setVisible(true);
-
+    AnimationPlayer.initializeAnimationPlayerTimer();
     // Isso não deveria estar no game ao invés de estar na main????
     // rules = new LevelRules(frame);
     // rules.nextLevel();
     //
 
     // render test, delete later
-    Game game = new Game(800, 600);
+    Game game = new Game(DEFAULT_RESOLUTION.width, DEFAULT_RESOLUTION.height);
     frame.add(game);
     frame.pack();
     game.startGame();

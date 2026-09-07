@@ -1,4 +1,7 @@
+import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 class LevelRules {
@@ -14,12 +17,18 @@ class LevelRules {
    static int Adding_to_Map_counter = 4;
    ArrayList<GameObject> adicionar;
    static Game game;
+   static BufferedImage background_image;
 
    static void startRules(JFrame frame2, Game jogo) {
       frame = frame2;
       god = new Item_Select(frame2);
       adition = new Adding_to_Map(frame2);
       game = jogo;
+
+      //-------------------------------------------------
+      //change latter 
+      background_image = SpriteLoader.loadNewBackgroundImage("spritesheet/Frat_background.png");
+      //-------------------------------------------------
    }
 
    static int generate_cap() {

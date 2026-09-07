@@ -32,6 +32,15 @@ public class MovableObj extends GameObject {
             global_active++;
     }
 
+    //Constructor for BallObj
+    MovableObj(double x_pos, double y_pos, double width, double height, double rotation, double mass, double friction,
+            boolean movable, boolean rotatable, boolean active, int obj_type, int obj_id, double elastic_factor) {
+        super(x_pos, y_pos, width, height, rotation, mass, friction, movable, rotatable, active, obj_type, obj_id);
+        this.elastic_factor = elastic_factor;
+        global_quantity++;
+        if (active) global_active++;
+    }
+
     @Override
     protected void updateInertialVariables() {
 

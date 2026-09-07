@@ -15,12 +15,11 @@ public class AnimationPlayer {
   private int current_frame;
   private int current_frame_time;
 
-  private static double rescale_factor = 6.0;
+  private static Vector2D render_rescale_factor = new Vector2D(Main.DEFAULT_RESOLUTION);
 
   private static Signal<Boolean> update_animations = new Signal<>();
 
-  public static javax.swing.Timer animation_timer;
-
+  public static javax.swing.Timer animation_timer; 
 
   // Declares an animation with a unique key, the last frame index, and an array of sprites
   // Also connects it to the global animation loop
@@ -48,9 +47,9 @@ public class AnimationPlayer {
   // Optimised constructor that loads the spritesheet and creates an animation player in one step
   // Kept the old one for compatibility with existing code, but this one is preferred
   public AnimationPlayer(String animation_key, String image_path, int sprite_width, int sprite_height,
-                          int sprite_height_offset, int num_sprites, int fps) throws Exception {
+                          int sprite_row_index, int num_sprites, int fps) throws Exception {
 
-    SpriteLoader.loadSpritesheet(animation_key, image_path, sprite_width, sprite_height, num_sprites, sprite_height_offset);
+    SpriteLoader.loadSpritesheet(animation_key, image_path, sprite_width, sprite_height, num_sprites, sprite_row_index);
     if(SpriteLoader.getSplicedSprites(animation_key) == null) {
       throw new Exception("AnimationPlayer: No sprites found for animation key " + animation_key);
     }
@@ -73,12 +72,18 @@ public class AnimationPlayer {
   public static void initializeAnimationPlayerTimer() {
     // 16ms = ~60fps
     animation_timer = new javax.swing.Timer(16, e -> {
+        updateRenderRescaleFactors();
         AnimationPlayer.update_animations.emit(true);
       }
     );
     animation_timer.start();
   }
 
+  private static void updateRenderRescaleFactors(){
+    Vector2D current_dim = new Vector2D(Main.frame.getSize());
+    render_rescale_factor.setSize(current_dim.x/Main.DEFAULT_RESOLUTION.width,
+                                  current_dim.y/Main.DEFAULT_RESOLUTION.height);
+  } 
 
   // Updates the current frame of the animation
   // The boolean parameter is not used, but is required for the Signal connection
@@ -92,7 +97,6 @@ public class AnimationPlayer {
     if (current_frame >= last_frame) {
       current_frame = 0;
     }
-    System.out.println("Animation key: " + animation_key + ", Current frame: " + current_frame);
   }
 
 
@@ -111,10 +115,10 @@ public class AnimationPlayer {
 
 
   // Should be called inside of paint components to draw the current frame of the animation at the specified x and y coordinates
-  public void paint(java.awt.Graphics g, int position_x, int position_y, Vector2D dimensions, double rotation) {
+  public void paint(Graphics2D g2d, int position_x, int position_y, Vector2D dimensions, double rotation) {
     AnimationFrame[] sprites = SpriteLoader.getSplicedSprites(animation_key);
 
-    Graphics2D g2d = (Graphics2D) g.create(); // copy of g2d
+    g2d = (Graphics2D) g2d.create(); // copy of g2d
 
     // 1. Compute the center of the image
     Vector2D center = new Vector2D(position_x + dimensions.x/2, position_y + dimensions.y/2);
@@ -126,14 +130,12 @@ public class AnimationPlayer {
 
     // 3. Draw sprite at proper rotation and position
     if (sprites != null && current_frame < sprites.length) {
-        int drawWidth = (int) (sprites[current_frame].getDimension_x() * rescale_factor);
-        int drawHeight = (int) (sprites[current_frame].getDimension_y() * rescale_factor);
+        int drawWidth = (int) (dimensions.x * render_rescale_factor.x);
+        int drawHeight = (int) (dimensions.y * render_rescale_factor.y);
 
         g2d.drawImage(sprites[current_frame].getImage(), -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight, null);
     }
+    g2d.dispose();
   }
 
-  public static void setRescaleFactor(double factor) {
-    rescale_factor = factor;
-  }
 }

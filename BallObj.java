@@ -24,8 +24,7 @@ public class BallObj extends MovableObj {
     // diameter: largura total da bola, igual a que aparece na tela.
     BallObj(double x_pos, double y_pos, double diameter, double mass, double friction, boolean active, int obj_id,
             double elastic_factor) {
-        super(x_pos, y_pos, diameter, diameter, 0, mass, friction, true, true, active, obj_id, elastic_factor);
-        obj_type = GameObject.BALL_OBJ;
+        super(x_pos, y_pos, diameter, diameter, 0, mass, friction, true, true, active, GameObject.BALL_OBJ, obj_id, elastic_factor);
     }
 
     @Override
@@ -38,7 +37,7 @@ public class BallObj extends MovableObj {
             g2d.fillOval((int) position.x, (int) position.y, (int) dimensions.x, (int) dimensions.x);
 
             // 2. Draw hitbox outline
-            g2d.setColor(new Color(255, 0, 0, 255));
+            g2d.setColor(new Color(126, 0, 255, 255));
             g2d.drawOval((int) position.x, (int) position.y, (int) dimensions.x, (int) dimensions.x);
 
             g2d.dispose();

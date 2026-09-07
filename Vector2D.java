@@ -1,3 +1,5 @@
+import java.awt.Dimension;
+
 public class Vector2D {
     public double x;
     public double y;
@@ -10,6 +12,11 @@ public class Vector2D {
     public Vector2D(Vector2D other_vec){
         this.x = other_vec.x;
         this.y = other_vec.y;
+    }
+
+    public Vector2D(Dimension frame){
+        this.x = frame.width;
+        this.y = frame.height;
     }
 
     public void setSize(double new_x, double new_y){

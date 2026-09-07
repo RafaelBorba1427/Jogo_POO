@@ -76,16 +76,16 @@ public class GameMap {
 
         // Game Boundaries
         left_wall = new RigidObj(0, 0, 0.025 * width, height,
-                0, GameRules.DEFAULT_FRICTION, false, true, 0);
+                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PAREDE);
 
         right_wall = new RigidObj(width - 0.025 * width, 0, 0.025 * width, height,
-                0, GameRules.DEFAULT_FRICTION, false, true, 0);
+                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PAREDE);
 
         floor = new RigidObj(0.025 * width, height - 0.025 * height, width - 0.050 * width, 0.025 * height,
-                0, GameRules.DEFAULT_FRICTION, false, true, 0);
+                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PLATAFORMA);
 
         roof = new RigidObj(0.025 * width, 0, width - 0.050 * width, 0.025 * height,
-                0, GameRules.DEFAULT_FRICTION, false, true, 0);
+                0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PLATAFORMA);
 
         permanent_objects.add(left_wall);
         permanent_objects.add(right_wall);

@@ -40,7 +40,7 @@ public class GameObject {
     protected boolean active;
 
     // sprite reference
-    protected BufferedImage sprite;
+    protected AnimationPlayer animation;
 
     // object type codes
     protected int obj_type;
@@ -65,7 +65,11 @@ public class GameObject {
             ID_BUFF_TIME_TRAVEL = 9,
             ID_BUFF_LAG = 10,
             ID_BUFF_ELASTIC_COLLISION = 11,
-            Quant_IDs = 12;
+            ID_BOLA_1 = 12,
+            ID_BOLA_2 = 13,
+            ID_BOLA_3 = 14,
+            ID_BOLA_4 = 15,
+            Quant_IDs = 16;
 
     // ------------------------------------------------------------
     // Constructor
@@ -86,8 +90,12 @@ public class GameObject {
         this.obj_id = obj_id;
 
         createHitBox();
+        createAnimationPlayer();
     }
 
+    // ------------------------------------------------------------
+    // Render
+    // ------------------------------------------------------------
     public void drawHitbox(Graphics2D g2d) {
         g2d = (Graphics2D) g2d.create(); // copy of g2d
 
@@ -104,16 +112,46 @@ public class GameObject {
         g2d.fillRect((int) (-dimensions.x / 2), (int) (-dimensions.y / 2), (int) dimensions.x, (int) dimensions.y);
 
         // 4. Draw hitbox outline
-        if (this.obj_id == ID_BALDE)
+        switch (this.obj_type) {
+            case EVENT_TRIGGER_OBJ:
+            g2d.setColor(new Color(255, 251, 0, 255));
+            break;
+            
+            case BUFF_OBJ:
             g2d.setColor(new Color(0, 255, 0, 255));
-        else
+            break;
+
+            case MOVABLE_OBJ:
+            g2d.setColor(new Color(0, 200, 255, 255));
+            break;
+
+            default:
             g2d.setColor(new Color(255, 0, 0, 255));
+                break;
+        }
         g2d.drawRect((int) (-dimensions.x / 2), (int) (-dimensions.y / 2), (int) dimensions.x, (int) dimensions.y);
 
         g2d.dispose();
     }
 
-    // Getter methods
+    protected void createAnimationPlayer(){
+        try {
+            if(obj_type != BALL_OBJ)
+        this.animation = new AnimationPlayer("objects1_" + obj_id, "spritesheet/objects1.png", 16, 16, obj_id, 15, 15);
+            else 
+        this.animation = new AnimationPlayer("menu_" + obj_id, "spritesheet/Menu_Stuff(1).png", 32, 32, (obj_id-12+2), 4, 4);
+            } catch (Exception e) {
+        System.out.println(e.getMessage());
+        }
+    }
+
+    public void drawSprite(Graphics2D g2d){//int position_x, int position_y, Vector2D dimensions, double rotation
+        animation.paint(g2d,(int) position.x, (int) position.y, dimensions, rotation);
+    }
+
+    // ------------------------------------------------------------
+    // Getter Methods
+    // ------------------------------------------------------------
     public int getUid() {
         return this.uid;
     }
@@ -130,7 +168,7 @@ public class GameObject {
         return new Vector2D(this.position);
     }
 
-    // Centro de massa em coordenadas do mundo.
+    // Center of mass Coordinates
     public Vector2D getCenterOfMass() {
         return new Vector2D(position.x + dimensions.x / 2.0,
                 position.y + dimensions.y / 2.0);
@@ -176,10 +214,6 @@ public class GameObject {
         return this.obj_id;
     }
 
-    public BufferedImage getSprite() {
-        return this.sprite;
-    }
-
     public boolean isActive() {
         return active;
     }
@@ -188,9 +222,8 @@ public class GameObject {
         return movable;
     }
 
-    // ------------------------------------------------------------
+    //--------------------------------------------------------
     // Methods used in the Collision Solver
-    // ------------------------------------------------------------
 
     // Center of mass Linear velocity, zero for static bodies.
     public Vector2D getLinearVelocity() {
@@ -226,7 +259,10 @@ public class GameObject {
         this.friction = Math.max(0.0, new_friction);
     }
 
+    // ------------------------------------------------------------
     // Setter methods
+    // ------------------------------------------------------------
+
     public void setPlayer() {
         obj_type = PLAYER;
     }
@@ -277,10 +313,6 @@ public class GameObject {
         this.dimensions.setSize(new_width, new_height);
         updateInertialVariables();
         updateHitBox();
-    }
-
-    public void changeSprite(BufferedImage new_sprite) {
-        this.sprite = new_sprite;
     }
 
     // ------------------------------------------------------------
