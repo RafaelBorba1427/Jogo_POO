@@ -6,7 +6,7 @@ public class MovableObj extends GameObject {
 
     // movable objects variables
     protected Vector2D velocity = new Vector2D(0, 0);
-    protected Vector2D acceleration = new Vector2D(0, GameRules.GRAVITY);
+    protected Vector2D acceleration = new Vector2D(0, 0);
 
     protected double angular_velocity = 0.0;
     protected double angular_acceleration = 0.0;
@@ -32,13 +32,14 @@ public class MovableObj extends GameObject {
             global_active++;
     }
 
-    //Constructor for BallObj
+    // Constructor for BallObj
     MovableObj(double x_pos, double y_pos, double width, double height, double rotation, double mass, double friction,
             boolean movable, boolean rotatable, boolean active, int obj_type, int obj_id, double elastic_factor) {
         super(x_pos, y_pos, width, height, rotation, mass, friction, movable, rotatable, active, obj_type, obj_id);
         this.elastic_factor = elastic_factor;
         global_quantity++;
-        if (active) global_active++;
+        if (active)
+            global_active++;
     }
 
     @Override

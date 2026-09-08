@@ -19,19 +19,7 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   // render test, delete later
   // double x_pos, double y_pos, double width, double height, double rotation,
   // boolean rotatable, boolean active, int obj_type, int obj_id
-  MovableObj obj_render_test7 = new MovableObj(1000f, 400f, 67, 40, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true,
-      GameObject.ID_PERMANENT_WALL, 0.3);
-  MovableObj obj_render_test6 = new MovableObj(900f, 400f, 80, 180, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true,
-      GameObject.ID_PERMANENT_WALL, 0.3);
-  MovableObj obj_render_test5 = new MovableObj(800f, 400f, 99, 300, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true,
-      GameObject.ID_PERMANENT_WALL, 0.3);
-  MovableObj obj_render_test4 = new MovableObj(700f, 400f, 30, 400, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true,
-      GameObject.ID_PERMANENT_WALL, 0.3);
-  RigidObj obj_render_test3 = new RigidObj(100f, 300f, 50f, 40f, (Math.PI / 4), GameRules.DEFAULT_FRICTION, true, true,
-      GameObject.ID_PLATFORM);
 
-  BallObj obj_render_test2 = new BallObj(200f, 200f, 60f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BALL_2,
-      0.8);
   static BallObj pingbongBall = new BallObj(700f, 200f, 45f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BALL_1,
       0.8);
   // ---------------------------------------------------------
@@ -74,14 +62,12 @@ public class Game extends JPanel implements MouseListener, KeyListener {
 
     // render test, delete later
     GameRules.physics_on = true;
-    game_map.addObject(obj_render_test7);
-    game_map.addObject(obj_render_test6);
-    game_map.addObject(obj_render_test5);
-    game_map.addObject(obj_render_test4);
-    game_map.addObject(obj_render_test3);
-    game_map.addObject(obj_render_test2);
-    game_map.addObject(pingbongBall);
 
+    game_map.addObject(pingbongBall);
+    LevelRules.currentMap = Maps.generation(1);
+    for (GameObject obj : LevelRules.currentMap) {
+      game_map.addObject(obj);
+    }
     pingbongBall.changeVelocity(0, 0);
     pingbongBall.move(300, 200);
     pingbongBall.setPlayer();
@@ -214,6 +200,7 @@ public class Game extends JPanel implements MouseListener, KeyListener {
     Vector2D xy = GameMap.Pixel_to_MapUnit(new Vector2D(e.getX(), e.getY())).add(game_camera.map_position);
 
     if (GameRules.current_game_mode == GameRules.GameModes.EDIT && item_select_list.size() > 0) {
+
       int temp_num;
       System.out.print(item_select_list.size() + " is the size");
       GameObject temp;
@@ -239,7 +226,7 @@ public class Game extends JPanel implements MouseListener, KeyListener {
     }
 
     if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
-      pingbongBall.velocity = xy.subtract(pingbongBall.getCenterOfMass()).multiply(0.05 * pingbongBall.inverse_mass)
+      pingbongBall.velocity = xy.subtract(pingbongBall.getCenterOfMass()).multiply(0.08 * pingbongBall.inverse_mass)
           .add(pingbongBall.velocity);
     }
 

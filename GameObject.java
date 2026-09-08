@@ -359,7 +359,7 @@ public class GameObject {
         return this.hit_box.intersects(other_hit_box);
     }
 
-    public void deactivate(GameObject object) {
+    static void deactivate(GameObject object) {
         object.active = false;
     }
 }

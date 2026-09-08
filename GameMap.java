@@ -90,10 +90,11 @@ public class GameMap {
 
         roof = new RigidObj(0.010 * width, 0, width - (0.02 * width), 0.020 * height,
                 0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_INVISIBLE_OBJ);
-        
+
         double bucket_x = 70, bucket_y = 80; // bucket width and height, always placed next to the wall
-        bucket = new EventTriggerObj(width -(0.01 * width) - bucket_x, height - (0.020 * height) - bucket_y, bucket_x, bucket_y,
-             0, true, true, GameObject.ID_BUCKET);
+        bucket = new EventTriggerObj(width - (0.01 * width) - bucket_x, height - (0.020 * height) - bucket_y, bucket_x,
+                bucket_y,
+                0, true, true, GameObject.ID_BUCKET);
 
         permanent_objects.add(left_wall);
         permanent_objects.add(right_wall);
@@ -115,17 +116,17 @@ public class GameMap {
     // ----------------------------------------------------
     public static double MAP_UNIT_TO_PIXEL = 0.8;
 
-    public static Dimension MapUnit_to_Pixel(Vector2D MapDimension){
-        return new Dimension((int) (MapDimension.x*0.8), (int) (MapDimension.y*0.8));
+    public static Dimension MapUnit_to_Pixel(Vector2D MapDimension) {
+        return new Dimension((int) (MapDimension.x * 0.8), (int) (MapDimension.y * 0.8));
     }
 
     public static double PIXEL_TO_MAP_UNIT = 1.25;
 
-    public static Vector2D Pixel_to_MapUnit(Dimension PixelDimension){
+    public static Vector2D Pixel_to_MapUnit(Dimension PixelDimension) {
         return new Vector2D(PixelDimension).multiply(1.25);
     }
 
-    public static Vector2D Pixel_to_MapUnit(Vector2D PixelDimension){
+    public static Vector2D Pixel_to_MapUnit(Vector2D PixelDimension) {
         return new Vector2D(PixelDimension).multiply(1.25);
     }
 
@@ -186,10 +187,11 @@ public class GameMap {
             Game.pingbongBall.changeRotation(0);
             Game.pingbongBall.changeAngularVelocity(0);
             Game.pingbongBall.changeAngularAcceleration(0);
+
             next_level = false;
             Game.next_level = true;
             GameRules.current_game_mode = GameRules.GameModes.EDIT;
-            
+
         }
     }
 
@@ -268,6 +270,7 @@ public class GameMap {
     // --------------------------
     private DeltaTime delta_time = new DeltaTime();
     private GameObject last_collided = null;
+
     // Transforma os pares candidatos da QuadTree em manifolds reais.
     private void buildManifolds() {
         HashMap<Long, CollisionManifold> new_cache = new HashMap<>();
@@ -304,37 +307,42 @@ public class GameMap {
 
                 // Checks if the player is in contact with the bucket to trigger the next level
                 // Will also handle points and audio maybe probably
+
                 if (body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ
                         || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ) {
                     if (body_a.getObjId() == GameObject.ID_BUCKET || body_b.getObjType() == GameObject.ID_BUCKET &&
                             body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER) {
                         SoundEffectPlayer.playSound("goal");
                         next_level = true;
+                    } else if (body_a.getObjType() == GameObject.PLAYER && body_b instanceof MovableObj
+                            && ((MovableObj) body_b).acceleration.y != GameRules.GRAVITY) {
+                        ((MovableObj) body_b).acceleration.y = GameRules.GRAVITY;
+                    } else if (body_b.getObjType() == GameObject.PLAYER && body_a instanceof MovableObj
+                            && ((MovableObj) body_a).acceleration.y != GameRules.GRAVITY) {
+                        ((MovableObj) body_a).acceleration.y = GameRules.GRAVITY;
                     }
-                }
-                else if (body_a.getObjType() == GameObject.PLAYER || body_b.getObjType() == GameObject.PLAYER) {
+
+                } else if (body_a.getObjType() == GameObject.PLAYER || body_b.getObjType() == GameObject.PLAYER) {
                     GameObject player;
                     GameObject other_object = null;
                     if (body_a.getObjType() == GameObject.PLAYER) {
                         player = body_a;
                         other_object = body_b;
-                    }
-                    else {
+                    } else {
                         player = body_b;
                         other_object = body_a;
                     }
 
-                    if(Math.abs(player.getLinearVelocity().y) > 1 && last_collided != other_object) {
+                    if (Math.abs(player.getLinearVelocity().y) > 1 && last_collided != other_object) {
                         SoundEffectPlayer.playBounceSound();
                         last_collided = other_object;
 
-                        if(delta_time.get() >= 20) {
+                        if (delta_time.get() >= 20) {
                             PointCounter.addPoints(1);
                             System.out.println("Points: " + PointCounter.getPoints());
                         }
                     }
-                }
-                else{
+                } else {
                     last_collided = null;
                 }
 
