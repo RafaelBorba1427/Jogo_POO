@@ -18,20 +18,25 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   // render test, delete later
   // double x_pos, double y_pos, double width, double height, double rotation,
   // boolean rotatable, boolean active, int obj_type, int obj_id
-  MovableObj obj_render_test7 = new MovableObj(1000f, 400f, 67, 40, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true, GameObject.ID_PERMANENT_WALL, 0.3);
-  MovableObj obj_render_test6 = new MovableObj(900f, 400f, 80, 180, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true, GameObject.ID_PERMANENT_WALL, 0.3);
-MovableObj obj_render_test5 = new MovableObj(800f, 400f, 99, 300, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true, GameObject.ID_PERMANENT_WALL, 0.3);
-  MovableObj obj_render_test4 = new MovableObj(700f, 400f, 30, 400, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true, GameObject.ID_PERMANENT_WALL, 0.3);
+  MovableObj obj_render_test7 = new MovableObj(1000f, 400f, 67, 40, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true,
+      GameObject.ID_PERMANENT_WALL, 0.3);
+  MovableObj obj_render_test6 = new MovableObj(900f, 400f, 80, 180, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true,
+      GameObject.ID_PERMANENT_WALL, 0.3);
+  MovableObj obj_render_test5 = new MovableObj(800f, 400f, 99, 300, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true,
+      GameObject.ID_PERMANENT_WALL, 0.3);
+  MovableObj obj_render_test4 = new MovableObj(700f, 400f, 30, 400, 0, 1, GameRules.DEFAULT_FRICTION, true, true, true,
+      GameObject.ID_PERMANENT_WALL, 0.3);
   RigidObj obj_render_test3 = new RigidObj(100f, 300f, 50f, 40f, (Math.PI / 4), GameRules.DEFAULT_FRICTION, true, true,
       GameObject.ID_PLATFORM);
 
-  BallObj obj_render_test2 = new BallObj(200f, 200f, 60f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BALL_2, 0.8);
-  static BallObj pingbongBall = new BallObj(700f, 200f, 45f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BALL_1, 0.8);
+  BallObj obj_render_test2 = new BallObj(200f, 200f, 60f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BALL_2,
+      0.8);
+  static BallObj pingbongBall = new BallObj(700f, 200f, 45f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BALL_1,
+      0.8);
   // ---------------------------------------------------------
 
-
   // ArrayList with items from item_select
-  Queue<GameObject> item_select_list = new ArrayDeque<GameObject>();
+  Queue<Integer> item_select_list = new ArrayDeque<Integer>();
 
   // Initialise all parameters and start the game loop
   public Game(Dimension resolution) {
@@ -57,9 +62,9 @@ MovableObj obj_render_test5 = new MovableObj(800f, 400f, 99, 300, 0, 1, GameRule
     setFocusable(true);
     setVisible(true);
 
-    //map can have any size, this is just temporary
-    // map unit: 1000,750 <=> pixel: 800,600 
-    Vector2D player_spawn_location = new Vector2D(100,500);
+    // map can have any size, this is just temporary
+    // map unit: 1000,750 <=> pixel: 800,600
+    Vector2D player_spawn_location = new Vector2D(100, 500);
     game_map = new GameMap(2000, 1000, player_spawn_location);
     game_camera = new Camera(game_map.getPlayerSpawn(), resolution);
   }
@@ -93,7 +98,7 @@ MovableObj obj_render_test5 = new MovableObj(800f, 400f, 99, 300, 0, 1, GameRule
 
       game_map.step(1); // collision and physics simulation
 
-      Vector2D ball_pos = pingbongBall.getCenterOfMass() , map_size = game_map.getMapSize();
+      Vector2D ball_pos = pingbongBall.getCenterOfMass(), map_size = game_map.getMapSize();
       game_camera.follow(ball_pos.x, ball_pos.y, map_size.x, map_size.y);
     });
 
@@ -113,24 +118,24 @@ MovableObj obj_render_test5 = new MovableObj(800f, 400f, 99, 300, 0, 1, GameRule
     super.paintComponent(g);
     Graphics2D g2d = (Graphics2D) g;
     g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-                            RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
 
     if (GameMap.is_loaded) {
 
       if (LevelRules.background_image != null) {
-            // Draws the image stretched to fill the entire panel
-            Vector2D map_size = game_map.getMapSize();
-            int sx = (int) (LevelRules.bg_dimensions.width * game_camera.map_position.x/map_size.x);
-            int sy = (int) (LevelRules.bg_dimensions.height * game_camera.map_position.y/map_size.y);
-            int width = (int) (LevelRules.bg_dimensions.width * game_camera.size_game_units.x/map_size.x);
-            int height = (int) (LevelRules.bg_dimensions.height * game_camera.size_game_units.y/map_size.y);
+        // Draws the image stretched to fill the entire panel
+        Vector2D map_size = game_map.getMapSize();
+        int sx = (int) (LevelRules.bg_dimensions.width * game_camera.map_position.x / map_size.x);
+        int sy = (int) (LevelRules.bg_dimensions.height * game_camera.map_position.y / map_size.y);
+        int width = (int) (LevelRules.bg_dimensions.width * game_camera.size_game_units.x / map_size.x);
+        int height = (int) (LevelRules.bg_dimensions.height * game_camera.size_game_units.y / map_size.y);
 
-            g.drawImage(LevelRules.background_image,
-                0, 0, game_camera.size.width, game_camera.size.height, // fill the whole screen
-                sx, sy, sx + width, sy + height, // a part of the background
-                null);
-        }
-   
+        g.drawImage(LevelRules.background_image,
+            0, 0, game_camera.size.width, game_camera.size.height, // fill the whole screen
+            sx, sy, sx + width, sy + height, // a part of the background
+            null);
+      }
+
       // ------------------------------------------------------------------
       // Object Culling implementation
       // ------------------------------------------------------------------
@@ -150,12 +155,15 @@ MovableObj obj_render_test5 = new MovableObj(800f, 400f, 99, 300, 0, 1, GameRule
 
       for (ArrayList<GameObject> obj_list : GameMap.getAllObjects()) {
         for (GameObject object : obj_list) {
-          if (!object.isActive()) continue;
+          if (!object.isActive())
+            continue;
 
           // Skip objects outside the camera
-          if (object.getHitBox() != null && !object.getHitBox().getAABB().intersect(camera_view)) continue;
+          if (object.getHitBox() != null && !object.getHitBox().getAABB().intersect(camera_view))
+            continue;
 
-          if (show_hit_boxes) object.drawHitbox(obj_g2d);
+          if (show_hit_boxes)
+            object.drawHitbox(obj_g2d);
           if (object.obj_id != GameObject.ID_INVISIBLE_OBJ)
             object.drawSprite(obj_g2d);
         }
@@ -169,18 +177,22 @@ MovableObj obj_render_test5 = new MovableObj(800f, 400f, 99, 300, 0, 1, GameRule
   @Override
   public void mouseClicked(MouseEvent e) {
     Vector2D xy = GameMap.Pixel_to_MapUnit(new Vector2D(e.getX(), e.getY())).add(game_camera.map_position);
-    if (GameRules.current_game_mode == GameRules.GameModes.EDIT && item_select_list.size() != 0) {
-      GameObject temp = item_select_list.poll();
-
-      temp.changeCenterOfMass(xy);
-
+    if (GameRules.current_game_mode == GameRules.GameModes.EDIT && item_select_list.size() > 0) {
+      int temp_num;
+      System.out.print(item_select_list.size() + " is the size");
+      GameObject temp;
+      temp_num = item_select_list.poll();
+      temp = new RigidObj(xy.x, xy.y, 60, 60, 0, 0, true, true, temp_num);
+      if (temp_num >= GameObject.ID_BUFF_ICED) {
+        temp = new BuffObj(xy.x, xy.y, 60.0, 60.0, 0, true, true, GameObject.BUFF_OBJ, temp_num);
+      }
       game_map.addObject(temp);
       System.out.println("printed");
       repaint();
       return;
-    }
-    else if(GameRules.current_game_mode == GameRules.GameModes.GAMELOOP){
-      pingbongBall.velocity = xy.subtract(pingbongBall.getCenterOfMass()).multiply(0.05 * pingbongBall.inverse_mass).add(pingbongBall.velocity);
+    } else if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
+      pingbongBall.velocity = xy.subtract(pingbongBall.getCenterOfMass()).multiply(0.05 * pingbongBall.inverse_mass)
+          .add(pingbongBall.velocity);
     }
 
     if (GameRules.current_game_mode == GameRules.GameModes.EDIT) {

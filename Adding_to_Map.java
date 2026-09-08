@@ -23,7 +23,7 @@ class Adding_to_Map implements ActionListener {
    JFrame frame;
    boolean finished = false;
    GameMap current;
-   Queue<GameObject> objects = new ArrayDeque<GameObject>();
+   Queue<Integer> objects = new ArrayDeque<Integer>();
    int counter = 0, aux_counter = 0;
 
    Adding_to_Map(JFrame var1) {
@@ -31,7 +31,7 @@ class Adding_to_Map implements ActionListener {
 
    }
 
-   Queue<GameObject> dialog_init(int var1, int counter, GameMap current) {
+   Queue<Integer> dialog_init(int var1, int counter, GameMap current) {
       objects.clear();
       this.current = current;
 
@@ -90,10 +90,8 @@ class Adding_to_Map implements ActionListener {
       aux_counter++;
 
       // current.addObject();
-      if (list.get(var2) < GameObject.ID_BUFF_ICED) {
-         objects.add(new RigidObj(400, 400, 60, 60, 0, 0.1, true, true, list.get(var2)));
-      }
-
+      System.out.println("Hello world");
+      objects.add(list.get(var2));
       if (aux_counter == counter) {
          this.finished = true;
          this.dialog.dispose();
