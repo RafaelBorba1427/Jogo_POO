@@ -15,6 +15,7 @@ public class Main {
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     frame.setVisible(true);
     AnimationPlayer.initializeAnimationPlayerTimer();
+    SoundEffectPlayer.initialiseSoundEffectPlayer(); // Initialize the sound effect player
     // Isso não deveria estar no game ao invés de estar na main????
     // rules = new LevelRules(frame);
     // rules.nextLevel();

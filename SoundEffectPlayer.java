@@ -1,4 +1,6 @@
 import javax.sound.sampled.*;
+import javax.swing.Timer;
+
 import java.util.*;
 
 public class SoundEffectPlayer {
@@ -44,9 +46,11 @@ public class SoundEffectPlayer {
         catch (Exception e) {
             e.printStackTrace();
             supports_sample_rate_control = false;
+            test_clip = null;
         }
 
         volume = 0.1f;
+        update_timer.start(); // Start the timer to update the time since the last bounce sound
     }
 
 
@@ -59,23 +63,22 @@ public class SoundEffectPlayer {
             }
 
             try {
-            // Load the sound file
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(SoundEffectPlayer.class.getResource(soundFilePath));
+                // Load the sound file
+                AudioInputStream input_stream = AudioSystem.getAudioInputStream(SoundEffectPlayer.class.getResource(soundFilePath));
+                Clip clip = AudioSystem.getClip();
 
-            Clip clip = AudioSystem.getClip();
+                clip.open(input_stream);
 
-            clip.open(audioInputStream);
+                FloatControl sample_rate_control = (FloatControl) clip.getControl(FloatControl.Type.SAMPLE_RATE);
+                float random_sample_rate = original_sample_rate * (0.9f + (float) Math.random() * 0.2f); // Randomize between 90% and 110%
+                sample_rate_control.setValue(random_sample_rate);
 
-            FloatControl sample_rate_control = (FloatControl) clip.getControl(FloatControl.Type.SAMPLE_RATE);
-            float random_sample_rate = original_sample_rate * (0.9f + (float) Math.random() * 0.2f); // Randomize between 90% and 110%
-            sample_rate_control.setValue(random_sample_rate);
+                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);        
+                gainControl.setValue(20f * (float) Math.log10(volume));
 
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);        
-            gainControl.setValue(20f * (float) Math.log10(volume));
+                clip.start();
 
-            clip.start();
-
-            sample_rate_control.setValue(original_sample_rate); // Reset to original sample rate after playing
+                sample_rate_control.setValue(original_sample_rate); // Reset to original sample rate after playing
             }
             catch (Exception e) {
                 e.printStackTrace();
@@ -114,10 +117,28 @@ public class SoundEffectPlayer {
     }
 
 
-    // Subroutines for playing random sounds from a category
-    public static void playBounceSound() {
-        playSoundWithPitchShift("bounce_realistic"); // Play the bounce sound with pitch shift
+    // Subroutine for playing the bounce sound
+    // Exclusively for the bounce sound and literally nothing else
+    private static javax.swing.Timer update_timer = new Timer(1, e -> updateTimeSinceLastBounceSound(1));
+    
+    private static int time_since_last_bounce_sound = 0;
+    public static void updateTimeSinceLastBounceSound(int delta_time) {
+        if (time_since_last_bounce_sound > 50) {
+            time_since_last_bounce_sound = 50; // Cap the value to avoid overflow
+            // No reason to let it go beyond 50, the threshold is 20 ms anyway
+        }
+        time_since_last_bounce_sound += delta_time;
     }
+    public static void playBounceSound() {
+        if(time_since_last_bounce_sound < 20) {
+            return; // Do not play the sound if it has been less than 20 milliseconds since the last bounce sound
+        }
+        playSoundWithPitchShift("bounce_realistic");
+        time_since_last_bounce_sound = 0; // Reset the timer after playing the sound
+    }
+
+
+    // Subroutines for playing random sounds from a category
     public static void playBuffSound() {
         Random random = new Random();
         int randomIndex = random.nextInt(3); // Generate a random index between 0 and 2

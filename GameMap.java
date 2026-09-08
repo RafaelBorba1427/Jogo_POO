@@ -267,6 +267,7 @@ public class GameMap {
     // Narrow phase
     // --------------------------
 
+    private GameObject last_collided = null;
     // Transforma os pares candidatos da QuadTree em manifolds reais.
     private void buildManifolds() {
         HashMap<Long, CollisionManifold> new_cache = new HashMap<>();
@@ -301,11 +302,35 @@ public class GameMap {
                 if (manifold == null)
                     continue;
 
+                // Checks if the player is in contact with the bucket to trigger the next level
+                // Will also handle points and audio maybe probably
                 if (body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ
                         || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ) {
                     if (body_a.getObjId() == GameObject.ID_BUCKET || body_b.getObjType() == GameObject.ID_BUCKET &&
-                            body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER)
+                            body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER) {
+                        SoundEffectPlayer.playSound("goal");
                         next_level = true;
+                    }
+                }
+                else if (body_a.getObjType() == GameObject.PLAYER || body_b.getObjType() == GameObject.PLAYER) {
+                    GameObject player;
+                    GameObject other_object = null;
+                    if (body_a.getObjType() == GameObject.PLAYER) {
+                        player = body_a;
+                        other_object = body_b;
+                    }
+                    else {
+                        player = body_b;
+                        other_object = body_a;
+                    }
+
+                    if(Math.abs(player.getLinearVelocity().y) > 1 && last_collided != other_object) {
+                        SoundEffectPlayer.playBounceSound();
+                        last_collided = other_object;
+                    }
+                }
+                else{
+                    last_collided = null;
                 }
 
                 manifold.inheritImpulses(manifold_cache.get(key));
