@@ -24,6 +24,7 @@ public class Main {
     Game game = new Game(DEFAULT_RESOLUTION);
     frame.add(game);
     frame.pack();
+    frame.setLocationRelativeTo(null);
     game.startGame();
     LevelRules.startRules(frame, game);
 
