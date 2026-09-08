@@ -201,7 +201,11 @@ public class GameMap {
             if (LevelRules.bombCounter >= LevelRules.bomticks) {
                 for (GameObject candidate : LevelRules.explode) {
                     System.out.println("Exploded");
-                    candidate.active = false;
+                    if (candidate.getObjId() != GameObject.ID_PERMANENT_FLOOR
+                            && candidate.getObjId() != GameObject.ID_PERMANENT_WALL
+                            && candidate.getObjId() != GameObject.PLAYER) {
+                        candidate.active = false;
+                    }
                 }
 
                 LevelRules.bombCounter = 0;

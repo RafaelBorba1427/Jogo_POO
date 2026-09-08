@@ -1,6 +1,6 @@
 public class MovableObj extends GameObject {
     // global quantifiers
-    protected static Vector2D global_acceleration = new Vector2D(0,0);
+    protected static Vector2D global_acceleration = new Vector2D(0, 0);
     private static int global_quantity = 0;
     private static int global_active = 0;
 
@@ -16,8 +16,8 @@ public class MovableObj extends GameObject {
             TERMINAL_VELOCITY = 25,
             MAX_VELOCITY = 30,
             MAX_ANGULAR_VELOCITY = 0.5;
-    
-    protected boolean no_gravity_on_spawn = false;
+
+    protected boolean no_gravity_on_spawn = true;
     protected boolean no_gravity = false;
     protected boolean collided = false;
     protected boolean tagged_by_player = false;
@@ -145,28 +145,29 @@ public class MovableObj extends GameObject {
         this.elastic_factor = new_elastic_factor;
     }
 
-    public boolean noGravity(){
+    public boolean noGravity() {
         return no_gravity;
     }
 
-    public void changeNoGravityStatus(boolean status){
+    public void changeNoGravityStatus(boolean status) {
         no_gravity = status;
     }
 
-    public boolean noGravityOnSpawn(){
+    public boolean noGravityOnSpawn() {
         return no_gravity_on_spawn;
     }
 
-    public void changeNoGravityOnSpawnStatus(boolean status){
+    public void changeNoGravityOnSpawnStatus(boolean status) {
         no_gravity_on_spawn = status;
-        if(no_gravity_on_spawn) no_gravity = true;
+        if (no_gravity_on_spawn)
+            no_gravity = true;
     }
 
-    public boolean wasTaggedByPlayer(){
+    public boolean wasTaggedByPlayer() {
         return tagged_by_player;
     }
 
-    public void changeTaggedByPlayerStatus(boolean status){
+    public void changeTaggedByPlayerStatus(boolean status) {
         tagged_by_player = status;
     }
 
