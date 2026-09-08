@@ -305,8 +305,7 @@ public class GameMap {
                 if (manifold == null)
                     continue;
 
-                // Checks if the player is in contact with the bucket to trigger the next level
-                // Will also handle points and audio maybe probably
+                //makes movable object stand still on spawn
 
                 if ((body_a instanceof MovableObj || body_a instanceof BallObj)
                         && ((MovableObj) body_a).acceleration.y != 0
@@ -321,10 +320,14 @@ public class GameMap {
                     ((MovableObj) body_a).acceleration.y = GameRules.GRAVITY;
 
                 }
+
+                // Checks if the player is in contact with the bucket to trigger the next level
+                // Will also handle points and audio maybe probably
+
                 if (body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ
                         || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ) {
-                    if (body_a.getObjId() == GameObject.ID_BUCKET || body_b.getObjType() == GameObject.ID_BUCKET &&
-                            body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER) {
+                    if (body_a.getObjType() == GameObject.PLAYER && body_b.getObjId() == GameObject.ID_BUCKET ||
+                            body_a.getObjId() == GameObject.ID_BUCKET && body_b.getObjType() == GameObject.PLAYER) {
                         SoundEffectPlayer.playSound("goal");
                         next_level = true;
                     }
