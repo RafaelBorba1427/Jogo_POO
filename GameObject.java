@@ -67,10 +67,10 @@ public class GameObject {
             ID_BUFF_TIME_TRAVEL = 9,
             ID_BUFF_LAG = 10,
             ID_BUFF_ELASTIC_COLLISION = 11,
-            ID_BALL_1 = 12,
-            ID_BALL_2 = 13,
-            ID_BALL_3 = 14,
-            ID_BALL_4 = 15,
+            ID_BALL_1 = 14,
+            ID_BALL_2 = 15,
+            ID_BALL_3 = 16,
+            ID_BALL_4 = 17,
             ID_PERMANENT_FLOOR = 16,
             ID_PERMANENT_WALL = 17,
             Quant_IDs = 19;
@@ -153,13 +153,10 @@ public class GameObject {
                 this.animation = new AnimationPlayer("permanent_wall", "spritesheet/wall_plank_20x600.png", 20, 600, 0,
                         1, 1);
 
-            else if (obj_type != BALL_OBJ)
-                this.animation = new AnimationPlayer("objects1_" + obj_id, "spritesheet/objects1.png", 16, 16, obj_id,
-                        15, 15);
-
             else
-                this.animation = new AnimationPlayer("menu_" + obj_id, "spritesheet/Menu_Stuff(1).png", 16, 16,
-                        (obj_id - 12 + 2), 15, 15);
+                this.animation = new AnimationPlayer("objects1_" + obj_id, "spritesheet/combined_spritesheet.png", 16,
+                        16, obj_id,
+                        15, 15);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());

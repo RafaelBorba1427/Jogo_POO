@@ -55,7 +55,8 @@ class Adding_to_Map implements ActionListener {
 
       try {
          AnimationPlayer animate;
-         animate = new AnimationPlayer("Platform object: " + GameObject.ID_PLATFORM, "spritesheet/objects1.png",
+         animate = new AnimationPlayer("Platform object: " + GameObject.ID_PLATFORM,
+               "spritesheet/combined_spritesheet.png",
                16,
                16, GameObject.ID_PLATFORM, 15, 15);
 
@@ -100,7 +101,7 @@ class Adding_to_Map implements ActionListener {
          int xOffset = i;
          try {
             AnimationPlayer animate = new AnimationPlayer("Other object " + id,
-                  "spritesheet/objects1.png",
+                  "spritesheet/combined_spritesheet.png",
                   16,
                   16, id, 15, 15);
 
