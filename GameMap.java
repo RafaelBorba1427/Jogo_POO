@@ -266,7 +266,7 @@ public class GameMap {
     // --------------------------
     // Narrow phase
     // --------------------------
-
+    private DeltaTime delta_time = new DeltaTime();
     private GameObject last_collided = null;
     // Transforma os pares candidatos da QuadTree em manifolds reais.
     private void buildManifolds() {
@@ -327,6 +327,11 @@ public class GameMap {
                     if(Math.abs(player.getLinearVelocity().y) > 1 && last_collided != other_object) {
                         SoundEffectPlayer.playBounceSound();
                         last_collided = other_object;
+
+                        if(delta_time.get() >= 20) {
+                            PointCounter.addPoints(1);
+                            System.out.println("Points: " + PointCounter.getPoints());
+                        }
                     }
                 }
                 else{

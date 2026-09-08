@@ -1,5 +1,4 @@
 import javax.sound.sampled.*;
-import javax.swing.Timer;
 
 import java.util.*;
 
@@ -13,6 +12,8 @@ public class SoundEffectPlayer {
     private static boolean supports_sample_rate_control = false;
 
     private static float volume;
+
+    private static DeltaTime delta_time = new DeltaTime();
 
     // Must be called before any sound is played to load the sound file paths into the HashMap
     public static void initialiseSoundEffectPlayer() {
@@ -50,7 +51,6 @@ public class SoundEffectPlayer {
         }
 
         volume = 0.1f;
-        update_timer.start(); // Start the timer to update the time since the last bounce sound
     }
 
 
@@ -116,25 +116,11 @@ public class SoundEffectPlayer {
         }
     }
 
-
-    // Subroutine for playing the bounce sound
-    // Exclusively for the bounce sound and literally nothing else
-    private static javax.swing.Timer update_timer = new Timer(1, e -> updateTimeSinceLastBounceSound(1));
-    
-    private static int time_since_last_bounce_sound = 0;
-    public static void updateTimeSinceLastBounceSound(int delta_time) {
-        if (time_since_last_bounce_sound > 50) {
-            time_since_last_bounce_sound = 50; // Cap the value to avoid overflow
-            // No reason to let it go beyond 50, the threshold is 20 ms anyway
-        }
-        time_since_last_bounce_sound += delta_time;
-    }
     public static void playBounceSound() {
-        if(time_since_last_bounce_sound < 20) {
+        if(delta_time.get() < 20) {
             return; // Do not play the sound if it has been less than 20 milliseconds since the last bounce sound
         }
         playSoundWithPitchShift("bounce_realistic");
-        time_since_last_bounce_sound = 0; // Reset the timer after playing the sound
     }
 
 
