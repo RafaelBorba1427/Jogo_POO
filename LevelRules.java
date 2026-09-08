@@ -1,3 +1,4 @@
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
@@ -18,6 +19,7 @@ class LevelRules {
    ArrayList<GameObject> adicionar;
    static Game game;
    static BufferedImage background_image;
+   static Dimension bg_dimensions = new Dimension(); 
 
    static void startRules(JFrame frame2, Game jogo) {
       frame = frame2;
@@ -28,6 +30,7 @@ class LevelRules {
       //-------------------------------------------------
       //change latter 
       background_image = SpriteLoader.loadNewBackgroundImage("spritesheet/Frat_background.png");
+      bg_dimensions = new Dimension(1536,1024);
       //-------------------------------------------------
    }
 

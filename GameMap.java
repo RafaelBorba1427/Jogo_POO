@@ -24,13 +24,14 @@ public class GameMap {
     GameObject left_wall,
             right_wall,
             floor,
-            roof;
+            roof,
+            bucket;
 
     private QuadTree<GameObject> collision_detection;
 
     static boolean next_level = false;
 
-    public static Vector2D player_spawn_position = new Vector2D();
+    public Vector2D player_spawn_position = new Vector2D();
 
     // ------------------------------------------------------------
     // Parametros do passo de fisica
@@ -78,22 +79,27 @@ public class GameMap {
                 height);
 
         // Game Boundaries
-        left_wall = new RigidObj(0, 0, 0.020 * width, height,
+        left_wall = new RigidObj(0, 0, 0.01 * width, height,
                 0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PERMANENT_WALL);
 
-        right_wall = new RigidObj(width - 0.020 * width, 0, 0.020 * width, height,
+        right_wall = new RigidObj(width - (0.01 * width), 0, (0.01 * width), height,
                 0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PERMANENT_WALL);
 
-        floor = new RigidObj(0.020 * width, height - 0.020 * height, width - 0.040 * width, 0.020 * height,
+        floor = new RigidObj((0.01 * width), height - (0.020 * height), width - (0.02 * width), (0.020 * height),
                 0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PERMANENT_FLOOR);
 
-        roof = new RigidObj(0.020 * width, 0, width - 0.040 * width, 0.020 * height,
+        roof = new RigidObj(0.010 * width, 0, width - (0.02 * width), 0.020 * height,
                 0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_INVISIBLE_OBJ);
+        
+        double bucket_x = 70, bucket_y = 80; // bucket width and height, always placed next to the wall
+        bucket = new EventTriggerObj(width -(0.01 * width) - bucket_x, height - (0.020 * height) - bucket_y, bucket_x, bucket_y,
+             0, true, true, GameObject.ID_BUCKET);
 
         permanent_objects.add(left_wall);
         permanent_objects.add(right_wall);
         permanent_objects.add(floor);
         permanent_objects.add(roof);
+        permanent_objects.add(bucket);
 
         collision_detection = new QuadTree<>(
                 world_bounds,
@@ -104,23 +110,23 @@ public class GameMap {
         is_loaded = true;
     }
 
-    // --------------------------
-    // Unit conversion methods
-    // --------------------------
-    public static int MapUnit_to_Pixel(double MapUnit){
-        return (int)(MapUnit*0.8);
-    }
+    // ----------------------------------------------------
+    // Unit conversion methods AND CONSTANTS
+    // ----------------------------------------------------
+    public static double MAP_UNIT_TO_PIXEL = 0.8;
 
     public static Dimension MapUnit_to_Pixel(Vector2D MapDimension){
         return new Dimension((int) (MapDimension.x*0.8), (int) (MapDimension.y*0.8));
     }
 
-    public static double Pixel_to_MapUnit(int Pixel){
-        return (double)(Pixel*1.25);
-    }
+    public static double PIXEL_TO_MAP_UNIT = 1.25;
 
     public static Vector2D Pixel_to_MapUnit(Dimension PixelDimension){
-        return new Vector2D(PixelDimension);
+        return new Vector2D(PixelDimension).multiply(1.25);
+    }
+
+    public static Vector2D Pixel_to_MapUnit(Vector2D PixelDimension){
+        return new Vector2D(PixelDimension).multiply(1.25);
     }
 
     // --------------------------
@@ -332,6 +338,10 @@ public class GameMap {
     // desenhar os pontos de contato e as normais por cima da cena.
     public List<CollisionManifold> getActiveManifolds() {
         return active_manifolds;
+    }
+
+    public Vector2D getPlayerSpawn() {
+        return new Vector2D(player_spawn_position);
     }
 
     public Vector2D getMapSize() {

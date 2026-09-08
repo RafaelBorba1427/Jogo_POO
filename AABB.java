@@ -75,5 +75,4 @@ public class AABB {
         return (this.max_pos.x >= target.min_pos.x) && (this.min_pos.x <= target.max_pos.x)
         &&  (this.max_pos.y >= target.min_pos.y) && (this.min_pos.y <= target.max_pos.y);
     }
-
 }

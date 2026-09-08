@@ -295,6 +295,12 @@ public class GameObject {
         updateHitBox();
     }
 
+    public void changeCenterOfMass(Vector2D new_pos) {
+        this.position.x = new_pos.x - dimensions.x / 2.0;
+        this.position.y = new_pos.y - dimensions.y / 2.0;
+        updateHitBox();
+    }
+
     public void changeRotation(double rotation) {
         if (this.rotatable) {
             this.rotation = rotation;
