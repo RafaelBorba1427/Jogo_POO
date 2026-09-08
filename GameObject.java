@@ -48,12 +48,12 @@ public class GameObject {
             MOVABLE_OBJ = 1,
             BALL_OBJ = 2,
             BUFF_OBJ = 3,
-            EVENT_TRIGGER_OBJ = 4, 
+            EVENT_TRIGGER_OBJ = 4,
             PLAYER = 5;
 
     // object IDs
     protected int obj_id;
-    public static final int ID_INVISIBLE_OBJ = -1, 
+    public static final int ID_INVISIBLE_OBJ = -1,
             ID_FROZEN_PLATAFORM = 0,
             ID_PLATFORM = 1,
             ID_TABLE = 2,
@@ -117,19 +117,19 @@ public class GameObject {
         // 4. Draw hitbox outline
         switch (this.obj_type) {
             case EVENT_TRIGGER_OBJ:
-            g2d.setColor(new Color(255, 251, 0, 255));
-            break;
-            
+                g2d.setColor(new Color(255, 251, 0, 255));
+                break;
+
             case BUFF_OBJ:
-            g2d.setColor(new Color(0, 255, 0, 255));
-            break;
+                g2d.setColor(new Color(0, 255, 0, 255));
+                break;
 
             case MOVABLE_OBJ:
-            g2d.setColor(new Color(0, 200, 255, 255));
-            break;
+                g2d.setColor(new Color(0, 200, 255, 255));
+                break;
 
             default:
-            g2d.setColor(new Color(255, 0, 0, 255));
+                g2d.setColor(new Color(255, 0, 0, 255));
                 break;
         }
         g2d.drawRect((int) (-dimensions.x / 2), (int) (-dimensions.y / 2), (int) dimensions.x, (int) dimensions.y);
@@ -137,32 +137,36 @@ public class GameObject {
         g2d.dispose();
     }
 
-    protected void createAnimationPlayer(){
+    protected void createAnimationPlayer() {
         try {
-            if(obj_id == ID_INVISIBLE_OBJ){
+            if (obj_id == ID_INVISIBLE_OBJ) {
                 animation = null;
                 return;
             }
 
-            if(obj_id == ID_PERMANENT_FLOOR)
-        this.animation = new AnimationPlayer("permanent_floor", "spritesheet/floor_plank_760x15.png", 760, 15, 0, 1, 1);
+            if (obj_id == ID_PERMANENT_FLOOR)
+                this.animation = new AnimationPlayer("permanent_floor", "spritesheet/floor_plank_760x15.png", 760, 15,
+                        0, 1, 1);
 
-            else if(obj_id == ID_PERMANENT_WALL)
-        this.animation = new AnimationPlayer("permanent_wall", "spritesheet/wall_plank_20x600.png", 20, 600, 0, 1, 1);
+            else if (obj_id == ID_PERMANENT_WALL)
+                this.animation = new AnimationPlayer("permanent_wall", "spritesheet/wall_plank_20x600.png", 20, 600, 0,
+                        1, 1);
 
-            else if(obj_type != BALL_OBJ)
-        this.animation = new AnimationPlayer("objects1_" + obj_id, "spritesheet/objects1.png", 16, 16, obj_id, 15, 15);
+            else if (obj_type != BALL_OBJ)
+                this.animation = new AnimationPlayer("objects1_" + obj_id, "spritesheet/objects1.png", 16, 16, obj_id,
+                        15, 15);
 
-            else 
-        this.animation = new AnimationPlayer("menu_" + obj_id, "spritesheet/Menu_Stuff(1).png", 32, 32, (obj_id-12+2), 4, 4);
+            else
+                this.animation = new AnimationPlayer("menu_" + obj_id, "spritesheet/Menu_Stuff(1).png", 32, 32,
+                        (obj_id - 12 + 2), 4, 4);
 
-            } catch (Exception e) {
-        System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 
-    public void drawSprite(Graphics2D g2d){//int position_x, int position_y, Vector2D dimensions, double rotation
-        animation.paint(g2d,(int) position.x, (int) position.y, dimensions, rotation);
+    public void drawSprite(Graphics2D g2d) {// int position_x, int position_y, Vector2D dimensions, double rotation
+        animation.paint(g2d, (int) position.x, (int) position.y, dimensions, rotation);
     }
 
     // ------------------------------------------------------------
@@ -238,7 +242,7 @@ public class GameObject {
         return movable;
     }
 
-    //--------------------------------------------------------
+    // --------------------------------------------------------
     // Methods used in the Collision Solver
 
     // Center of mass Linear velocity, zero for static bodies.

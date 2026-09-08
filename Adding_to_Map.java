@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.ArrayDeque;
+import javax.swing.*;
+import java.awt.*;
 
 class Adding_to_Map implements ActionListener {
    JDialog dialog;
@@ -49,25 +51,89 @@ class Adding_to_Map implements ActionListener {
       };
       this.panel.setOpaque(false);
       this.panel.setLayout(null);
-      JButton local = new JButton();
-      local.setBounds(10, 80, 60, 60);
-      local.addActionListener(this);
-      this.list.put(local, 1);
-      this.panel.add(local);
+      JButton local;
+
+      try {
+         AnimationPlayer animate;
+         animate = new AnimationPlayer("Platform object: " + GameObject.ID_PLATFORM, "spritesheet/objects1.png",
+               16,
+               16, GameObject.ID_PLATFORM, 15, 15);
+
+         local = new JButton() {
+            {
+               setBounds(10, 80, (int) GameRules.sizes.get(GameObject.ID_PLATFORM).x,
+                     (int) GameRules.sizes.get(GameObject.ID_PLATFORM).y);
+               setContentAreaFilled(false);
+               setBorderPainted(false);
+               setFocusPainted(false);
+               setOpaque(false);
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+               super.paintComponent(g); // clears the panel before drawing (important!)
+               Graphics2D g2d = (Graphics2D) g;
+               animate.paint(g2d, 0, 0, new Vector2D(this.getWidth(),
+                     this.getHeight()), 0.0);
+
+            }
+         };
+
+         local.setBounds(10, 80, (int) GameRules.sizes.get(GameObject.ID_PLATFORM).x,
+               (int) GameRules.sizes.get(GameObject.ID_PLATFORM).y);
+         local.addActionListener(this);
+         this.list.put(local, GameObject.ID_PLATFORM);
+         this.panel.add(local);
+
+      } catch (Exception e) {
+         System.out.println("Animation error");
+      }
 
       for (int i = 1; i < numero; i++) {
          int aux;
          // TODO:: change ID for correct ID
          do {
-            aux = (int) (Math.random() * 11.0);
+            aux = (int) (Math.random() * (10));
          } while (aux == GameObject.ID_BUCKET || aux == GameObject.ID_SLINGSHOT);
 
          int id = aux;
-         local = new JButton();
-         local.setBounds(10 + i * 70, 80, 60, 60);
-         local.addActionListener(this);
-         this.list.put(local, id);
-         this.panel.add(local);
+         int xOffset = i;
+         try {
+            AnimationPlayer animate = new AnimationPlayer("Other object " + id,
+                  "spritesheet/objects1.png",
+                  16,
+                  16, id, 15, 15);
+
+            local = new JButton() {
+
+               {
+                  setBounds(10 + xOffset * 70, 80, 60, 60);
+                  setContentAreaFilled(false);
+                  setBorderPainted(false);
+                  setFocusPainted(false);
+                  setOpaque(false);
+               }
+
+               @Override
+               protected void paintComponent(Graphics g) {
+                  super.paintComponent(g);
+                  Graphics2D g2d = (Graphics2D) g;
+                  // g2d.setColor(Color.RED);
+                  // g2d.fillRect(0, 0, getWidth(), getHeight());
+                  animate.paint(g2d, 0, 0, new Vector2D(this.getWidth(),
+                        this.getHeight()), 0.0);
+
+               }
+            };
+
+            local.addActionListener(this);
+            this.list.put(local, id);
+            this.panel.add(local);
+
+         } catch (Exception e) {
+            System.out.println("Animation error");
+         }
+
       }
 
       this.dialog = new JDialog(this.frame, "Choose Your Item", true);

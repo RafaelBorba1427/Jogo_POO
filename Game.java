@@ -182,9 +182,11 @@ public class Game extends JPanel implements MouseListener, KeyListener {
       System.out.print(item_select_list.size() + " is the size");
       GameObject temp;
       temp_num = item_select_list.poll();
-      temp = new RigidObj(xy.x, xy.y, 60, 60, 0, 0, true, true, temp_num);
+      temp = new RigidObj(xy.x, xy.y, GameRules.sizes.get(temp_num).x, GameRules.sizes.get(temp_num).y, 0, 0, true,
+          true, temp_num);
       if (temp_num >= GameObject.ID_BUFF_ICED) {
-        temp = new BuffObj(xy.x, xy.y, 60.0, 60.0, 0, true, true, GameObject.BUFF_OBJ, temp_num);
+        temp = new BuffObj(xy.x, xy.y, GameRules.sizes.get(temp_num).x,
+            GameRules.sizes.get(temp_num).y, 0, true, true, GameObject.BUFF_OBJ, temp_num);
       }
       game_map.addObject(temp);
       System.out.println("printed");
