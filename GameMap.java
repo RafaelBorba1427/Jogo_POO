@@ -178,6 +178,11 @@ public class GameMap {
     public void step(double dt) {
         step(dt, DEFAULT_SUBSTEPS, DEFAULT_SOLVER_ITERATIONS);
 
+        for(GameObject obj : moving_objects){
+            ((MovableObj)obj).collided = false;
+            ((MovableObj)obj).changeAcceleration(0, 0);
+        }
+
         // Gera o Popup
         if (next_level) {
             LevelRules.nextLevel(this);
@@ -187,6 +192,10 @@ public class GameMap {
             Game.pingbongBall.changeRotation(0);
             Game.pingbongBall.changeAngularVelocity(0);
             Game.pingbongBall.changeAngularAcceleration(0);
+
+            for(GameObject obj : moving_objects)
+                if(((MovableObj)obj).noGravityOnSpawn())
+                    ((MovableObj)obj).changeNoGravityStatus(true);
 
             next_level = false;
             Game.next_level = true;
@@ -217,6 +226,22 @@ public class GameMap {
         for (int s = 0; s < substeps; s++) {
 
             for (GameObject obj : moving_objects) {
+
+                int gravity = 0;
+                if(GameRules.global_gravity_on && !((MovableObj)obj).noGravity()){
+                    gravity = 1;
+                }
+
+                if( ((MovableObj)obj).noGravityOnSpawn() && ((MovableObj)obj).collided && 
+                Math.abs(((MovableObj)obj).getVelocityX()) > MovableObj.MIN_VELOCITY*10 ||
+                Math.abs(((MovableObj)obj).getVelocityY()) > MovableObj.MIN_VELOCITY*10){
+                    gravity = 1;
+                    ((MovableObj)obj).changeNoGravityStatus(false);
+                }
+
+                ((MovableObj)obj).changeAcceleration(MovableObj.global_acceleration.x, 
+                    MovableObj.global_acceleration.y + gravity*GameRules.GRAVITY);
+
                 ((MovableObj) obj).integrateForces(sub_dt);
             }
 
@@ -259,7 +284,6 @@ public class GameMap {
                     continue;
                 if (object.getHitBox() == null)
                     continue;
-
                 collision_detection.insert(object, object.getHitBox().getAABB());
             }
         }
@@ -304,33 +328,29 @@ public class GameMap {
                 CollisionManifold manifold = CollisionManifold.generate(body_a, body_b);
                 if (manifold == null)
                     continue;
+                
+                //---------------------------------------------------------------------------------
+                //Checks that use collsion
+                //---------------------------------------------------------------------------------
+                if(body_a.getObjType() == GameObject.MOVABLE_OBJ || body_a.getObjType() == GameObject.BALL_OBJ){
+                    ((MovableObj)body_a).collided = true;
+                }
 
-                //makes movable object stand still on spawn
-
-                if ((body_a instanceof MovableObj || body_a instanceof BallObj)
-                        && ((MovableObj) body_a).acceleration.y != 0
-                        && (body_b instanceof MovableObj || body_b instanceof BallObj)
-                        && ((MovableObj) body_b).acceleration.y == 0) {
-                    ((MovableObj) body_b).acceleration.y = GameRules.GRAVITY;
-
-                } else if ((body_b instanceof MovableObj || body_b instanceof BallObj)
-                        && ((MovableObj) body_b).acceleration.y != 0
-                        && (body_a instanceof MovableObj || body_a instanceof BallObj)
-                        && ((MovableObj) body_a).acceleration.y == 0) {
-                    ((MovableObj) body_a).acceleration.y = GameRules.GRAVITY;
-
+                if(body_b.getObjType() == GameObject.MOVABLE_OBJ || body_b.getObjType() == GameObject.BALL_OBJ){
+                    ((MovableObj)body_b).collided = true;
                 }
 
                 // Checks if the player is in contact with the bucket to trigger the next level
-                // Will also handle points and audio maybe probably
 
                 if (body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ
                         || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ) {
+
                     if (body_a.getObjType() == GameObject.PLAYER && body_b.getObjId() == GameObject.ID_BUCKET ||
                             body_a.getObjId() == GameObject.ID_BUCKET && body_b.getObjType() == GameObject.PLAYER) {
                         SoundEffectPlayer.playSound("goal");
                         next_level = true;
                     }
+
                 } else if (body_a.getObjType() == GameObject.PLAYER || body_b.getObjType() == GameObject.PLAYER) {
                     GameObject player;
                     GameObject other_object = null;
@@ -354,6 +374,7 @@ public class GameMap {
                 } else {
                     last_collided = null;
                 }
+                //---------------------------------------------------------------------------------
 
                 manifold.inheritImpulses(manifold_cache.get(key));
 

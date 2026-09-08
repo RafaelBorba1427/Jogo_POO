@@ -27,6 +27,11 @@ class Maps {
             GameObject.ID_BALL_2,
             0.8);
 
+        obj_render_test7.changeNoGravityOnSpawnStatus(true);
+        obj_render_test6.changeNoGravityOnSpawnStatus(true);
+        obj_render_test5.changeNoGravityOnSpawnStatus(true);
+        obj_render_test4.changeNoGravityOnSpawnStatus(true);
+        obj_render_test2.changeNoGravityOnSpawnStatus(true);
         saida.add(obj_render_test7);
         saida.add(obj_render_test6);
         saida.add(obj_render_test5);
