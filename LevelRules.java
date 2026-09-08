@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 class LevelRules {
    static int counter = 0;
-   static int level_cap = 10;
+   static int level_cap = 2;
    static int level_count = 0;
    static int health = 1;
    static int points = 0;
@@ -60,8 +60,9 @@ class LevelRules {
          if (counter >= level_cap) {
             god.dialogInit();
 
+            counter = 0;
          }
-         counter = 0;
+
          generate_cap();
 
       }

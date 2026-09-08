@@ -308,20 +308,26 @@ public class GameMap {
                 // Checks if the player is in contact with the bucket to trigger the next level
                 // Will also handle points and audio maybe probably
 
+                if ((body_a instanceof MovableObj || body_a instanceof BallObj)
+                        && ((MovableObj) body_a).acceleration.y != 0
+                        && (body_b instanceof MovableObj || body_b instanceof BallObj)
+                        && ((MovableObj) body_b).acceleration.y == 0) {
+                    ((MovableObj) body_b).acceleration.y = GameRules.GRAVITY;
+
+                } else if ((body_b instanceof MovableObj || body_b instanceof BallObj)
+                        && ((MovableObj) body_b).acceleration.y != 0
+                        && (body_a instanceof MovableObj || body_a instanceof BallObj)
+                        && ((MovableObj) body_a).acceleration.y == 0) {
+                    ((MovableObj) body_a).acceleration.y = GameRules.GRAVITY;
+
+                }
                 if (body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ
                         || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ) {
                     if (body_a.getObjId() == GameObject.ID_BUCKET || body_b.getObjType() == GameObject.ID_BUCKET &&
                             body_a.getObjType() == GameObject.PLAYER || body_a.getObjType() == GameObject.PLAYER) {
                         SoundEffectPlayer.playSound("goal");
                         next_level = true;
-                    } else if (body_a.getObjType() == GameObject.PLAYER && body_b instanceof MovableObj
-                            && ((MovableObj) body_b).acceleration.y != GameRules.GRAVITY) {
-                        ((MovableObj) body_b).acceleration.y = GameRules.GRAVITY;
-                    } else if (body_b.getObjType() == GameObject.PLAYER && body_a instanceof MovableObj
-                            && ((MovableObj) body_a).acceleration.y != GameRules.GRAVITY) {
-                        ((MovableObj) body_a).acceleration.y = GameRules.GRAVITY;
                     }
-
                 } else if (body_a.getObjType() == GameObject.PLAYER || body_b.getObjType() == GameObject.PLAYER) {
                     GameObject player;
                     GameObject other_object = null;

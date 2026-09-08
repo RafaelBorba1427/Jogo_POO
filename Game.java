@@ -71,6 +71,7 @@ public class Game extends JPanel implements MouseListener, KeyListener {
     pingbongBall.changeVelocity(0, 0);
     pingbongBall.move(300, 200);
     pingbongBall.setPlayer();
+    pingbongBall.changeAcceleration(0, GameRules.GRAVITY);
     // ------------------------
 
     Timer timer = new Timer(16, e -> {

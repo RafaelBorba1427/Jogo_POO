@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import java.awt.Graphics2D;
 
 class Item_Select implements ActionListener {
    JDialog dialog;
@@ -40,28 +41,80 @@ class Item_Select implements ActionListener {
 
    public void dialogInit() {
       this.panel.removeAll();
-      JButton var2 = new JButton("First");
-      var2.setBounds(100, 160, 100, 100);
-      var2.addActionListener(this);
-      var2.setOpaque(false);
-      var2.setBorderPainted(false);
-      this.first = var2;
-      this.panel.add(this.first);
+      JButton local;
+      try {
+         AnimationPlayer animate;
+         animate = new AnimationPlayer("Platform object: " + GameObject.ID_COPY,
+               "spritesheet/combined_spritesheet.png",
+               16,
+               16, GameObject.ID_COPY, 15, 15);
 
+         local = new JButton() {
+            {
+               setBounds(100, 160, (int) GameRules.sizes.get(GameObject.ID_PLATFORM).x,
+                     (int) GameRules.sizes.get(GameObject.ID_PLATFORM).y);
+               setContentAreaFilled(false);
+               setBorderPainted(false);
+               setFocusPainted(false);
+               setOpaque(false);
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+               super.paintComponent(g); // clears the panel before drawing (important!)
+               Graphics2D g2d = (Graphics2D) g;
+               animate.paint(g2d, 0, 0, new Vector2D(this.getWidth(),
+                     this.getHeight()), 0.0);
+
+            }
+         };
+
+         local.addActionListener(this);
+         this.first = local;
+         this.panel.add(this.first);
+
+      } catch (Exception e) {
+         System.out.println("Animation error");
+      }
       int var3;
-      do {
-         var3 = (int) (Math.random() * this.number_of_things);
-      } while (var3 == 1);
+      var3 = GameObject.ID_BOMB + (int) (Math.random() * GameObject.Quant_GODItems);
 
       System.out.println("l is " + var3);
       this.id = var3;
-      var2 = new JButton("Second");
-      var2.setBounds(300, 160, 100, 100);
-      var2.addActionListener(this);
-      var2.setOpaque(false);
-      var2.setBorderPainted(false);
-      this.second = var2;
-      this.panel.add(this.second);
+      try {
+         AnimationPlayer animate;
+         animate = new AnimationPlayer("Platform object: " + var3,
+               "spritesheet/combined_spritesheet.png",
+               16,
+               16, var3, 15, 15);
+
+         local = new JButton() {
+            {
+               setBounds(300, 160, (int) GameRules.sizes.get(GameObject.ID_PLATFORM).x,
+                     (int) GameRules.sizes.get(GameObject.ID_PLATFORM).y);
+               setContentAreaFilled(false);
+               setBorderPainted(false);
+               setFocusPainted(false);
+               setOpaque(false);
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+               super.paintComponent(g); // clears the panel before drawing (important!)
+               Graphics2D g2d = (Graphics2D) g;
+               animate.paint(g2d, 0, 0, new Vector2D(this.getWidth(),
+                     this.getHeight()), 0.0);
+
+            }
+         };
+
+         local.addActionListener(this);
+         this.second = local;
+         this.panel.add(this.second);
+      } catch (Exception e) {
+         System.out.println("Animation error");
+      }
+
       this.dialog = new JDialog(this.frame, "Choose Your Item", true);
       this.dialog.setUndecorated(true);
       this.dialog.setBackground(new Color(225, 225, 225));
