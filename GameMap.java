@@ -187,7 +187,9 @@ public class GameMap {
             Game.pingbongBall.changeAngularVelocity(0);
             Game.pingbongBall.changeAngularAcceleration(0);
             next_level = false;
+            Game.next_level = true;
             GameRules.current_game_mode = GameRules.GameModes.EDIT;
+            
         }
     }
 

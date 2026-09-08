@@ -14,7 +14,7 @@ public class GameRules {
             entry(GameObject.ID_BUFF_SPEED_BOOST, new Vector2D(40, 40)),
             entry(GameObject.ID_BUFF_TIME_TRAVEL, new Vector2D(40, 40)),
             entry(GameObject.ID_BUCKET, new Vector2D(60, 60)),
-            entry(GameObject.ID_FROZEN_PLATAFORM, new Vector2D(50, 50)),
+            entry(GameObject.ID_FROZEN_PLATFORM, new Vector2D(50, 50)),
             entry(GameObject.ID_WALL, new Vector2D(50, 30)),
             entry(GameObject.ID_PLATFORM, new Vector2D(50, 50)),
             entry(GameObject.ID_TABLE, new Vector2D(50, 50)));// constants

@@ -27,11 +27,11 @@ class LevelRules {
       adition = new Adding_to_Map(frame2);
       game = jogo;
 
-      //-------------------------------------------------
+      //-----------------------------------------------------------------------------------------------
       //change latter 
       background_image = SpriteLoader.loadNewBackgroundImage("spritesheet/Frat_background.png");
       bg_dimensions = new Dimension(1536,1024);
-      //-------------------------------------------------
+      //-----------------------------------------------------------------------------------------------
    }
 
    static int generate_cap() {

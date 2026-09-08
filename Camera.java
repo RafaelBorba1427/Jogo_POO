@@ -25,6 +25,10 @@ public class Camera {
         size_game_units = new Vector2D(size).multiply(1.25);
     }
 
+    public void setPosition(Vector2D map_position) {
+        this.map_position = new Vector2D(map_position);
+    }
+
     //update resolution
     public void updateResolution(Dimension new_size){
         size = new Dimension(new_size);
