@@ -54,7 +54,7 @@ public class GameObject {
     // object IDs
     protected int obj_id;
 
-    public static final int ID_INVISIBLE_OBJ = -1, 
+    public static final int ID_INVISIBLE_OBJ = -1,
             ID_FROZEN_PLATFORM = 0,
             ID_PLATFORM = 1,
             ID_TABLE = 2,
@@ -158,8 +158,8 @@ public class GameObject {
                         15, 15);
 
             else
-                this.animation = new AnimationPlayer("menu_" + obj_id, "spritesheet/Menu_Stuff(1).png", 32, 32,
-                        (obj_id - 12 + 2), 4, 4);
+                this.animation = new AnimationPlayer("menu_" + obj_id, "spritesheet/Menu_Stuff(1).png", 16, 16,
+                        (obj_id - 12 + 2), 15, 15);
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -170,8 +170,10 @@ public class GameObject {
         animation.paint(g2d, (int) position.x, (int) position.y, dimensions, rotation);
     }
 
-    public void drawSprite(Graphics2D g2d, double position_x, double position_y){//int position_x, int position_y, Vector2D dimensions, double rotation
-        animation.paint(g2d,(int) position.x, (int) position.y, dimensions, rotation);
+    public void drawSprite(Graphics2D g2d, double position_x, double position_y) {// int position_x, int position_y,
+                                                                                  // Vector2D dimensions, double
+                                                                                  // rotation
+        animation.paint(g2d, (int) position.x, (int) position.y, dimensions, rotation);
     }
 
     // ------------------------------------------------------------

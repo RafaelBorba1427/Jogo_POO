@@ -99,21 +99,22 @@ public class Game extends JPanel implements MouseListener, KeyListener {
 
       game_map.step(1); // collision and physics simulation
 
-      if(next_level){
+      if (next_level) {
         next_level = false;
         game_camera.setPosition(game_map.player_spawn_position);
       }
 
       Vector2D ball_pos = pingbongBall.getCenterOfMass(), map_size = game_map.getMapSize();
-      if(GameRules.current_game_mode == GameRules.GameModes.GAMELOOP){
+      if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
         game_camera.follow(ball_pos.x, ball_pos.y, map_size.x, map_size.y);
       }
-      
-      else if(GameRules.current_game_mode == GameRules.GameModes.EDIT){
+
+      else if (GameRules.current_game_mode == GameRules.GameModes.EDIT) {
         Point componentLocation = MouseInfo.getPointerInfo().getLocation();
         SwingUtilities.convertPointFromScreen(componentLocation, Main.frame);
 
-        Vector2D xy = GameMap.Pixel_to_MapUnit(new Vector2D(componentLocation.x, componentLocation.y)).add(game_camera.map_position);
+        Vector2D xy = GameMap.Pixel_to_MapUnit(new Vector2D(componentLocation.x, componentLocation.y))
+            .add(game_camera.map_position);
         game_camera.follow(xy.x, xy.y, map_size.x, map_size.y);
       }
 
@@ -188,20 +189,21 @@ public class Game extends JPanel implements MouseListener, KeyListener {
 
       obj_g2d.dispose();
 
-      if(GameRules.current_game_mode == GameRules.GameModes.EDIT && item_select_list.size() > 0){
-          Point componentLocation = MouseInfo.getPointerInfo().getLocation();
-          SwingUtilities.convertPointFromScreen(componentLocation, Main.frame);
+      if (GameRules.current_game_mode == GameRules.GameModes.EDIT && item_select_list.size() > 0) {
+        Point componentLocation = MouseInfo.getPointerInfo().getLocation();
+        SwingUtilities.convertPointFromScreen(componentLocation, Main.frame);
 
-          try {
-          AnimationPlayer animation = new AnimationPlayer("objects1_" + item_select_list.peek(), "spritesheet/objects1.png", 16, 16, item_select_list.peek(),1, 1);
+        try {
+          AnimationPlayer animation = new AnimationPlayer("objects1_" + item_select_list.peek(),
+              "spritesheet/objects1.png", 16, 16, item_select_list.peek(), 1, 1);
           Vector2D dimensions = new Vector2D(GameRules.sizes.get(item_select_list.peek()));
-          animation.paint(g2d, (int) GameMap.PIXEL_TO_MAP_UNIT * componentLocation.x, 
-                          (int) GameMap.PIXEL_TO_MAP_UNIT* componentLocation.y, 
-                          GameMap.Pixel_to_MapUnit(dimensions),0);
-          
-          } catch (Exception e) {
-              System.out.println(e.getMessage());
-          }
+          animation.paint(g2d, (int) GameMap.PIXEL_TO_MAP_UNIT * componentLocation.x,
+              (int) GameMap.PIXEL_TO_MAP_UNIT * componentLocation.y,
+              GameMap.Pixel_to_MapUnit(dimensions), 0);
+
+        } catch (Exception e) {
+          System.out.println(e.getMessage());
+        }
       }
 
     }
@@ -229,15 +231,16 @@ public class Game extends JPanel implements MouseListener, KeyListener {
       repaint();
       return;
 
-    } else if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
-      pingbongBall.velocity = xy.subtract(pingbongBall.getCenterOfMass()).multiply(0.05 * pingbongBall.inverse_mass)
-          .add(pingbongBall.velocity);
     }
-
     if (GameRules.current_game_mode == GameRules.GameModes.EDIT) {
       GameRules.current_game_mode = GameRules.GameModes.GAMELOOP;
       pingbongBall.changeAcceleration(0, GameRules.GRAVITY);
 
+    }
+
+    if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
+      pingbongBall.velocity = xy.subtract(pingbongBall.getCenterOfMass()).multiply(0.05 * pingbongBall.inverse_mass)
+          .add(pingbongBall.velocity);
     }
 
   }
