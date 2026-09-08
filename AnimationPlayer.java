@@ -130,8 +130,8 @@ public class AnimationPlayer {
 
     // 3. Draw sprite at proper rotation and position
     if (sprites != null && current_frame < sprites.length) {
-        int drawWidth = (int) (dimensions.x * render_rescale_factor.x);
-        int drawHeight = (int) (dimensions.y * render_rescale_factor.y);
+        int drawWidth = (int) (dimensions.x);
+        int drawHeight = (int) (dimensions.y);
 
         g2d.drawImage(sprites[current_frame].getImage(), -drawWidth / 2, -drawHeight / 2, drawWidth, drawHeight, null);
     }

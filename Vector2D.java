@@ -1,4 +1,5 @@
 import java.awt.Dimension;
+import java.awt.Point;
 
 public class Vector2D {
     public double x;
@@ -20,6 +21,11 @@ public class Vector2D {
     public Vector2D(Dimension frame){
         this.x = frame.width;
         this.y = frame.height;
+    }
+
+    public Vector2D(Point point){
+        this.x = point.x;
+        this.y = point.y;
     }
 
     public void setSize(double new_x, double new_y){

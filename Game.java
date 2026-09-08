@@ -194,7 +194,10 @@ public class Game extends JPanel implements MouseListener, KeyListener {
 
           try {
           AnimationPlayer animation = new AnimationPlayer("objects1_" + item_select_list.peek(), "spritesheet/objects1.png", 16, 16, item_select_list.peek(),1, 1);
-          animation.paint(g2d, componentLocation.x, componentLocation.y, new Vector2D(GameRules.sizes.get(item_select_list.peek())) ,0f);
+          Vector2D dimensions = new Vector2D(GameRules.sizes.get(item_select_list.peek()));
+          animation.paint(g2d, (int) GameMap.PIXEL_TO_MAP_UNIT * componentLocation.x, 
+                          (int) GameMap.PIXEL_TO_MAP_UNIT* componentLocation.y, 
+                          GameMap.Pixel_to_MapUnit(dimensions),0);
           
           } catch (Exception e) {
               System.out.println(e.getMessage());
