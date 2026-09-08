@@ -86,11 +86,9 @@ class Adding_to_Map implements ActionListener {
          local.addActionListener(this);
          this.list.put(local, GameObject.ID_PLATFORM);
          this.panel.add(local);
-
       } catch (Exception e) {
          System.out.println("Animation error");
       }
-
       for (int i = 1; i < numero; i++) {
          int aux;
          // TODO:: change ID for correct ID

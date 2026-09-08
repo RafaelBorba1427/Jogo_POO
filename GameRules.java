@@ -3,6 +3,7 @@ import static java.util.Map.entry;
 
 public class GameRules {
     // settings
+
     static boolean physics_on = false;
     static boolean debug_mode = false;
     static boolean cheats1 = false;
@@ -17,14 +18,17 @@ public class GameRules {
             entry(GameObject.ID_FROZEN_PLATFORM, new Vector2D(50, 50)),
             entry(GameObject.ID_WALL, new Vector2D(50, 30)),
             entry(GameObject.ID_PLATFORM, new Vector2D(50, 50)),
-            entry(GameObject.ID_TABLE, new Vector2D(50, 50)));// constants
+            entry(GameObject.ID_TABLE, new Vector2D(50, 50))
+
+    );// constants
+
     static double GRAVITY = 0.3;
     static boolean global_gravity_on = true;
     static double DEFAULT_FRICTION = 0.3;
     static boolean ballGravity = true;
 
     static enum GameModes {
-        GAMELOOP, EDIT;
+        GAMELOOP, EDIT, BOMB_CUTSCENE;
     };
 
     static GameModes current_game_mode = GameModes.GAMELOOP;

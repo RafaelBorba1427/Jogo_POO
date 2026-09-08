@@ -4,6 +4,7 @@ import java.awt.event.*;
 import java.util.Queue;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Game extends JPanel implements MouseListener, KeyListener {
   // ---------------------------------------------
@@ -198,6 +199,18 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   @Override
   public void mouseClicked(MouseEvent e) {
     Vector2D xy = GameMap.Pixel_to_MapUnit(new Vector2D(e.getX(), e.getY())).add(game_camera.map_position);
+
+    if (GameRules.current_game_mode == GameRules.GameModes.BOMB_CUTSCENE) {
+      System.out.println("Hi bomb");
+
+      if (LevelRules.bomb_away)
+        return;
+      LevelRules.bomb = new BallObj(xy.x, xy.y, 60, 20, 0.5, true, GameObject.ID_BOMB, 0.5);
+      LevelRules.bomb.changeAcceleration(0, GameRules.GRAVITY);
+      game_map.addObject(LevelRules.bomb);
+      LevelRules.bomb_away = true;
+      return;
+    }
 
     if (GameRules.current_game_mode == GameRules.GameModes.EDIT && item_select_list.size() > 0) {
 

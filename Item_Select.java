@@ -9,6 +9,7 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.Graphics2D;
+import java.util.*;
 
 class Item_Select implements ActionListener {
    JDialog dialog;
@@ -23,6 +24,7 @@ class Item_Select implements ActionListener {
    int id = 1;
    JFrame frame;
    public boolean finished = false;
+   Map<JButton, Integer> list = new HashMap<JButton, Integer>();
 
    Item_Select(JFrame var1) {
       this.frame = var1;
@@ -37,6 +39,7 @@ class Item_Select implements ActionListener {
       };
       this.panel.setOpaque(false);
       this.panel.setLayout(null);
+
    }
 
    public void dialogInit() {
@@ -45,15 +48,15 @@ class Item_Select implements ActionListener {
       JButton local;
       try {
          AnimationPlayer animate;
-         animate = new AnimationPlayer("Platform object: " + GameObject.ID_COPY,
+         animate = new AnimationPlayer("Platform object: " + GameObject.ID_BOMB,
                "spritesheet/combined_spritesheet.png",
                16,
-               16, GameObject.ID_COPY, 15, 15);
+               16, GameObject.ID_BOMB, 15, 15);
 
          local = new JButton() {
             {
-               setBounds(100, 160, (int) GameRules.sizes.get(GameObject.ID_PLATFORM).x,
-                     (int) GameRules.sizes.get(GameObject.ID_PLATFORM).y);
+               setBounds(100, 160, 60,
+                     60);
                setContentAreaFilled(false);
                setBorderPainted(false);
                setFocusPainted(false);
@@ -71,8 +74,8 @@ class Item_Select implements ActionListener {
          };
          local.addActionListener(this);
          this.first = local;
-         this.panel.add(this.first);
-
+         this.panel.add(local);
+         this.list.put(local, GameObject.ID_BOMB);
       } catch (Exception e) {
          System.out.println("Animation error");
       }
@@ -112,6 +115,7 @@ class Item_Select implements ActionListener {
          local.addActionListener(this);
          this.second = local;
          this.panel.add(this.second);
+         this.list.put(local, var3);
       } catch (Exception e) {
          System.out.println("Animation error");
       }
@@ -130,9 +134,9 @@ class Item_Select implements ActionListener {
 
    @Override
    public void actionPerformed(ActionEvent var1) {
-      if (var1.getSource() == this.first) {
+      if (list.get(var1.getSource()) == GameObject.ID_BOMB) {
+         GameRules.current_game_mode = GameRules.GameModes.BOMB_CUTSCENE;
       }
-
       this.finished = true;
       this.dialog.dispose();
    }

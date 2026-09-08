@@ -27,7 +27,7 @@ public class GameMap {
             roof,
             bucket;
 
-    private QuadTree<GameObject> collision_detection;
+    public QuadTree<GameObject> collision_detection;
 
     static boolean next_level = false;
 
@@ -176,13 +176,8 @@ public class GameMap {
     // Avanca a simulacao em dt unidades de tempo.
     // dt = 1.0 default
     public void step(double dt) {
+
         step(dt, DEFAULT_SUBSTEPS, DEFAULT_SOLVER_ITERATIONS);
-
-        for(GameObject obj : moving_objects){
-            ((MovableObj)obj).collided = false;
-            ((MovableObj)obj).changeAcceleration(0, 0);
-        }
-
         // Gera o Popup
         if (next_level) {
             LevelRules.nextLevel(this);
@@ -193,15 +188,34 @@ public class GameMap {
             Game.pingbongBall.changeAngularVelocity(0);
             Game.pingbongBall.changeAngularAcceleration(0);
 
-            for(GameObject obj : moving_objects)
-                if(((MovableObj)obj).noGravityOnSpawn())
-                    ((MovableObj)obj).changeNoGravityStatus(true);
+            for (GameObject obj : moving_objects)
+                if (((MovableObj) obj).noGravityOnSpawn())
+                    ((MovableObj) obj).changeNoGravityStatus(true);
 
             next_level = false;
             Game.next_level = true;
-            GameRules.current_game_mode = GameRules.GameModes.EDIT;
+            // GameRules.current_game_mode = GameRules.GameModes.EDIT;
 
         }
+        if (GameRules.current_game_mode == GameRules.GameModes.BOMB_CUTSCENE) {
+            if (LevelRules.bombCounter >= LevelRules.bomticks) {
+                for (GameObject candidate : LevelRules.explode) {
+                    System.out.println("Exploded");
+                    candidate.active = false;
+                }
+
+                LevelRules.bombCounter = 0;
+                LevelRules.bomb_away = false;
+                GameRules.current_game_mode = GameRules.GameModes.EDIT;
+                LevelRules.explode.clear();
+
+                return;
+            }
+            if (LevelRules.bomb != null) {
+                LevelRules.bombCounter++;
+            }
+        }
+        LevelRules.explode.clear();
     }
 
     // Ordem do passo:
@@ -228,19 +242,19 @@ public class GameMap {
             for (GameObject obj : moving_objects) {
 
                 int gravity = 0;
-                if(GameRules.global_gravity_on && !((MovableObj)obj).noGravity()){
+                if (GameRules.global_gravity_on && !((MovableObj) obj).noGravity()) {
                     gravity = 1;
                 }
 
-                if( ((MovableObj)obj).noGravityOnSpawn() && ((MovableObj)obj).collided && 
-                Math.abs(((MovableObj)obj).getVelocityX()) > MovableObj.MIN_VELOCITY*10 ||
-                Math.abs(((MovableObj)obj).getVelocityY()) > MovableObj.MIN_VELOCITY*10){
+                if (((MovableObj) obj).noGravityOnSpawn() && ((MovableObj) obj).collided &&
+                        Math.abs(((MovableObj) obj).getVelocityX()) > MovableObj.MIN_VELOCITY * 10 ||
+                        Math.abs(((MovableObj) obj).getVelocityY()) > MovableObj.MIN_VELOCITY * 10) {
                     gravity = 1;
-                    ((MovableObj)obj).changeNoGravityStatus(false);
+                    ((MovableObj) obj).changeNoGravityStatus(false);
                 }
 
-                ((MovableObj)obj).changeAcceleration(MovableObj.global_acceleration.x, 
-                    MovableObj.global_acceleration.y + gravity*GameRules.GRAVITY);
+                ((MovableObj) obj).changeAcceleration(MovableObj.global_acceleration.x,
+                        MovableObj.global_acceleration.y + gravity * GameRules.GRAVITY);
 
                 ((MovableObj) obj).integrateForces(sub_dt);
             }
@@ -305,13 +319,25 @@ public class GameMap {
         for (GameObject moving : moving_objects) {
             if (!moving.isActive())
                 continue;
+            List<GameObject> candidates, candidates_bomb;
+            if (moving == LevelRules.bomb) {
 
-            List<GameObject> candidates = collision_detection.query(moving.getHitBox().getAABB());
+                AABB bounds = new AABB(LevelRules.bomb.getHitBox().getAABB().min_pos.x - LevelRules.bomradius,
+                        LevelRules.bomb.getHitBox().getAABB().min_pos.y - LevelRules.bomradius,
+                        LevelRules.bomb.getHitBox().getAABB().max_pos.x + LevelRules.bomradius,
+                        LevelRules.bomb.getHitBox().getAABB().max_pos.y + LevelRules.bomradius);
+                LevelRules.explode = collision_detection.query(bounds);
+
+            }
+            candidates = collision_detection.query(moving.getHitBox().getAABB());
 
             for (GameObject candidate : candidates) {
+
                 if (candidate == moving || !candidate.isActive())
                     continue;
-
+                if (moving == LevelRules.bomb) {
+                    LevelRules.explode.add(candidate);
+                }
                 // Dois objetos moveis aparecem duas vezes nessa varredura
                 // (um encontra o outro nas duas direcoes).
                 long key = pairKey(moving, candidate);
@@ -328,22 +354,35 @@ public class GameMap {
                 CollisionManifold manifold = CollisionManifold.generate(body_a, body_b);
                 if (manifold == null)
                     continue;
-                
-                //---------------------------------------------------------------------------------
-                //Checks that use collsion
-                //---------------------------------------------------------------------------------
-                if(body_a.getObjType() == GameObject.MOVABLE_OBJ || body_a.getObjType() == GameObject.BALL_OBJ){
-                    ((MovableObj)body_a).collided = true;
-                }
 
-                if(body_b.getObjType() == GameObject.MOVABLE_OBJ || body_b.getObjType() == GameObject.BALL_OBJ){
-                    ((MovableObj)body_b).collided = true;
+                // ---------------------------------------------------------------------------------
+                // Checks that use collsion
+                // ---------------------------------------------------------------------------------
+                if (body_a.getObjType() == GameObject.MOVABLE_OBJ || body_a.getObjType() == GameObject.BALL_OBJ) {
+                    ((MovableObj) body_a).collided = true;
+                }
+                // makes movable object stand still on spawn
+
+                if ((body_a instanceof MovableObj || body_a instanceof BallObj)
+                        && ((MovableObj) body_a).acceleration.y != 0
+                        && (body_b instanceof MovableObj || body_b instanceof BallObj)
+                        && ((MovableObj) body_b).acceleration.y == 0) {
+                    ((MovableObj) body_b).acceleration.y = GameRules.GRAVITY;
+
+                } else if ((body_b instanceof MovableObj || body_b instanceof BallObj)
+                        && ((MovableObj) body_b).acceleration.y != 0
+                        && (body_a instanceof MovableObj || body_a instanceof BallObj)
+                        && ((MovableObj) body_a).acceleration.y == 0) {
+                    ((MovableObj) body_a).acceleration.y = GameRules.GRAVITY;
+
                 }
 
                 // Checks if the player is in contact with the bucket to trigger the next level
 
                 if (body_a.getObjType() == GameObject.EVENT_TRIGGER_OBJ
-                        || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ) {
+                        || body_b.getObjType() == GameObject.EVENT_TRIGGER_OBJ)
+
+                {
 
                     if (body_a.getObjType() == GameObject.PLAYER && body_b.getObjId() == GameObject.ID_BUCKET ||
                             body_a.getObjId() == GameObject.ID_BUCKET && body_b.getObjType() == GameObject.PLAYER) {
@@ -374,7 +413,7 @@ public class GameMap {
                 } else {
                     last_collided = null;
                 }
-                //---------------------------------------------------------------------------------
+                // ---------------------------------------------------------------------------------
 
                 manifold.inheritImpulses(manifold_cache.get(key));
 

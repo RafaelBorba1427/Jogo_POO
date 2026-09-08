@@ -4,8 +4,13 @@ import javax.swing.JFrame;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.List;
 
 class LevelRules {
+   static int bomradius = 40;
+   static int bomticks = 60;
+   static int bombCounter = 0;
    static int counter = 0;
    static int level_cap = 2;
    static int level_count = 0;
@@ -21,6 +26,9 @@ class LevelRules {
    static BufferedImage background_image;
    static Dimension bg_dimensions = new Dimension();
    static ArrayList<GameObject> currentMap = new ArrayList<GameObject>();
+   static BallObj bomb;
+   static boolean bomb_away = false;
+   static List<GameObject> explode = new ArrayList<GameObject>();
 
    static void startRules(JFrame frame2, Game jogo) {
       frame = frame2;
@@ -61,8 +69,10 @@ class LevelRules {
             god.dialogInit();
 
             counter = 0;
-         }
 
+         } else if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
+            GameRules.current_game_mode = GameRules.GameModes.EDIT;
+         }
          generate_cap();
 
       }

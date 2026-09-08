@@ -83,8 +83,10 @@ public class CircularHitBox implements HitBox {
 
     @Override
     public boolean intersects(HitBox other) {
-        if (other instanceof CircularHitBox) return intersects((CircularHitBox) other);
-        if (other instanceof RectangularHitBox) return intersects((RectangularHitBox) other);
+        if (other instanceof CircularHitBox)
+            return intersects((CircularHitBox) other);
+        if (other instanceof RectangularHitBox)
+            return intersects((RectangularHitBox) other);
         return false;
     }
 
