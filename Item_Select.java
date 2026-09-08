@@ -40,6 +40,7 @@ class Item_Select implements ActionListener {
    }
 
    public void dialogInit() {
+
       this.panel.removeAll();
       JButton local;
       try {
@@ -68,7 +69,6 @@ class Item_Select implements ActionListener {
 
             }
          };
-
          local.addActionListener(this);
          this.first = local;
          this.panel.add(this.first);
@@ -76,6 +76,7 @@ class Item_Select implements ActionListener {
       } catch (Exception e) {
          System.out.println("Animation error");
       }
+
       int var3;
       var3 = GameObject.ID_BOMB + (int) (Math.random() * GameObject.Quant_GODItems);
 

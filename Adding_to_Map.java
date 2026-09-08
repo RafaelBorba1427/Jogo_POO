@@ -55,11 +55,12 @@ class Adding_to_Map implements ActionListener {
 
       try {
          AnimationPlayer animate;
-         animate = new AnimationPlayer("Platform object: " + GameObject.ID_PLATFORM,
-               "spritesheet/combined_spritesheet.png",
-               16,
-               16, GameObject.ID_PLATFORM, 15, 15);
 
+         animate = new AnimationPlayer("objects1_" + GameObject.ID_PLATFORM, "spritesheet/combined_spritesheet.png", 16,
+               16, GameObject.ID_PLATFORM,
+               15, 15);
+
+         System.out.println("AnimationPlayer was played");
          local = new JButton() {
             {
                setBounds(10, 80, (int) GameRules.sizes.get(GameObject.ID_PLATFORM).x,
@@ -100,10 +101,10 @@ class Adding_to_Map implements ActionListener {
          int id = aux;
          int xOffset = i;
          try {
-            AnimationPlayer animate = new AnimationPlayer("Other object " + id,
-                  "spritesheet/combined_spritesheet.png",
-                  16,
-                  16, id, 15, 15);
+
+            AnimationPlayer animate = new AnimationPlayer("objects1_" + id, "spritesheet/combined_spritesheet.png", 16,
+                  16, id,
+                  15, 15);
 
             local = new JButton() {
 
