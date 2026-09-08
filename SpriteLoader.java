@@ -14,7 +14,6 @@ public class SpriteLoader {
     public static void loadSpritesheet(String animation_key, String image_path, int sprite_width,
                                         int sprite_height, int num_sprites, int sprite_row_index) {
         if(spritesheets.containsKey(animation_key)) {
-            System.out.println("Spritesheet with key " + animation_key + " already loaded.");
             return;
         }
 

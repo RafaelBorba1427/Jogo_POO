@@ -188,13 +188,17 @@ public class Game extends JPanel implements MouseListener, KeyListener {
 
       obj_g2d.dispose();
 
-      else if(GameRules.current_game_mode == GameRules.GameModes.EDIT){
-        Point componentLocation = MouseInfo.getPointerInfo().getLocation();
-        SwingUtilities.convertPointFromScreen(componentLocation, Main.frame);
+      if(GameRules.current_game_mode == GameRules.GameModes.EDIT && item_select_list.size() > 0){
+          Point componentLocation = MouseInfo.getPointerInfo().getLocation();
+          SwingUtilities.convertPointFromScreen(componentLocation, Main.frame);
 
-        AnimationPlayer animation = new AnimationPlayer("objects1_" + item_select_list.peek(), "spritesheet/objects1.png", 16, 16, item_select_list.peek(),1, 1);
-
-        animation.paint(g2d, componentLocation.x, componentLocation.y, new Vector2D(GameRules.sizes.get(item_select_list.peek())) ,0f);
+          try {
+          AnimationPlayer animation = new AnimationPlayer("objects1_" + item_select_list.peek(), "spritesheet/objects1.png", 16, 16, item_select_list.peek(),1, 1);
+          animation.paint(g2d, componentLocation.x, componentLocation.y, new Vector2D(GameRules.sizes.get(item_select_list.peek())) ,0f);
+          
+          } catch (Exception e) {
+              System.out.println(e.getMessage());
+          }
       }
 
     }
