@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
-import java.math.*;
-import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImage;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -11,7 +8,7 @@ import java.util.TimerTask;
 import javax.imageio.ImageIO;
 import java.io.File;
 
-public class healthSystem extends JPanel {
+public class HealthSystem extends JPanel {
      int max_hp;
     private int current_hp;
 
@@ -19,7 +16,7 @@ public class healthSystem extends JPanel {
 
     private ArrayList<heart> hp_sprites = new ArrayList<heart>();
 
-    public healthSystem(int max_hp, boolean is_visible) {
+    public HealthSystem(int max_hp, boolean is_visible) {
         this.max_hp = max_hp;
         this.current_hp = max_hp;
         this.is_dead = false;
@@ -58,10 +55,10 @@ public class healthSystem extends JPanel {
 
             hp_sprites.get(current_hp).playDamageAnimation(); // Assuming you have a method to play the damage animation
                                                               // on the heart sprite
-            game.soundMaster.playSound("damage");
+            // game.soundMaster.playSound("damage");
 
             if(current_hp <= max_hp / 2) {
-                game.musicMaster.changeTrackAndPlay("gameOverworld1");
+                // game.musicMaster.changeTrackAndPlay("gameOverworld1");
             }
         }
 
@@ -111,10 +108,10 @@ public class healthSystem extends JPanel {
      * JFrame frame = new JFrame("Health System Test");
      * frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
      * frame.setSize(1000, 1000);
-     * healthSystem health = new healthSystem(5, true);
+     * HealthSystem health = new HealthSystem(5, true);
      * frame.add(health);
      * 
-     * healthSystemTest test = new healthSystemTest();
+     * HealthSystemTest test = new HealthSystemTest();
      * frame.addKeyListener(test);
      * 
      * frame.setVisible(true);
@@ -209,7 +206,7 @@ class heart {
 // TO DO
 // Delete later
 /*
- * class healthSystemTest implements KeyListener {
+ * class HealthSystemTest implements KeyListener {
  * public char input;
  * 
  * public void keyPressed(KeyEvent e) {
