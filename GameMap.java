@@ -206,13 +206,14 @@ public class GameMap {
                             && candidate.getObjId() != GameObject.PLAYER) {
                         candidate.active = false;
                     }
+
                 }
 
                 LevelRules.bombCounter = 0;
                 LevelRules.bomb_away = false;
                 GameRules.current_game_mode = GameRules.GameModes.EDIT;
                 LevelRules.explode.clear();
-
+                LevelRules.bomb = null;
                 return;
             }
             if (LevelRules.bomb != null) {

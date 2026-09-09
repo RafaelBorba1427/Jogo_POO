@@ -25,6 +25,8 @@ class Item_Select implements ActionListener {
    JFrame frame;
    public boolean finished = false;
    Map<JButton, Integer> list = new HashMap<JButton, Integer>();
+   Set<GameObject> list_of_Objects = new HashSet<GameObject>();
+   ArrayList<ArrayList<GameObject>> current_map = new ArrayList<ArrayList<GameObject>>();
 
    Item_Select(JFrame var1) {
       this.frame = var1;
@@ -42,16 +44,16 @@ class Item_Select implements ActionListener {
 
    }
 
-   public void dialogInit() {
-
+   public Set<GameObject> dialogInit(ArrayList<ArrayList<GameObject>> mapList) {
+      current_map = mapList;
       this.panel.removeAll();
       JButton local;
       try {
          AnimationPlayer animate;
-         animate = new AnimationPlayer("Platform object: " + GameObject.ID_BOMB,
+         animate = new AnimationPlayer("Platform object: " + GameObject.ID_COPY,
                "spritesheet/combined_spritesheet.png",
                16,
-               16, GameObject.ID_BOMB, 15, 15);
+               16, GameObject.ID_COPY, 15, 15);
 
          local = new JButton() {
             {
@@ -75,7 +77,7 @@ class Item_Select implements ActionListener {
          local.addActionListener(this);
          this.first = local;
          this.panel.add(local);
-         this.list.put(local, GameObject.ID_BOMB);
+         this.list.put(local, GameObject.ID_COPY);
       } catch (Exception e) {
          System.out.println("Animation error");
       }
@@ -130,12 +132,19 @@ class Item_Select implements ActionListener {
       this.dialog.setContentPane(this.panel);
       this.dialog.setVisible(true);
       System.out.println("This continued");
+      return list_of_Objects;
    }
 
    @Override
    public void actionPerformed(ActionEvent var1) {
       if (list.get(var1.getSource()) == GameObject.ID_BOMB) {
          GameRules.current_game_mode = GameRules.GameModes.BOMB_CUTSCENE;
+      } else if (list.get(var1.getSource()) == GameObject.ID_COPY) {
+         for (ArrayList<GameObject> obj : current_map) {
+            for (GameObject obj2 : obj) {
+               list_of_Objects.add(obj2);
+            }
+         }
       }
       this.finished = true;
       this.dialog.dispose();

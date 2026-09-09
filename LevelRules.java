@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.List;
+import java.util.HashSet;
 
 class LevelRules {
    static int bomradius = 40;
@@ -51,12 +52,6 @@ class LevelRules {
       for (GameObject erase : currentMap) {
          GameObject.deactivate(erase);
       }
-      int randomInt = 1 + (int) (Math.random() * ((Maps.number)));
-      currentMap = Maps.generation(randomInt);
-      for (GameObject add : currentMap) {
-         game.game_map.addObject(add);
-
-      }
 
       if (health == 0) {
          new End_of_game(frame, points);
@@ -66,16 +61,35 @@ class LevelRules {
          game.item_select_list = adition.dialog_init(4, 4, map);
 
          if (counter >= level_cap) {
-            god.dialogInit();
-
+            Set<GameObject> ading_to_map = new HashSet<GameObject>();
+            ading_to_map = god.dialogInit(GameMap.getAllObjects());
+            for (ArrayList<GameObject> obj : GameMap.getAllObjects()) {
+               for (GameObject obj2 : obj) {
+                  if (!ading_to_map.contains(obj2) && !(obj2.getObjType() == GameObject.PLAYER
+                        || obj2.getObjId() == GameObject.ID_PERMANENT_FLOOR
+                        || obj2.getObjId() == GameObject.ID_PERMANENT_WALL
+                        || obj2.getObjId() == GameObject.ID_BUCKET)) {
+                     obj2.active = false;
+                  }
+               }
+            }
             counter = 0;
 
-         } else if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
+         }
+         if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
             GameRules.current_game_mode = GameRules.GameModes.EDIT;
+            System.out.println("Game mode edit");
          }
          generate_cap();
 
       }
+      int randomInt = 1 + (int) (Math.random() * ((Maps.number)));
+      currentMap = Maps.generation(randomInt);
+      for (GameObject add : currentMap) {
+         game.game_map.addObject(add);
+
+      }
+
       Game.pingbongBall.changeVelocity(0, 0);
    }
 }
