@@ -5,7 +5,7 @@ class Maps {
 
     static ArrayList<GameObject> generation(int map_select) {
         ArrayList<GameObject> saida = new ArrayList<GameObject>();
-        switch (3) {
+        switch (map_select) {
             case 1:
                 int width = 50, height = 100;
                 BuffObj speed_buff = new BuffObj(800, 200, 50, 50, 0, false, true, GameObject.ID_BUFF_SPEED_BOOST);
