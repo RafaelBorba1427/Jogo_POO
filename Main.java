@@ -18,7 +18,7 @@ public class Main {
   }
 
   private static void boot() {
-    frame = new JFrame("Game");
+    frame = new JFrame("TRICKSHOT_FRAT_LEGENDS_2_ASCENDANCE_TM");
 
     // MainMenu menu = new MainMenu(frame);
     // frame.add(menu);
