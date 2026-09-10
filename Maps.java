@@ -6,7 +6,7 @@ class Maps {
     static ArrayList<GameObject> generation(int map_select) {
         ArrayList<GameObject> saida = new ArrayList<GameObject>();
         switch (map_select) {
-            case 1:
+            case 3:
                 int width = 50, height = 100;
                 BuffObj speed_buff = new BuffObj(800, 200, 50, 50, 0, false, true, GameObject.ID_BUFF_SPEED_BOOST);
                 saida.add(speed_buff);
@@ -19,14 +19,7 @@ class Maps {
                 saida.add(obj);
                 }
 
-                for(int wall_qtd = 0; wall_qtd < 10; wall_qtd++){
-                        MovableObj obj = new MovableObj(1080, 50 + (height + 10)* wall_qtd, width, height, 0, .4, GameRules.DEFAULT_FRICTION,
-                        true, true,
-                        true,
-                        GameObject.ID_PERMANENT_WALL, 0.3);
                 
-                saida.add(obj);
-                }
                 break;
             case 2:
                 BuffObj intangible_buff_1 = new BuffObj(800, 200, 50, 50, 0, false, true, GameObject.ID_BUFF_INTANGIBLE);
@@ -37,7 +30,7 @@ class Maps {
                 RigidObj great_wall = new RigidObj(1000, 25, 50, 925, 0, GameRules.DEFAULT_FRICTION, false, true, GameObject.ID_PERMANENT_WALL);
                 saida.add(great_wall);
                 break;
-            case 3:
+            case 1:
                 saida.add(new RigidObj(1000f, 600f, 67f, 40f, (Math.PI / 3), GameRules.DEFAULT_FRICTION, true,
                         true,
                         GameObject.ID_PINGPONG));

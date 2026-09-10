@@ -1,9 +1,5 @@
 import java.awt.Dimension;
 import javax.swing.*;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 
 // ------------------------------------------------------------
 // Main

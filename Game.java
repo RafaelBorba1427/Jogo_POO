@@ -5,11 +5,6 @@ import java.util.Queue;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 
-import java.util.List;
-import java.util.Set;
-import java.util.List;
-import java.util.HashSet;
-
 
 public class Game extends JPanel implements MouseListener, KeyListener {
   // ---------------------------------------------

@@ -1,4 +1,3 @@
-import java.awt.geom.Rectangle2D;
 
 public class EventTriggerObj extends GameObject {
     // global quantifiers
