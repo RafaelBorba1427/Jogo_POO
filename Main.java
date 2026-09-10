@@ -1,34 +1,33 @@
 import java.awt.Dimension;
 import javax.swing.*;
 
+// ------------------------------------------------------------
+// Main
+// ------------------------------------------------------------
+
 public class Main {
-  static LevelRules rules;
   static JFrame frame;
-  static final Dimension DEFAULT_RESOLUTION = new Dimension(800,600);
+  static final Dimension DEFAULT_RESOLUTION = new Dimension(800, 600);
 
   public static void main(String[] args) {
+    SwingUtilities.invokeLater(Main::boot);
+  }
+
+  private static void boot() {
     frame = new JFrame("Game");
-    // MainMenu menu = new MainMenu(frame);
-
-    // frame.add(menu);
-    frame.setSize(DEFAULT_RESOLUTION.width, DEFAULT_RESOLUTION.height);
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    frame.setVisible(true);
-    AnimationPlayer.initializeAnimationPlayerTimer();
-    SoundEffectPlayer.initialiseSoundEffectPlayer(); // Initialize the sound effect player
-    // Isso não deveria estar no game ao invés de estar na main????
-    // rules = new LevelRules(frame);
-    // rules.nextLevel();
-    //
+    frame.setSize(DEFAULT_RESOLUTION.width, DEFAULT_RESOLUTION.height);
 
-    // render test, delete later
-    Game game = new Game(DEFAULT_RESOLUTION);
-    frame.add(game);
+    // Subsistemas globais, antes de qualquer tela pedir som ou sprite.
+    AnimationPlayer.initializeAnimationPlayerTimer();
+    SoundEffectPlayer.initialiseSoundEffectPlayer();
+    MusicPlayer.initialiseMusicPlayer();
+
+    GameFlow.initialise(frame);
+    GameFlow.showMenu();
+
     frame.pack();
     frame.setLocationRelativeTo(null);
-    game.startGame();
-    LevelRules.startRules(frame, game);
-
-    // ------------------------
+    frame.setVisible(true);
   }
 }

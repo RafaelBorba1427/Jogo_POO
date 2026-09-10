@@ -2,21 +2,39 @@ import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import javax.swing.JFrame;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.List;
 import java.util.HashSet;
 
+// ------------------------------------------------------------
+// LevelRules
+//
+// Mudancas desta refatoracao:
+//
+// 1. "static int health" virou o HealthSystem de verdade. Antes era um contador
+//    solto que nunca era decrementado por ninguem: a unica leitura era
+//    "if (health == 0)" no nextLevel, e como health comecava em 1 e ninguem
+//    escrevia nele, esse if nunca era verdadeiro. A vida agora mora no
+//    HealthSystem da instancia de Game.
+//
+// 2. "static int points" saiu. A pontuacao e do PointSystem, que ja guarda
+//    total e potencial.
+//
+// 3. Meta de pontos por nivel. Cada nivel define um alvo; terminar o nivel sem
+//    bater o alvo custa um coracao (a outra metade da regra, "a bola parou sem
+//    bater a meta", esta no Game.checkBallAtRest).
+//
+// 4. End_of_game foi trocado pela GameOverScreen, chamada via GameFlow, que
+//    devolve o jogador ao menu.
+// ------------------------------------------------------------
 class LevelRules {
-   static int bomradius = 40;
-   static int bomticks = 60;
-   static int bombCounter = 0;
+   static double bomradius = 150;
+   static int bomticks = 90;
+   static double bomdiameter = 60;
    static int counter = 0;
    static int level_cap = 2;
    static int level_count = 0;
-   static int health = 1;
-   static int points = 0;
    static JFrame frame;
    static Item_Select god;
    static Adding_to_Map adition;
@@ -27,9 +45,21 @@ class LevelRules {
    static BufferedImage background_image;
    static Dimension bg_dimensions = new Dimension();
    static ArrayList<GameObject> currentMap = new ArrayList<GameObject>();
-   static BallObj bomb;
-   static boolean bomb_away = false;
-   static List<GameObject> explode = new ArrayList<GameObject>();
+   static BombObj bomb;
+
+   // ------------------------------------------------------------
+   // Vida e meta de pontos
+   // ------------------------------------------------------------
+
+   static final int STARTING_HEARTS = 5;
+
+   // Meta do primeiro nivel e quanto ela sobe a cada nivel vencido.
+   static final long BASE_TARGET_POINTS = 300L;
+   static final long TARGET_POINTS_PER_LEVEL = 150L;
+
+   static long targetForLevel(int level) {
+      return BASE_TARGET_POINTS + TARGET_POINTS_PER_LEVEL * Math.max(0, level);
+   }
 
    static void startRules(JFrame frame2, Game jogo) {
       frame = frame2;
@@ -42,10 +72,51 @@ class LevelRules {
       background_image = SpriteLoader.loadNewBackgroundImage("spritesheet/Frat_background.png");
       bg_dimensions = new Dimension(1536, 1024);
       // -----------------------------------------------------------------------------------------------
+
+      PointSystem.setTargetPoints(targetForLevel(level_count));
+   }
+
+   // Estado de nivel zerado para uma partida nova vinda do menu.
+   static void resetForNewGame() {
+      counter = 0;
+      level_count = 0;
+      level_cap = 2;
+      bomb = null;
+      bateu = false;
+      currentMap.clear();
+      PointSystem.setTargetPoints(targetForLevel(0));
    }
 
    static int generate_cap() {
       return level_cap == 0 ? 1 : level_cap + 2 * (level_cap - 1);
+   }
+
+   // ------------------------------------------------------------
+   // Limpeza do mapa depois do painel do God
+   //
+   // BUG CORRIGIDO (teto sem hitbox):
+   // ------------------------------------------------------------
+
+   static void wipeObjectsNotKept(GameMap map, Set<GameObject> kept) {
+      ArrayList<GameObject> permanent = map.getPermanentObjects();
+
+      for (ArrayList<GameObject> obj_list : GameMap.getAllObjects()) {
+         if (obj_list == permanent)
+            continue;
+
+         for (GameObject obj : obj_list) {
+            if (kept.contains(obj))
+               continue;
+
+            if (obj.getObjType() == GameObject.PLAYER
+                  || obj.getObjId() == GameObject.ID_PERMANENT_FLOOR
+                  || obj.getObjId() == GameObject.ID_PERMANENT_WALL
+                  || obj.getObjId() == GameObject.ID_BUCKET)
+               continue;
+
+            obj.active = false;
+         }
+      }
    }
 
    static void nextLevel(GameMap map) {
@@ -53,36 +124,51 @@ class LevelRules {
          GameObject.deactivate(erase);
       }
 
-      if (health == 0) {
-         new End_of_game(frame, points);
-      } else {
+      // ---------------------------------------------------------------
+      // Fim de nivel: pontos do balde, checagem de meta e vida
+      // ---------------------------------------------------------------
 
-         counter++;
-         game.item_select_list = adition.dialog_init(4, 4, map);
+      // O balde so pontua aqui, uma vez por nivel.
+      PointSystem.addPotentialPoints(PointSystem.pointsForObject(map.getBucket()));
 
-         if (counter >= level_cap) {
-            Set<GameObject> ading_to_map = new HashSet<GameObject>();
-            ading_to_map = god.dialogInit(GameMap.getAllObjects());
-            for (ArrayList<GameObject> obj : GameMap.getAllObjects()) {
-               for (GameObject obj2 : obj) {
-                  if (!ading_to_map.contains(obj2) && !(obj2.getObjType() == GameObject.PLAYER
-                        || obj2.getObjId() == GameObject.ID_PERMANENT_FLOOR
-                        || obj2.getObjId() == GameObject.ID_PERMANENT_WALL
-                        || obj2.getObjId() == GameObject.ID_BUCKET)) {
-                     obj2.active = false;
-                  }
-               }
-            }
-            counter = 0;
+      HealthSystem health = (game != null) ? game.getHealthSystem() : null;
 
+      if (!PointSystem.hasReachedTarget() && health != null) {
+         boolean is_dead = health.takeDamageAndCheckDeath();
+         if (is_dead) {
+            PointSystem.processPoints();
+            if (game != null)
+               game.triggerGameOver();
+            return;
          }
-         if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
-            GameRules.current_game_mode = GameRules.GameModes.EDIT;
-            System.out.println("Game mode edit");
-         }
-         generate_cap();
+      }
+
+      // Meta batida (ou vida ainda restante): confirma os pontos do nivel e
+      // sobe a meta do proximo.
+      PointSystem.processPoints();
+      level_count++;
+      PointSystem.setTargetPoints(targetForLevel(level_count));
+
+      // ---------------------------------------------------------------
+
+      counter++;
+ 
+      game.item_select_list = adition.dialog_init(4, 4, map);
+
+      if (counter >= level_cap) {
+         Set<GameObject> ading_to_map = new HashSet<GameObject>();
+         god.current_healthSystem = game.getHealthSystem();
+         ading_to_map = god.dialogInit(GameMap.getAllObjects());
+
+         wipeObjectsNotKept(map, ading_to_map);
+         counter = 0;
 
       }
+      if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
+         GameRules.current_game_mode = GameRules.GameModes.EDIT;
+      }
+      generate_cap();
+
       int randomInt = 1 + (int) (Math.random() * ((Maps.number)));
       currentMap = Maps.generation(randomInt);
       for (GameObject add : currentMap) {

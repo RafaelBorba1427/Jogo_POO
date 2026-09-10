@@ -27,6 +27,30 @@ public class GameRules {
     static double DEFAULT_FRICTION = 0.3;
     static boolean ballGravity = true;
 
+    // ------------------------------------------------------------
+    // Aparencia da bola do jogador
+    // ------------------------------------------------------------
+    static final int[] BALL_IDS = {
+            GameObject.ID_BALL_1,
+            GameObject.ID_BALL_2,
+            GameObject.ID_BALL_3,
+            GameObject.ID_BALL_4
+    };
+
+    static final String[] BALL_NAMES = {
+            "FRAT KING", "PISSY BOY", "NERD", "PRINCESA"
+    };
+
+    static int selected_ball_id = GameObject.ID_BALL_1;
+
+    static int getSelectedBallIndex() {
+        for (int i = 0; i < BALL_IDS.length; i++) {
+            if (BALL_IDS[i] == selected_ball_id)
+                return i;
+        }
+        return 0;
+    }
+
     static enum GameModes {
         GAMELOOP, EDIT, BOMB_CUTSCENE;
     };

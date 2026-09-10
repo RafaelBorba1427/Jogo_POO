@@ -27,6 +27,7 @@ class Item_Select implements ActionListener {
    Map<JButton, Integer> list = new HashMap<JButton, Integer>();
    Set<GameObject> list_of_Objects = new HashSet<GameObject>();
    ArrayList<ArrayList<GameObject>> current_map = new ArrayList<ArrayList<GameObject>>();
+   public HealthSystem current_healthSystem = null;
 
    Item_Select(JFrame var1) {
       this.frame = var1;
@@ -145,7 +146,12 @@ class Item_Select implements ActionListener {
                list_of_Objects.add(obj2);
             }
          }
+      } else if(list.get(var1.getSource()) == GameObject.ID_VILE){
+         current_healthSystem.resetToFull();
+      }else if(list.get(var1.getSource()) == GameObject.ID_BANDAID){
+         current_healthSystem.heal();
       }
+
       this.finished = true;
       this.dialog.dispose();
    }

@@ -62,9 +62,15 @@ public class SoundEffectPlayer {
                 return;
             }
 
+            java.net.URL sound_url = SoundEffectPlayer.class.getResource(soundFilePath);
+            if (sound_url == null) {
+                warnMissingSound(sound, soundFilePath);
+                return;
+            }
+
             try {
                 // Load the sound file
-                AudioInputStream input_stream = AudioSystem.getAudioInputStream(SoundEffectPlayer.class.getResource(soundFilePath));
+                AudioInputStream input_stream = AudioSystem.getAudioInputStream(sound_url);
                 Clip clip = AudioSystem.getClip();
 
                 clip.open(input_stream);
@@ -73,8 +79,7 @@ public class SoundEffectPlayer {
                 float random_sample_rate = original_sample_rate * (0.9f + (float) Math.random() * 0.2f); // Randomize between 90% and 110%
                 sample_rate_control.setValue(random_sample_rate);
 
-                FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);        
-                gainControl.setValue(20f * (float) Math.log10(volume));
+                MusicPlayer.applyGain((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN), volume);
 
                 clip.start();
 
@@ -97,16 +102,25 @@ public class SoundEffectPlayer {
             System.err.println("Sound file not found for key: " + sound);
             return;
         }
+        // Guarda adicionada na refatoracao: getResource devolve null quando o
+        // .wav nao esta no classpath, e AudioSystem.getAudioInputStream(null)
+        // lanca NullPointerException. Antes isso virava um stack trace por
+        // quique da bola. Agora avisa uma vez e o jogo segue mudo.
+        java.net.URL sound_url = SoundEffectPlayer.class.getResource(soundFilePath);
+        if (sound_url == null) {
+            warnMissingSound(sound, soundFilePath);
+            return;
+        }
+
         try {
             // Load the sound file
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(SoundEffectPlayer.class.getResource(soundFilePath));
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(sound_url);
 
             Clip clip = AudioSystem.getClip();
 
             clip.open(audioInputStream);
 
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);        
-            gainControl.setValue(20f * (float) Math.log10(volume));
+            MusicPlayer.applyGain((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN), volume);
 
             clip.start();
 
@@ -139,8 +153,23 @@ public class SoundEffectPlayer {
     }
 
 
-    public static void updateVolume(float volume) {
-        SoundEffectPlayer.volume = volume;
+    public static void updateVolume(float new_volume) {
+        SoundEffectPlayer.volume = MusicPlayer.clampVolume(new_volume);
+    }
+
+    public static float getVolume() {
+        return volume;
+    }
+
+    // Avisa uma unica vez por som que falta, para nao inundar o console a cada
+    // quique.
+    private static final HashSet<String> warned_missing_sounds = new HashSet<>();
+
+    private static void warnMissingSound(String key, String path) {
+        if (warned_missing_sounds.add(key)) {
+            System.err.println("SoundEffectPlayer: arquivo nao encontrado no classpath para \""
+                    + key + "\": " + path);
+        }
     }
 
 

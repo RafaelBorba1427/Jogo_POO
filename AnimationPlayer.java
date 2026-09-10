@@ -94,7 +94,14 @@ public class AnimationPlayer {
       current_frame_time = 0;
     }
 
-    if (current_frame >= last_frame) {
+    // BUG CORRIGIDO: era "current_frame >= last_frame".
+    //
+    // last_frame e o INDICE do ultimo quadro (length - 1), entao a condicao
+    // antiga reiniciava a animacao AO CHEGAR nele: o ultimo quadro de toda
+    // animacao do jogo nunca era desenhado. Com 15 quadros dava para nao
+    // reparar (perdia 1 de 15); com os icones do menu, que tem 4, sumia um
+    // quarto da animacao.
+    if (current_frame > last_frame) {
       current_frame = 0;
     }
   }
@@ -131,7 +138,13 @@ public class AnimationPlayer {
     g2d.rotate(rotation);
 
     // 3. Draw sprite at proper rotation and position
-    if (sprites != null && current_frame < sprites.length) {
+    //
+    // O teste de sprites[current_frame] != null foi adicionado na refatoracao.
+    // O SpriteLoader guarda o array mesmo quando a leitura do PNG falha, entao
+    // ele fica cheio de posicoes nulas; sem esta guarda, UM asset faltando
+    // derrubava o paintComponent com NullPointerException a cada frame e a
+    // tela inteira parava de desenhar.
+    if (sprites != null && current_frame < sprites.length && sprites[current_frame] != null) {
       int drawWidth = (int) (dimensions.x);
       int drawHeight = (int) (dimensions.y);
 
