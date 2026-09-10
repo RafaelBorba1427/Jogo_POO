@@ -78,8 +78,9 @@ public class GameObject {
             ID_BANDAID = 20,
             ID_COPY = 21,
             Quant_GODItems = 4,
-            Quant_IDs = 23;
 
+            ID_PINGPONG = 22,
+            Quant_IDs = 24;
     // ------------------------------------------------------------
     // Constructor
     // ------------------------------------------------------------
@@ -156,6 +157,9 @@ public class GameObject {
 
             else if (obj_id == ID_PERMANENT_WALL)
                 this.animation = new AnimationPlayer("permanent_wall", "spritesheet/wall_plank_20x600.png", 20, 600, 0,
+                        1, 1);
+            else if (obj_id == ID_PINGPONG)
+                this.animation = new AnimationPlayer("newWall", "spritesheet/PingPong.png", 70, 30, 0,
                         1, 1);
 
             else

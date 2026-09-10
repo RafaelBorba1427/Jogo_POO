@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.ArrayDeque;
@@ -136,15 +138,25 @@ class Adding_to_Map implements ActionListener {
 
       }
 
-      this.dialog = new JDialog(this.frame, "Choose Your Item", true);
+      // Dispose any previously open item-choice dialog to avoid leaking windows
+      if (this.dialog != null) {
+         this.dialog.dispose();
+      }
+
+      this.dialog = new JDialog(this.frame, "Choose Your Item", false); // non-modal
+
+      this.panel.setOpaque(false); // required so the panel doesn't paint over the transparent window
+
       this.dialog.setUndecorated(true);
       this.dialog.setBackground(new Color(0, 0, 0, 0));
-      this.dialog.setAlwaysOnTop(true);
-      this.dialog.setDefaultCloseOperation(2);
+      this.dialog.setAlwaysOnTop(false);
+      this.dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE); // 2 == DISPOSE_ON_CLOSE, but use the
+                                                                              // constant for clarity
       this.dialog.setSize(300, 200);
       this.dialog.setLocationRelativeTo(this.frame);
       this.dialog.setContentPane(this.panel);
-      this.dialog.setVisible(true);
+      this.dialog.setVisible(false);
+
       return objects;
    }
 
@@ -161,7 +173,18 @@ class Adding_to_Map implements ActionListener {
       if (aux_counter == counter) {
          this.finished = true;
          this.dialog.dispose();
+         this.dialog = null;
          aux_counter = 0;
+         if (LevelRules.counter >= LevelRules.level_cap) {
+            LevelRules.god.dialogInit(GameMap.getAllObjects());
+            if (Game.cut.CHANGE_LEVEL) {
+               Game.cut.CHANGE_LEVEL = false;
+            }
+            LevelRules.god.dialog.setVisible(true);
+
+            LevelRules.counter = 0;
+
+         }
       }
    }
 }

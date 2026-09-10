@@ -44,7 +44,7 @@ class Item_Select implements ActionListener {
 
    }
 
-   public Set<GameObject> dialogInit(ArrayList<ArrayList<GameObject>> mapList) {
+   public void dialogInit(ArrayList<ArrayList<GameObject>> mapList) {
       current_map = mapList;
       this.panel.removeAll();
       JButton local;
@@ -82,9 +82,10 @@ class Item_Select implements ActionListener {
          System.out.println("Animation error");
       }
 
-      int var3;
-      var3 = GameObject.ID_BOMB + (int) (Math.random() * GameObject.Quant_GODItems);
-
+      int var3 = -1;
+      do {
+         var3 = GameObject.ID_BOMB + (int) (Math.random() * GameObject.Quant_GODItems);
+      } while (var3 == GameObject.ID_COPY);
       System.out.println("l is " + var3);
       this.id = var3;
       try {
@@ -125,28 +126,45 @@ class Item_Select implements ActionListener {
       this.dialog = new JDialog(this.frame, "Choose Your Item", true);
       this.dialog.setUndecorated(true);
       this.dialog.setBackground(new Color(225, 225, 225));
-      this.dialog.setAlwaysOnTop(true);
+      this.dialog.setAlwaysOnTop(false);
       this.dialog.setDefaultCloseOperation(2);
       this.dialog.setSize(500, 300);
       this.dialog.setLocationRelativeTo(this.frame);
       this.dialog.setContentPane(this.panel);
-      this.dialog.setVisible(true);
+
       System.out.println("This continued");
-      return list_of_Objects;
    }
 
    @Override
+
    public void actionPerformed(ActionEvent var1) {
-      if (list.get(var1.getSource()) == GameObject.ID_BOMB) {
-         GameRules.current_game_mode = GameRules.GameModes.BOMB_CUTSCENE;
-      } else if (list.get(var1.getSource()) == GameObject.ID_COPY) {
+      if (list.get(var1.getSource()) == GameObject.ID_COPY) {
          for (ArrayList<GameObject> obj : current_map) {
             for (GameObject obj2 : obj) {
                list_of_Objects.add(obj2);
             }
          }
+
+         this.finished = true;
+         this.dialog.dispose();
+         this.dialog = null;
+         return;
+      }
+      if (list.get(var1.getSource()) == GameObject.ID_BOMB) {
+         GameRules.current_game_mode = GameRules.GameModes.BOMB_CUTSCENE;
+      }
+      for (ArrayList<GameObject> obj : GameMap.getAllObjects()) {
+         for (GameObject obj2 : obj) {
+            if (!list_of_Objects.contains(obj2) && !(obj2.getObjType() == GameObject.PLAYER
+                  || obj2.getObjId() == GameObject.ID_PERMANENT_FLOOR
+                  || obj2.getObjId() == GameObject.ID_PERMANENT_WALL
+                  || obj2.getObjId() == GameObject.ID_BUCKET)) {
+               obj2.active = false;
+            }
+         }
       }
       this.finished = true;
       this.dialog.dispose();
+      this.dialog = null;
    }
 }

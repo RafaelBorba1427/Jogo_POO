@@ -28,7 +28,7 @@ public class GameRules {
     static boolean ballGravity = true;
 
     static enum GameModes {
-        GAMELOOP, EDIT, BOMB_CUTSCENE;
+        GAMELOOP, EDIT, BOMB_CUTSCENE, CUTSCENE;
     };
 
     static GameModes current_game_mode = GameModes.GAMELOOP;

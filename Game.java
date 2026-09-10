@@ -5,6 +5,9 @@ import java.util.Queue;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.List;
+import java.util.HashSet;
 
 public class Game extends JPanel implements MouseListener, KeyListener {
   // ---------------------------------------------
@@ -15,11 +18,15 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   static boolean next_level = false; //
   GameMap game_map;
   Camera game_camera;
+  static CutsceneOverlay cut;
 
   // --------------------------------------------------------
   // render test, delete later
   // double x_pos, double y_pos, double width, double height, double rotation,
   // boolean rotatable, boolean active, int obj_type, int obj_id
+  public void setOverlay(CutsceneOverlay cut) {
+    Game.cut = cut;
+  }
 
   static BallObj pingbongBall = new BallObj(700f, 200f, 45f, 1, GameRules.DEFAULT_FRICTION, true, GameObject.ID_BALL_1,
       0.8);
@@ -83,6 +90,11 @@ public class Game extends JPanel implements MouseListener, KeyListener {
         return;
       }
       repaint();
+      if (GameRules.current_game_mode == GameRules.GameModes.CUTSCENE) {
+        game_camera.setPosition(game_map.player_spawn_position);
+        Game.pingbongBall.changeNoGravityStatus(true);
+        Game.pingbongBall.changeVelocity(0, 0);
+      }
 
       game_map.step(1); // collision and physics simulation
 
@@ -96,7 +108,7 @@ public class Game extends JPanel implements MouseListener, KeyListener {
         game_camera.follow(ball_pos.x, ball_pos.y, map_size.x, map_size.y);
       }
 
-      else if (GameRules.current_game_mode == GameRules.GameModes.EDIT) {
+      else if (GameRules.current_game_mode != GameRules.GameModes.GAMELOOP) {
         Point componentLocation = MouseInfo.getPointerInfo().getLocation();
         SwingUtilities.convertPointFromScreen(componentLocation, Main.frame);
 
@@ -104,7 +116,6 @@ public class Game extends JPanel implements MouseListener, KeyListener {
             .add(game_camera.map_position);
         game_camera.follow(xy.x, xy.y, map_size.x, map_size.y);
       }
-
     });
 
     timer.start();
@@ -200,6 +211,18 @@ public class Game extends JPanel implements MouseListener, KeyListener {
   public void mouseClicked(MouseEvent e) {
     Vector2D xy = GameMap.Pixel_to_MapUnit(new Vector2D(e.getX(), e.getY())).add(game_camera.map_position);
 
+    if (GameRules.current_game_mode == GameRules.GameModes.CUTSCENE) {
+      GameRules.current_game_mode = cut.advanceLine();
+      if (GameRules.current_game_mode == GameRules.GameModes.CUTSCENE) {
+        return;
+      }
+      if (GameRules.current_game_mode == GameRules.GameModes.EDIT) {
+        LevelRules.adition.dialog.setVisible(true);
+
+      }
+      return;
+    }
+
     if (GameRules.current_game_mode == GameRules.GameModes.BOMB_CUTSCENE) {
       System.out.println("Hi bomb");
 
@@ -235,9 +258,11 @@ public class Game extends JPanel implements MouseListener, KeyListener {
     if (GameRules.current_game_mode == GameRules.GameModes.EDIT) {
       GameRules.current_game_mode = GameRules.GameModes.GAMELOOP;
       pingbongBall.changeAcceleration(0, GameRules.GRAVITY);
-
+      return;
     }
-
+    if (LevelRules.adition.dialog != null || LevelRules.god.dialog != null) {
+      return;
+    }
     if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
       pingbongBall.velocity = xy.subtract(pingbongBall.getCenterOfMass()).multiply(0.08 * pingbongBall.inverse_mass)
           .add(pingbongBall.velocity);

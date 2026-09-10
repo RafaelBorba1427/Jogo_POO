@@ -56,26 +56,25 @@ class LevelRules {
       if (health == 0) {
          new End_of_game(frame, points);
       } else {
-
-         counter++;
          game.item_select_list = adition.dialog_init(4, 4, map);
 
-         if (counter >= level_cap) {
-            Set<GameObject> ading_to_map = new HashSet<GameObject>();
-            ading_to_map = god.dialogInit(GameMap.getAllObjects());
-            for (ArrayList<GameObject> obj : GameMap.getAllObjects()) {
-               for (GameObject obj2 : obj) {
-                  if (!ading_to_map.contains(obj2) && !(obj2.getObjType() == GameObject.PLAYER
-                        || obj2.getObjId() == GameObject.ID_PERMANENT_FLOOR
-                        || obj2.getObjId() == GameObject.ID_PERMANENT_WALL
-                        || obj2.getObjId() == GameObject.ID_BUCKET)) {
-                     obj2.active = false;
-                  }
-               }
-            }
-            counter = 0;
-
+         counter++;
+         if (Game.cut.FIRST_CUP || (Game.cut.CHANGE_LEVEL && LevelRules.counter >= LevelRules.level_cap)) {
+            if (Game.cut.FIRST_CUP)
+               Game.cut.showDialog(CutsceneOverlay.Stage.FIRST_CUP, GameRules.GameModes.EDIT);
+            else
+               Game.cut.showDialog(CutsceneOverlay.Stage.CHANGE_LEVEL, GameRules.GameModes.EDIT);
+            GameRules.current_game_mode = GameRules.GameModes.CUTSCENE;
+            Game.cut.FIRST_CUP = false;
+         } else {
+            GameRules.current_game_mode = GameRules.GameModes.EDIT;
+            adition.dialog.setVisible(true);
          }
+         if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
+            GameRules.current_game_mode = GameRules.GameModes.EDIT;
+            System.out.println("Game mode edit");
+         }
+
          if (GameRules.current_game_mode == GameRules.GameModes.GAMELOOP) {
             GameRules.current_game_mode = GameRules.GameModes.EDIT;
             System.out.println("Game mode edit");
