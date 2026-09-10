@@ -2,8 +2,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.*;
 
-import javax.imageio.ImageIO;
-
 public class SpriteLoader {
     private static final HashMap<String, BufferedImage> spritesheets = new HashMap<>();
     private static final HashMap<String, AnimationFrame[]> sprites_spliced = new HashMap<>();

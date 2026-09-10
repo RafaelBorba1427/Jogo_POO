@@ -1,47 +1,38 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.awt.image.BufferedImage;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import javax.imageio.ImageIO;
-import java.io.File;
+import java.util.Scanner;
 
 public class HealthSystem extends JPanel {
-     int max_hp;
+    private int max_hp;
     private int current_hp;
 
-    private boolean is_dead; // A bit redundant, but might be useful
-
     private ArrayList<heart> hp_sprites = new ArrayList<heart>();
+    private Vector2D scale_factor;
 
-    public HealthSystem(int max_hp, boolean is_visible) {
+    private static final int heart_spacing = 40;
+    private static final int default_height = 10;
+
+    public Signal<Boolean> desperation_mode = new Signal<>();
+    public Signal<Boolean> is_dead = new Signal<>();
+
+    public HealthSystem(int max_hp, boolean is_visible, Vector2D scale_factor) {
         this.max_hp = max_hp;
         this.current_hp = max_hp;
-        this.is_dead = false;
+        this.scale_factor = scale_factor;
         setVisible(is_visible);
         setOpaque(false);
-        setPreferredSize(new Dimension(game.rescaleX(800), game.rescaleY(100))); // Set preferred size of the panel
+        setPreferredSize(new Dimension(300, 100)); // Set preferred size of the panel
 
         for (int i = 0; i < max_hp; i++) {
-            hp_sprites.add(new heart(i * game.rescaleX(70), 10)); // Adjust position as needed
+            hp_sprites.add(new heart(i * heart_spacing, default_height, scale_factor)); // Adjust position as needed
         }
-
-        Timer animation_timer = new Timer();
-        TimerTask update_frame = new TimerTask() {
-            @Override
-            public void run() {
-                repaint();
-            }
-        };
-        animation_timer.scheduleAtFixedRate(update_frame, 0, 100); // 10 FPS
     }
 
-    public void AddMaxHearts(int hearts){
+    public synchronized void addMaxHearts(int hearts){
         
         for (int i = max_hp; i < max_hp + hearts; i++) {
-            hp_sprites.add(new heart(i * 70, 10)); // Adjust position as needed
+            hp_sprites.add(new heart(i * heart_spacing, default_height, scale_factor)); // Adjust position as needed
             hp_sprites.get(i).playDamageAnimation();
         }
         max_hp += hearts;
@@ -53,17 +44,19 @@ public class HealthSystem extends JPanel {
         if (current_hp > 0) {
             current_hp--;
 
-            hp_sprites.get(current_hp).playDamageAnimation(); // Assuming you have a method to play the damage animation
-                                                              // on the heart sprite
-            // game.soundMaster.playSound("damage");
+            hp_sprites.get(current_hp).playDamageAnimation();
+            SoundEffectPlayer.playSound("damage");
 
             if(current_hp <= max_hp / 2) {
-                // game.musicMaster.changeTrackAndPlay("gameOverworld1");
+                desperation_mode.emit(true);
+            }
+            else{
+                desperation_mode.emit(false);
             }
         }
 
         if (current_hp <= 0) {
-            this.is_dead = true;
+            is_dead.emit(true);
             return true; // Dead
         }
         return false; // Not dead
@@ -72,7 +65,15 @@ public class HealthSystem extends JPanel {
     public void heal() {
         if (current_hp < max_hp) {
             current_hp++;
-            hp_sprites.get(current_hp - 1).playDamageAnimationReverse();
+            hp_sprites.get(current_hp - 1).playHealAnimation();
+            SoundEffectPlayer.playSound("heal");
+        }
+
+        if(current_hp <= max_hp / 2) {
+                desperation_mode.emit(true);
+        }
+        else{
+            desperation_mode.emit(false);
         }
     }
 
@@ -85,156 +86,110 @@ public class HealthSystem extends JPanel {
         return max_hp;
     }
 
-    public boolean isDead() {
-        return is_dead;
+    
+    @Override
+    protected void paintComponent(Graphics g){
+        super.paintComponent(g);
+        for(heart h : hp_sprites){
+            h.paint(g);
+        }
+        repaint();
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        for (heart h : hp_sprites) {
-            h.paintHeart(g);
+    public static void main(String[] args){
+        testCase test = new testCase();
+        @SuppressWarnings("resource")
+        Scanner in = new Scanner(System.in);
+        int command;
+        while(true){
+            command = in.nextInt();
+
+            test.test(command);
         }
     }
-
-    public void setVisibile(boolean visible) {
-        this.setVisible(visible);
-    }
-
-    // TO DO
-    // For testing purposes, delete later
-    /*
-     * public static void main(String[] args) {
-     * JFrame frame = new JFrame("Health System Test");
-     * frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-     * frame.setSize(1000, 1000);
-     * HealthSystem health = new HealthSystem(5, true);
-     * frame.add(health);
-     * 
-     * HealthSystemTest test = new HealthSystemTest();
-     * frame.addKeyListener(test);
-     * 
-     * frame.setVisible(true);
-     * frame.setFocusable(true);
-     * 
-     * while (true) {
-     * if (test.input == 'a') {
-     * health.takeDamageAndCheckDeath();
-     * } else if (test.input == 'd') {
-     * health.heal();
-     * <<<<<<< HEAD
-     * }
-     * else if(test.input == 'q'){
-     * health.setVisible(false);
-     * System.out.println("Health system hidden!"); // Debugging output
-     * }
-     * else if(test.input == 'e'){
-     * health.setVisible(true);
-     * =======
-     * } else if (test.input == 'q') {
-     * health.setVisibile(false);
-     * System.out.println("Health system hidden!"); // Debugging output
-     * } else if (test.input == 'e') {
-     * health.setVisibile(true);
-     * >>>>>>> guiEndCycle
-     * System.out.println("Health system shown!"); // Debugging output
-     * }
-     * 
-     * test.input = '\0'; // Reset input after processing
-     * 
-     * System.out.println("Current HP: " + health.getCurrentHp() + "/" +
-     * health.getMaxHp() + " | Is Dead: "
-     * + health.isDead()); // Debugging output
-     * }
-     * }
-     */
 }
 
 class heart {
-    private BufferedImage heart_spritesheet;
-    private BufferedImage[] take_damage_animation = new BufferedImage[5]; // Assuming 5 frames for the damage animation
+    private AnimationPlayer animation_player;
 
-    int pos_x = 0; // Position of the heart sprite, can be set as needed
-    int pos_y = 0;
+    private int pos_x = 0; // Position of the heart sprite, can be set as needed
+    private int pos_y = 0;
 
-    private int current_frame = 0;
+    private Vector2D scale_factor;
 
-    private boolean play_damage_animation = false;
-    private boolean play_damage_animation_reverse = false;
+    private static final String key = "heart";
+    private static final String path = "spritesheet/heart.png";
+    private static final int sprite_width = 16;
+    private static final int sprite_height = 16;
+    private static final int row = 0;
+    private static final int frames = 5;
+    private static final int fps = 5;
 
-    public heart(int x, int y) {
+    public heart(int x, int y, Vector2D scale_factor) {
         this.pos_x = x;
         this.pos_y = y;
+        this.scale_factor = scale_factor;
 
-        try {
-            heart_spritesheet = ImageIO.read(new File("spritesheet/heart.png"));
-        } catch (Exception e) {
-            e.printStackTrace();
+        try{
+            animation_player = new AnimationPlayer(key, path, sprite_width, sprite_height, row, frames, fps, false, true);
         }
-
-        for (int i = 0; i < 5; i++) {
-            take_damage_animation[i] = heart_spritesheet.getSubimage(i * 16, 0, 16, 16);
+        catch(Exception e){
+            System.out.println("Error loading heart animation: " + e.getMessage());
         }
     }
+
 
     public void playDamageAnimation() {
-        play_damage_animation = true;
+        animation_player.reverseAnimation(false);
+        animation_player.play();
+    }
+    public void playHealAnimation() {
+        animation_player.reverseAnimation(true);
+        animation_player.play();
     }
 
-    public void playDamageAnimationReverse() {
-        play_damage_animation_reverse = true;
-    }
 
-    public void paintHeart(Graphics g) {
-        g.drawImage(take_damage_animation[current_frame], pos_x, pos_y, game.rescaleX(64), game.rescaleY(64), null);
-        if (play_damage_animation) {
-            if (current_frame >= take_damage_animation.length - 1) {
-                play_damage_animation = false;
-                return;
-            }
-            current_frame++;
-        } else if (play_damage_animation_reverse) {
-            if (current_frame <= 0) {
-                play_damage_animation_reverse = false;
-                return;
-            }
-            current_frame--;
-        }
+    public void paint(Graphics g) {
+        animation_player.paint((Graphics2D)g, pos_x, pos_y, scale_factor, 0.0);
     }
 }
 
-// TO DO
-// Delete later
-/*
- * class HealthSystemTest implements KeyListener {
- * public char input;
- * 
- * public void keyPressed(KeyEvent e) {
- * if (e.getKeyChar() == 'a') {
- * input = 'a';
- * System.out.println("Damage taken!"); // Debugging output
- * }
- * if (e.getKeyChar() == 'd') {
- * input = 'd';
- * System.out.println("Healed!"); // Debugging output
- * }
- * if (e.getKeyChar() == 'q') {
- * input = 'q';
- * System.out.println("Health system will be hidden!"); // Debugging output
- * }
- * if (e.getKeyChar() == 'e') {
- * input = 'e';
- * System.out.println("Health system will be shown!"); // Debugging output
- * }
- * }
- * 
- * public void keyReleased(KeyEvent e) {
- * // Not needed for this test
- * }
- * 
- * public void keyTyped(KeyEvent e) {
- * // Not needed for this test
- * }
- * }
- * <<<<<<< HEAD
- */
+
+// Class for tests, may delete later
+class testCase extends JFrame{
+    private HealthSystem health_system;
+
+    public void test(int command)
+    {
+        if(command == 1){
+            health_system.takeDamageAndCheckDeath();
+        }
+        else if(command == 2){
+            health_system.heal();
+        }
+        else if(command == 3){
+            health_system.addMaxHearts(1);
+        }
+    }
+    public testCase(){
+        super("test");
+        health_system = new HealthSystem(5, true, new Vector2D(32, 32));
+        health_system.setVisible(true);
+        add(health_system);
+        setVisible(true);
+        pack();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        SoundEffectPlayer.initialiseSoundEffectPlayer();
+
+        health_system.desperation_mode.connect(this::desperation);
+    }
+
+    public void desperation(boolean d){
+        if(d){
+            System.out.println("Desperation!!!");
+        }
+        else{
+            System.out.println("Phew!");
+        }
+    }
+}

@@ -128,7 +128,8 @@ public class MusicPlayer {
 
         MusicPlayer.setTrackAndPlay("menu"); // Play the initial music
         
-        
+        // Errors annoy me, should probably remove this later
+        @SuppressWarnings("resource")
         Scanner in = new Scanner(System.in);
         while(true) {
             int a = Integer.parseInt(in.nextLine()); // Wait for user input to change the track

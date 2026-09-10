@@ -20,7 +20,7 @@ public class animationPlayerTest {
         protected void paintComponent(Graphics g) {
           super.paintComponent(g);
           Graphics2D g2d = (Graphics2D) g;
-          animation_player.paint(g2d, 100, 100, new Vector2D(16, 16), rotation); // Draw the animation at (100, 100)
+          animation_player.paint(g2d, 100, 100, new Vector2D(128, 128), rotation); // Draw the animation at (100, 100)
 
           repaint();
         }

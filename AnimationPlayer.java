@@ -4,7 +4,8 @@ import java.awt.*;
 public class AnimationPlayer {
   private static final ArrayList<AnimationPlayer> animation_players = new ArrayList<>();
 
-  private static int default_fps = 60;
+  private static final int default_fps = 60;
+  private static boolean animation_player_initialised = false;
 
   private String animation_key;
 
@@ -13,6 +14,12 @@ public class AnimationPlayer {
 
   private int current_frame;
   private int current_frame_time;
+
+  // Settings
+  private boolean loop = true;
+  private boolean play_reversed = false;
+  private boolean is_unique = false; // If true, this animation player will not sync with other animations of the same type
+  private boolean play = false; // If true, the animation will play, otherwise it will pause
 
   private static Vector2D render_rescale_factor = new Vector2D(1, 1);
 
@@ -26,6 +33,9 @@ public class AnimationPlayer {
   // Due to variance in sprite storing method, this class expects the sprites to
   // already be coverted into an array beforehand
   public AnimationPlayer(String animation_key, int fps) throws Exception {
+    if(animation_player_initialised == false){
+      AnimationPlayer.initializeAnimationPlayerTimer();
+    }
     if (SpriteLoader.getSplicedSprites(animation_key) == null) {
       throw new Exception("AnimationPlayer: No sprites found for animation key " + animation_key);
     }
@@ -43,12 +53,17 @@ public class AnimationPlayer {
     });
   }
 
+
   // Optimised constructor that loads the spritesheet and creates an animation
   // player in one step
   // Kept the old one for compatibility with existing code, but this one is
   // preferred
   public AnimationPlayer(String animation_key, String image_path, int sprite_width, int sprite_height,
       int sprite_row_index, int num_sprites, int fps) throws Exception {
+    
+    if(animation_player_initialised == false){
+      AnimationPlayer.initializeAnimationPlayerTimer();
+    }
 
     SpriteLoader.loadSpritesheet(animation_key, image_path, sprite_width, sprite_height, num_sprites, sprite_row_index);
     if (SpriteLoader.getSplicedSprites(animation_key) == null) {
@@ -58,15 +73,28 @@ public class AnimationPlayer {
     this.last_frame = SpriteLoader.getSplicedSprites(animation_key).length - 1;
     this.fps = fps;
 
-    syncToAnimationType(); // Sync the current frame with other animations of the same type, if there are
-                           // any
+    if(is_unique == false){
+      syncToAnimationType(); // Sync the current frame with other animations of the same type, if there are any
+    }
 
     animation_players.add(this);
 
     update_animations.connect((Boolean value) -> {
-      update(value);
-    });
+        update(value);
+      }
+    );
   }
+
+
+  // Yet another constructor that allows for more settings
+  // Again, kept the old ones for compatibility, but this one is preferred
+  public AnimationPlayer(String animation_key, String image_path, int sprite_width, int sprite_height,
+      int sprite_row_index, int num_sprites, int fps, boolean loop, boolean is_unique) throws Exception {
+    this(animation_key, image_path, sprite_width, sprite_height, sprite_row_index, num_sprites, fps);
+    this.loop = loop;
+    this.is_unique = is_unique;
+  }
+
 
   // The timer is shared between all animations, so it must be initialised
   // statically
@@ -79,25 +107,67 @@ public class AnimationPlayer {
     animation_timer.start();
   }
 
+
+  // No idea why this is here, but it breaks things so into the try/catch it goes~
   private static void updateRenderRescaleFactors() {
-    Vector2D current_dim = new Vector2D(Main.frame.getSize());
-    render_rescale_factor.setSize(current_dim.x / Main.DEFAULT_RESOLUTION.width,
-        current_dim.y / Main.DEFAULT_RESOLUTION.height);
+    try{
+      Vector2D current_dim = new Vector2D(Main.frame.getSize());
+      render_rescale_factor.setSize(current_dim.x / Main.DEFAULT_RESOLUTION.width,
+      current_dim.y / Main.DEFAULT_RESOLUTION.height);
+    }
+    catch(Exception e){
+      return;
+    }
   }
+
+
+  public void reverseAnimation(boolean reverse){
+    this.play_reversed = reverse;
+  }
+
 
   // Updates the current frame of the animation
   // The boolean parameter is not used, but is required for the Signal connection
   public void update(Boolean value) {
-    current_frame_time++;
-    if (default_fps / current_frame_time <= fps) {
-      current_frame++;
-      current_frame_time = 0;
+    if (!play) {
+      return;
     }
 
-    if (current_frame >= last_frame) {
-      current_frame = 0;
+    if(play_reversed){
+      current_frame_time--;
+
+      if (current_frame_time <= 0) {
+        current_frame_time = default_fps / fps;
+        current_frame--;
+
+        if (current_frame < 0) {
+          if (loop) {
+            current_frame = last_frame;
+          } else {
+            current_frame = 0;
+            play = false; // Stop the animation if it reaches the end and is not looping
+          }
+        }
+      }
+    }
+    else{
+      current_frame_time++;
+      if (current_frame_time >= default_fps / fps) {
+        current_frame_time = 0;
+        current_frame++;
+
+        if (current_frame > last_frame) {
+          if (loop) {
+            current_frame = 0;
+          } else {
+            current_frame = last_frame;
+            play = false; // Stop the animation if it reaches the end and is not looping
+          }
+        }
+      }
     }
   }
+
 
   // Synchronizes the current frame of this animation master with another
   // animation master that has the same animation key
@@ -110,10 +180,10 @@ public class AnimationPlayer {
         return;
       }
     }
-    current_frame = 0; // If no other animation master with the same key is found, start from the first
-                       // frame
+    current_frame = 0; // If no other animation master with the same key is found, start from the first frame
     return;
   }
+
 
   // Should be called inside of paint components to draw the current frame of the
   // animation at the specified x and y coordinates
@@ -140,4 +210,9 @@ public class AnimationPlayer {
     g2d.dispose();
   }
 
+
+  // Now that animations arent always loops, this function is necessary
+  public void play() {
+    play = true;
+  }
 }

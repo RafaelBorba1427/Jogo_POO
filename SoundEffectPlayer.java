@@ -26,6 +26,7 @@ public class SoundEffectPlayer {
 
         soundFilePaths.put("goal", "sounds/sfx/400 Sounds Pack/Musical Effects/8_bit_level_start.wav");
         soundFilePaths.put("damage", "sounds/sfx/400 Sounds Pack/Retro/lose.wav");
+        soundFilePaths.put("heal", "sounds/sfx/SweetSounds_SFX/WAV/Notso_Confirm.wav");
         soundFilePaths.put("napkin", "sounds/sfx/400 Sounds Pack/Other/paste.wav");
 
         soundFilePaths.put("buff0", "sounds/sfx/400 Sounds Pack/Retro/power_up.wav");
@@ -144,10 +145,12 @@ public class SoundEffectPlayer {
     }
 
 
-    /*
     // Example usage, delete later
     public static void main(String[] args) {
         SoundEffectPlayer.initialiseSoundEffectPlayer(); // Initialize the sound effect player
+
+        // Errors annoy me, should probably remove this later
+        @SuppressWarnings("resource")
         Scanner in = new Scanner(System.in);
 
         while(true) {
@@ -162,11 +165,13 @@ public class SoundEffectPlayer {
             else if(a == 3) {
                 SoundEffectPlayer.playDebuffSound(); // Play a random debuff sound
             }
+            else if(a == 4){
+                SoundEffectPlayer.playSound("damage");
+            }
             else{
-                break; // Exit the loop if the input is not recognized
+                break;
             }
         }
 
     }
-    */
 }
