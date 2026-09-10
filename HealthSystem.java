@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Scanner;
+// import java.util.Scanner;
 
 public class HealthSystem extends JPanel {
     private int max_hp;
@@ -86,7 +86,7 @@ public class HealthSystem extends JPanel {
         return max_hp;
     }
 
-    
+
     @Override
     protected void paintComponent(Graphics g){
         super.paintComponent(g);
@@ -95,7 +95,7 @@ public class HealthSystem extends JPanel {
         }
         repaint();
     }
-
+    /* 
     public static void main(String[] args){
         testCase test = new testCase();
         @SuppressWarnings("resource")
@@ -107,6 +107,7 @@ public class HealthSystem extends JPanel {
             test.test(command);
         }
     }
+    */
 }
 
 class heart {
@@ -154,7 +155,7 @@ class heart {
     }
 }
 
-
+/*
 // Class for tests, may delete later
 class testCase extends JFrame{
     private HealthSystem health_system;
@@ -193,3 +194,4 @@ class testCase extends JFrame{
         }
     }
 }
+*/
