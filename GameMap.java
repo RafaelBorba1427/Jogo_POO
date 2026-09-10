@@ -173,11 +173,41 @@ public class GameMap {
     // Passo de fisica
     // --------------------------
 
+    // Guarda de reentrancia.
+    //
+    // O LevelRules abre JDialogs MODAIS (Adding_to_Map, Item_Select) de dentro
+    // do nextLevel, que por sua vez e chamado daqui. Um dialogo modal no EDT
+    // sobe um laco de eventos aninhado, e o Timer de 16ms do Game continua
+    // disparando dentro dele: sem esta guarda, step() reentra enquanto a
+    // chamada de fora ainda esta parada no dialogo, e a fisica avanca por tras
+    // da janela (a bola cai, perde vida, muda de nivel de novo).
+
+    private boolean stepping = false;
+
     // Avanca a simulacao em dt unidades de tempo.
     // dt = 1.0 default
     public void step(double dt) {
+        if (stepping)
+            return;
+        stepping = true;
+        try {
+            stepInternal(dt);
+        } finally {
+            stepping = false;
+        }
+    }
+
+    private void stepInternal(double dt) {
+
+        // Buffs: um tick do BuffSystem ANTES da integracao.
+        BuffSystem.update(Game.pingbongBall);
 
         step(dt, DEFAULT_SUBSTEPS, DEFAULT_SOLVER_ITERATIONS);
+
+        // Colisao do jogador com objetos de buff, depois das posicoes finais
+        // do tick ja estarem escritas.
+        checkPlayerBuffCollisions();
+
         // Gera o Popup
         if (next_level) {
             LevelRules.nextLevel(this);
@@ -197,30 +227,57 @@ public class GameMap {
             // GameRules.current_game_mode = GameRules.GameModes.EDIT;
 
         }
-        if (GameRules.current_game_mode == GameRules.GameModes.BOMB_CUTSCENE) {
-            if (LevelRules.bombCounter >= LevelRules.bomticks) {
-                for (GameObject candidate : LevelRules.explode) {
-                    System.out.println("Exploded");
-                    if (candidate.getObjId() != GameObject.ID_PERMANENT_FLOOR
-                            && candidate.getObjId() != GameObject.ID_PERMANENT_WALL
-                            && candidate.getObjId() != GameObject.PLAYER) {
-                        candidate.active = false;
-                    }
+        updateBomb();
+    }
 
-                }
+    // --------------------------
+    // Bomba do Frat God
+    // --------------------------
 
-                LevelRules.bombCounter = 0;
-                LevelRules.bomb_away = false;
-                GameRules.current_game_mode = GameRules.GameModes.EDIT;
-                LevelRules.explode.clear();
-                LevelRules.bomb = null;
-                return;
-            }
-            if (LevelRules.bomb != null) {
-                LevelRules.bombCounter++;
-            }
+    private void updateBomb() {
+        if (LevelRules.bomb == null)
+            return;
+
+        if (LevelRules.bomb.tick())
+            detonateBomb(LevelRules.bomb);
+
+        if (LevelRules.bomb.isFinished()) {
+            GameObject.deactivate(LevelRules.bomb);
+            LevelRules.bomb = null;
+            GameRules.current_game_mode = GameRules.GameModes.EDIT;
         }
-        LevelRules.explode.clear();
+    }
+
+    // Desativa tudo dentro do raio, menos a estrutura do mapa e o jogador.
+    private void detonateBomb(BombObj bomb) {
+        Vector2D center = bomb.getCenterOfMass();
+        double radius = bomb.getBlastRadius();
+
+        buildBroadPhase();
+        List<GameObject> candidates = collision_detection.query(
+                new AABB(center.x - radius, center.y - radius, center.x + radius, center.y + radius));
+
+        for (GameObject candidate : candidates) {
+            if (candidate == bomb || !candidate.isActive() || candidate.getHitBox() == null)
+                continue;
+            if (permanent_objects.contains(candidate))
+                continue;
+            if (candidate.getObjType() == GameObject.PLAYER)
+                continue;
+            if (!circleIntersectsAABB(center, radius, candidate.getHitBox().getAABB()))
+                continue;
+
+            candidate.active = false;
+        }
+    }
+
+    // A QuadTree devolve uma caixa; isto recorta o circulo de verdade dentro dela.
+    private static boolean circleIntersectsAABB(Vector2D center, double radius, AABB box) {
+        double closest_x = Math.max(box.min_pos.x, Math.min(center.x, box.max_pos.x));
+        double closest_y = Math.max(box.min_pos.y, Math.min(center.y, box.max_pos.y));
+        double dx = center.x - closest_x;
+        double dy = center.y - closest_y;
+        return dx * dx + dy * dy <= radius * radius;
     }
 
     // Ordem do passo:
@@ -290,6 +347,49 @@ public class GameMap {
     }
 
     // --------------------------
+    // Gatilhos do jogador (buffs)
+    // --------------------------
+
+    // Procura o corpo marcado com GameObject.PLAYER entre os objetos moveis.
+    // A tag PLAYER e colocada por GameObject.setPlayer(), que troca o obj_type
+    // DEPOIS do objeto ja ter sido inserido em moving_objects como BALL_OBJ,
+    // entao e aqui que ele continua estando.
+    private GameObject findPlayer() {
+        for (GameObject obj : moving_objects) {
+            if (obj.isActive() && obj.getObjType() == GameObject.PLAYER)
+                return obj;
+        }
+        return null;
+    }
+
+    // Colisao entre o jogador e objetos de buff.
+    // A QuadTree e reconstruida antes da consulta porque o ultimo
+    // buildBroadPhase() do passo aconteceu ANTES do integrateVelocity final,
+    // entao as caixas guardadas la estao um substep atrasadas.
+    private void checkPlayerBuffCollisions() {
+        GameObject player = findPlayer();
+        if (player == null || player.getHitBox() == null)
+            return;
+
+        buildBroadPhase();
+
+        List<GameObject> candidates = collision_detection.query(player.getHitBox().getAABB());
+
+        for (GameObject candidate : candidates) {
+            if (candidate == player || !candidate.isActive())
+                continue;
+            if (candidate.getObjType() != GameObject.BUFF_OBJ)
+                continue;
+            if (!player.collides(candidate))
+                continue;
+
+            // Aplica o buff, pontua, toca o som e desativa o objeto.
+            // O deleteInactiveObjs() do proximo passo remove ele da lista.
+            BuffSystem.pickUpBuff(candidate);
+        }
+    }
+
+    // --------------------------
     // Broad phase
     // --------------------------
 
@@ -324,25 +424,12 @@ public class GameMap {
         for (GameObject moving : moving_objects) {
             if (!moving.isActive())
                 continue;
-            List<GameObject> candidates, candidates_bomb;
-            if (moving == LevelRules.bomb) {
-
-                AABB bounds = new AABB(LevelRules.bomb.getHitBox().getAABB().min_pos.x - LevelRules.bomradius,
-                        LevelRules.bomb.getHitBox().getAABB().min_pos.y - LevelRules.bomradius,
-                        LevelRules.bomb.getHitBox().getAABB().max_pos.x + LevelRules.bomradius,
-                        LevelRules.bomb.getHitBox().getAABB().max_pos.y + LevelRules.bomradius);
-                LevelRules.explode = collision_detection.query(bounds);
-
-            }
-            candidates = collision_detection.query(moving.getHitBox().getAABB());
+            List<GameObject> candidates = collision_detection.query(moving.getHitBox().getAABB());
 
             for (GameObject candidate : candidates) {
 
                 if (candidate == moving || !candidate.isActive())
                     continue;
-                if (moving == LevelRules.bomb) {
-                    LevelRules.explode.add(candidate);
-                }
                 // Dois objetos moveis aparecem duas vezes nessa varredura
                 // (um encontra o outro nas duas direcoes).
                 long key = pairKey(moving, candidate);
@@ -355,6 +442,31 @@ public class GameMap {
                 // trocado. O uid da essa ordem estavel.
                 GameObject body_a = (moving.getUid() <= candidate.getUid()) ? moving : candidate;
                 GameObject body_b = (body_a == moving) ? candidate : moving;
+
+                // Bomba ja detonada: so animacao, nao colide com nada.
+                if (isSpentBomb(body_a) || isSpentBomb(body_b))
+                    continue;
+
+                // ---------------------------------------------------------------------------------
+                // Buff INTANGIBLE
+                //
+                // O jogador atravessa obstaculos, mas NAO a estrutura do mapa
+                // (paredes, chao e teto), senao ele cai para fora do mundo.
+                // ---------------------------------------------------------------------------------
+                if (BuffSystem.isIntangible()) {
+                    boolean a_is_player = body_a.getObjType() == GameObject.PLAYER;
+                    boolean b_is_player = body_b.getObjType() == GameObject.PLAYER;
+
+                    if (a_is_player || b_is_player) {
+                        GameObject other = a_is_player ? body_b : body_a;
+                        boolean other_is_solid_boundary = permanent_objects.contains(other);
+                        boolean other_is_trigger = other.getObjType() == GameObject.EVENT_TRIGGER_OBJ
+                                || other.getObjType() == GameObject.BUFF_OBJ;
+
+                        if (!other_is_trigger && !other_is_solid_boundary)
+                            continue;
+                    }
+                }
 
                 CollisionManifold manifold = CollisionManifold.generate(body_a, body_b);
                 if (manifold == null)
@@ -410,9 +522,9 @@ public class GameMap {
                         SoundEffectPlayer.playBounceSound();
                         last_collided = other_object;
 
+                        
                         if (delta_time.get() >= 20) {
-                            PointCounter.addPoints(1);
-                            System.out.println("Points: " + PointCounter.getPoints());
+                            PointSystem.addPotentialPoints(other_object);
                         }
                     }
                 } else {
@@ -428,6 +540,10 @@ public class GameMap {
         }
 
         manifold_cache = new_cache;
+    }
+
+    private static boolean isSpentBomb(GameObject obj) {
+        return obj instanceof BombObj && ((BombObj) obj).hasExploded();
     }
 
     // Chave simetrica do par, montada a partir dos uids.
@@ -448,6 +564,12 @@ public class GameMap {
         return moving_objects;
     }
 
+    // Objetos que fazem parte da estrutura do mapa (paredes, chao, teto,
+    // balde) e nunca devem ser removidos por limpeza de nivel.
+    public ArrayList<GameObject> getPermanentObjects() {
+        return permanent_objects;
+    }
+
     // Manifolds resolvidos no ultimo passo. Util para depuracao: da para
     // desenhar os pontos de contato e as normais por cima da cena.
     public List<CollisionManifold> getActiveManifolds() {
@@ -456,6 +578,12 @@ public class GameMap {
 
     public Vector2D getPlayerSpawn() {
         return new Vector2D(player_spawn_position);
+    }
+
+    // O balde do mapa. Usado pelo LevelRules para pontuar o gol uma unica vez
+    // por nivel, em vez de uma vez por substep de fisica.
+    public GameObject getBucket() {
+        return bucket;
     }
 
     public Vector2D getMapSize() {

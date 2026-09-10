@@ -1,29 +1,41 @@
+
+@Deprecated
 public class PointCounter {
-  private static int points;
-  private static int target_points;
-  public static final Signal<Boolean> reached_target_points = new Signal<>();
 
+  /** @deprecated use {@link PointSystem#reached_target_points} */
+  @Deprecated
+  public static final Signal<Boolean> reached_target_points = PointSystem.reached_target_points;
+
+  private PointCounter() {
+  }
+
+  /** @deprecated use {@link PointSystem#addPoints(int)} */
+  @Deprecated
   public static void addPoints(int points) {
-    PointCounter.points += points;
-    if (PointCounter.points >= PointCounter.target_points) {
-      reached_target_points.emit(true);
-    }
+    PointSystem.addPoints(points);
   }
 
+  /** @deprecated use {@link PointSystem#getPoints()} */
+  @Deprecated
   public static int getPoints() {
-    return PointCounter.points;
+    return (int) PointSystem.getDisplayPoints();
   }
 
+  /** @deprecated use {@link PointSystem#setPoints(long)} */
+  @Deprecated
   public static void setPoints(int points) {
-    PointCounter.points = points;
+    PointSystem.setPoints(points);
   }
 
-
+  /** @deprecated use {@link PointSystem#setTargetPoints(long)} */
+  @Deprecated
   public static void setTargetPoints(int target_points) {
-    PointCounter.target_points = target_points;
+    PointSystem.setTargetPoints(target_points);
   }
 
+  /** @deprecated use {@link PointSystem#getTargetPoints()} */
+  @Deprecated
   public static int getTargetPoints() {
-    return PointCounter.target_points;
+    return (int) PointSystem.getTargetPoints();
   }
 }

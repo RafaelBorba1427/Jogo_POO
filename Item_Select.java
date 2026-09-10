@@ -27,6 +27,7 @@ class Item_Select implements ActionListener {
    Map<JButton, Integer> list = new HashMap<JButton, Integer>();
    Set<GameObject> list_of_Objects = new HashSet<GameObject>();
    ArrayList<ArrayList<GameObject>> current_map = new ArrayList<ArrayList<GameObject>>();
+   public HealthSystem current_healthSystem = null;
 
    Item_Select(JFrame var1) {
       this.frame = var1;
@@ -145,6 +146,7 @@ class Item_Select implements ActionListener {
             }
          }
 
+
          this.finished = true;
          this.dialog.dispose();
          this.dialog = null;
@@ -153,16 +155,18 @@ class Item_Select implements ActionListener {
       if (list.get(var1.getSource()) == GameObject.ID_BOMB) {
          GameRules.current_game_mode = GameRules.GameModes.BOMB_CUTSCENE;
       }
-      for (ArrayList<GameObject> obj : GameMap.getAllObjects()) {
-         for (GameObject obj2 : obj) {
-            if (!list_of_Objects.contains(obj2) && !(obj2.getObjType() == GameObject.PLAYER
-                  || obj2.getObjId() == GameObject.ID_PERMANENT_FLOOR
-                  || obj2.getObjId() == GameObject.ID_PERMANENT_WALL
-                  || obj2.getObjId() == GameObject.ID_BUCKET)) {
-               obj2.active = false;
-            }
-         }
+
+      else if(list.get(var1.getSource()) == GameObject.ID_VILE){
+         current_healthSystem.resetToFull();
+      }else if(list.get(var1.getSource()) == GameObject.ID_BANDAID){
+         current_healthSystem.heal();
       }
+
+      // A lista por id nao incluia ID_INVISIBLE_OBJ, entao o teto do mapa era
+      // desativado aqui. wipeObjectsNotKept pula a lista de permanentes inteira.
+      LevelRules.wipeObjectsNotKept(LevelRules.game.game_map, list_of_Objects);
+
+
       this.finished = true;
       this.dialog.dispose();
       this.dialog = null;

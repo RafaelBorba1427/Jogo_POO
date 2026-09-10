@@ -58,17 +58,34 @@ public class MusicPlayer {
             System.err.println("Music file not found for key: " + music);
             return;
         }
+
+        // Guardas adicionadas na refatoracao. Antes, se AudioSystem.getClip()
+        // tivesse falhado no init (maquina sem placa de som, driver ocupado) o
+        // clip ficava nulo e a primeira troca de faixa derrubava a tela inteira
+        // com NullPointerException. O mesmo valia para getResource() devolvendo
+        // null quando o .wav nao esta no classpath. O jogo agora segue mudo em
+        // vez de morrer.
+        if (clip == null) {
+            System.err.println("MusicPlayer: nenhum clip de audio disponivel, seguindo sem musica.");
+            return;
+        }
+
+        java.net.URL music_url = MusicPlayer.class.getResource(musicFilePath);
+        if (music_url == null) {
+            System.err.println("MusicPlayer: arquivo nao encontrado no classpath: " + musicFilePath);
+            return;
+        }
+
         try {
             // Load the music file
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(MusicPlayer.class.getResource(musicFilePath));
-            
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(music_url);
+
             clip.stop(); // Stop the current music if any
             clip.close(); // Close the current clip to release resources
 
             clip.open(audioInputStream);
 
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(20f * (float) Math.log10(volume));
+            applyGain((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN), volume);
 
             if(!isLooping){
                 clip.start();
@@ -106,12 +123,43 @@ public class MusicPlayer {
     }
 
 
-    public static void updateVolume(float volume) {
-        MusicPlayer.volume = volume; // Update the volume variable
-        if (clip != null) {
-            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-            gainControl.setValue(20f * (float) Math.log10(volume));
+    public static void updateVolume(float new_volume) {
+        MusicPlayer.volume = clampVolume(new_volume);
+        if (clip != null && clip.isControlSupported(FloatControl.Type.MASTER_GAIN)) {
+            applyGain((FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN), MusicPlayer.volume);
         }
+    }
+
+    public static float getVolume() {
+        return volume;
+    }
+
+    // Volume linear (0.0 a 1.0) limitado ao intervalo valido.
+    static float clampVolume(float value) {
+        if (value < 0f) return 0f;
+        if (value > 1f) return 1f;
+        return value;
+    }
+
+    // Converte volume linear em decibeis e aplica no controle, respeitando os
+    // limites que a placa de som declara.
+    //
+    // Antes era "gainControl.setValue(20f * log10(volume))" direto. Com
+    // volume 0 isso da -Infinity, e FloatControl.setValue(-Infinity) lanca
+    // IllegalArgumentException -- ou seja, o slider de volume no zero (mudo,
+    // o valor que mais se usa) derrubava o som inteiro. Fora do intervalo do
+    // controle o erro e o mesmo.
+    static void applyGain(FloatControl control, float linear_volume) {
+        if (control == null) return;
+
+        float decibels = (linear_volume <= 0.0001f)
+                ? control.getMinimum()
+                : (float) (20.0 * Math.log10(linear_volume));
+
+        if (decibels < control.getMinimum()) decibels = control.getMinimum();
+        if (decibels > control.getMaximum()) decibels = control.getMaximum();
+
+        control.setValue(decibels);
     }
 
 

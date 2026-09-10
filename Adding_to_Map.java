@@ -1,6 +1,3 @@
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
@@ -10,8 +7,6 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.ArrayList;
 import java.util.Queue;
 import java.util.ArrayDeque;
@@ -79,18 +74,20 @@ class Adding_to_Map implements ActionListener {
                Graphics2D g2d = (Graphics2D) g;
                animate.paint(g2d, 0, 0, new Vector2D(this.getWidth(),
                      this.getHeight()), 0.0);
-
+               
             }
          };
 
-         local.setBounds(10, 80, (int) GameRules.sizes.get(GameObject.ID_PLATFORM).x,
+         local.setBounds(130, 120, (int) GameRules.sizes.get(GameObject.ID_PLATFORM).x,
                (int) GameRules.sizes.get(GameObject.ID_PLATFORM).y);
          local.addActionListener(this);
          this.list.put(local, GameObject.ID_PLATFORM);
          this.panel.add(local);
+
       } catch (Exception e) {
          System.out.println("Animation error");
       }
+
       for (int i = 1; i < numero; i++) {
          int aux;
          // TODO:: change ID for correct ID
@@ -109,7 +106,7 @@ class Adding_to_Map implements ActionListener {
             local = new JButton() {
 
                {
-                  setBounds(10 + xOffset * 70, 80, 60, 60);
+                  setBounds(130 + xOffset * 70, 120, 60, 60);
                   setContentAreaFilled(false);
                   setBorderPainted(false);
                   setFocusPainted(false);
@@ -138,25 +135,15 @@ class Adding_to_Map implements ActionListener {
 
       }
 
-      // Dispose any previously open item-choice dialog to avoid leaking windows
-      if (this.dialog != null) {
-         this.dialog.dispose();
-      }
-
-      this.dialog = new JDialog(this.frame, "Choose Your Item", false); // non-modal
-
-      this.panel.setOpaque(false); // required so the panel doesn't paint over the transparent window
-
+      this.dialog = new JDialog(this.frame, "Choose Your Item", true);
       this.dialog.setUndecorated(true);
       this.dialog.setBackground(new Color(0, 0, 0, 0));
       this.dialog.setAlwaysOnTop(false);
-      this.dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE); // 2 == DISPOSE_ON_CLOSE, but use the
-                                                                              // constant for clarity
-      this.dialog.setSize(300, 200);
+      this.dialog.setDefaultCloseOperation(2);
+      this.dialog.setSize(500, 350);
       this.dialog.setLocationRelativeTo(this.frame);
       this.dialog.setContentPane(this.panel);
       this.dialog.setVisible(false);
-
       return objects;
    }
 

@@ -55,9 +55,6 @@ public class CutsceneOverlay extends JPanel {
     try {
       images.add(ImageIO.read(new File("spritesheet/HelloNarator.png")));
       images.add(ImageIO.read(new File("spritesheet/top_left.png")));
-      images.add(ImageIO.read(new File("spritesheet/top_right.png")));
-      images.add(ImageIO.read(new File("spritesheet/bottom_left.png")));
-      images.add(ImageIO.read(new File("spritesheet/bottom_right.png")));
 
     } catch (Exception e) {
       System.out.println(e);
@@ -72,7 +69,9 @@ public class CutsceneOverlay extends JPanel {
       return next;
     }
     dialogText = talks.get(moment);
-    spriteImage = images.get((int) (Math.random() * 2));
+    // Sao 5 poses carregadas; o sorteio antigo (* 2) so alcancava as duas primeiras.
+    if (!images.isEmpty())
+      spriteImage = images.get((int) (Math.random() * images.size()));
     moment++;
     repaint();
     return GameRules.GameModes.CUTSCENE;
@@ -84,8 +83,9 @@ public class CutsceneOverlay extends JPanel {
     final_moment = maxiStagetoIndex.get(stage);
     visible = true;
     GameRules.current_game_mode = GameRules.GameModes.CUTSCENE;
-    advanceLine();
+    // next precisa estar gravado antes: advanceLine() pode devolve-lo na hora.
     this.next = next;
+    advanceLine();
   }
 
   private void drawWrappedText(Graphics2D g2, String text, int x, int y, int maxWidth, int lineHeight, int maxLines) {

@@ -4,13 +4,7 @@ import java.awt.Graphics2D;
 // ------------------------------------------------------------
 // BallObj
 //
-// Corpo movel de hitbox circular.
-//
-// Convencao de tamanho: dimensions.x guarda o DIAMETRO. O desenho ja usava
-// dimensions.x como diametro (fillOval recebe largura, nao raio), mas a
-// hitbox e o momento de inercia tratavam o mesmo numero como raio. O circulo
-// fisico ficava com o dobro do tamanho do circulo desenhado e centrado no
-// canto superior esquerdo dele. Agora tudo usa a mesma convencao.
+// any type of ball
 // ------------------------------------------------------------
 public class BallObj extends MovableObj {
     // global quantifiers
@@ -21,7 +15,7 @@ public class BallObj extends MovableObj {
     // Obj inherited methods
     // ------------------------------------------------------------
 
-    // diameter: largura total da bola, igual a que aparece na tela.
+    
     BallObj(double x_pos, double y_pos, double diameter, double mass, double friction, boolean active, int obj_id,
             double elastic_factor) {
         super(x_pos, y_pos, diameter, diameter, 0, mass, friction, true, true, active, GameObject.BALL_OBJ, obj_id, elastic_factor);
@@ -54,7 +48,6 @@ public class BallObj extends MovableObj {
         ((CircularHitBox) hit_box).updateHitBox(position, dimensions.x);
     }
 
-    // Momento de inercia de um disco solido: I = m * r^2 / 2.
     @Override
     protected void updateInertialVariables() {
         double radius = dimensions.x / 2.0;
@@ -62,11 +55,6 @@ public class BallObj extends MovableObj {
         this.moment_inertia = (mass * radius * radius) / 2.0;
         this.inverse_moment_inertia = 1.0 / this.moment_inertia;
     }
-
-    // A deteccao de colisao nao e mais sobrescrita: GameObject.collides()
-    // pergunta a propria hitbox, que faz o despacho duplo. A versao antiga
-    // olhava o obj_type do outro objeto para decidir o cast, o que dava
-    // ClassCastException com qualquer outro tipo de hitbox circular.
 
     // ------------------------------------------------------------
     // Ball Obj Exclusive methods
